@@ -1,0 +1,59 @@
+### Job 전체조회
+GET http://localhost:8080/scheduler/jobs
+Accept: application/json
+
+### Job 등록
+POST http://localhost:8080/scheduler/job
+Content-Type: application/json
+Accept: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER3",
+  "triggerGroup" : "MGT",
+  "triggerDescription" : "신규 등록한 트리거~",
+  "cronExpression" : "7 * * * * ?",
+  "shellScriptNm" : "trigger3.sh"
+}
+
+### Job 정지
+PUT http://localhost:8080/scheduler/job/pause
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER3",
+  "triggerGroup" : "MGT"
+}
+
+### Job 재개
+PUT http://localhost:8080/scheduler/job/resume
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER1",
+  "triggerGroup" : "MGT"
+}
+
+### Job 수정
+PUT http://localhost:8080/scheduler/job/update
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER1",
+  "triggerGroup" : "MGT",
+  "cronExpression" : "0 44 * * * ?"
+}
+
+### Job 삭제
+DELETE http://localhost:8080/scheduler/job
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER1",
+  "triggerGroup" : "MGT"
+}
+
+###

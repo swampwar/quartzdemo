@@ -1,0 +1,217 @@
+package wind.yang.quartzdemo.quartz.service;
+
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import wind.yang.quartzdemo.quartz.dto.JobRequest;
+import wind.yang.quartzdemo.quartz.dto.JobResponse;
+import wind.yang.quartzdemo.quartz.listener.SampleTriggerListener;
+
+import javax.annotation.PostConstruct;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+@Slf4j
+@Service
+public class QuartzService {
+    @Qualifier("qScheduler")
+    @Autowired
+    Scheduler scheduler;
+
+    @Autowired
+    SampleTriggerListener triggerListener;
+
+    JobDetail defaultJob;
+
+    @PostConstruct
+    public void init() throws SchedulerException {
+        JobKey defaultJobKey = new JobKey("DEFUALT_JOB", "DEFAULT_GROUP");
+        defaultJob = scheduler.getJobDetail(defaultJobKey);
+    }
+
+    /**
+     * Job 등록
+     * @param jobRequest
+     * @return
+     */
+    public boolean createJob(JobRequest jobRequest) {
+        // 잡이 실행할 스크립트정보 저장
+        // triggerListener.addTriggerCmd(jobRequest.getTriggerName(), jobRequest.getShellScriptNm());
+
+        // 리스케쥴이 될 트리거 생성
+        CronTrigger trigger = null;
+        try {
+            CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+            factoryBean.setName(jobRequest.getTriggerName());
+            factoryBean.setGroup(jobRequest.getTriggerGroup());
+            factoryBean.setDescription(jobRequest.getTriggerDescription());
+            factoryBean.setCronExpression(jobRequest.getCronExpression());
+            factoryBean.setJobDetail(defaultJob);
+            factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+            factoryBean.afterPropertiesSet();
+            trigger = factoryBean.getObject();
+
+            scheduler.scheduleJob(trigger);
+        } catch (SchedulerException | ParseException e) {
+            log.error("Trigger[{}]를 Scheduler에 등록 중 에러[{}]가 발생함", trigger, e.getMessage());
+//            triggerListener.removeTriggerCmd(jobRequest.getTriggerName()); // 잡이 실행할 스크립트정보 삭제
+            e.printStackTrace();
+            return false;
+        }
+
+        // TODO 쉘스크립트 파일이 업로드 됬는지 체크필요
+        triggerListener.addTriggerCmd(jobRequest.getTriggerName(), jobRequest.getShellScriptNm());
+        log.info("Trigger 등록완료 [{}], 실행 쉘스크립트정보 등록완료 [{}]", trigger, jobRequest.getShellScriptNm());
+        return true;
+    }
+
+    /**
+     * Job 전체조회
+     * @return
+     */
+    public List<JobResponse> readJobs(){
+        List<JobResponse> jobResponseList = new ArrayList<>();
+        try {
+            List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
+            for(String group : triggerGroupNames){
+                Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.groupEquals(group));
+                for(TriggerKey triggerKey : triggerKeys){
+                    Trigger trigger = scheduler.getTrigger(triggerKey);
+                    JobResponse jobResponse = new JobResponse();
+                    jobResponse.setSchedulerName(scheduler.getSchedulerName());
+                    jobResponse.setTriggerGroup(triggerKey.getGroup());
+                    jobResponse.setTriggerName(triggerKey.getName());
+                    jobResponse.setJobGroup(trigger.getJobKey().getGroup());
+                    jobResponse.setJobName(trigger.getJobKey().getName());
+                    jobResponse.setNextFireTime(dateToString(trigger.getNextFireTime()));
+                    jobResponse.setPrevFireTime(dateToString(trigger.getPreviousFireTime()));
+                    jobResponse.setStartTime(dateToString(trigger.getStartTime()));
+                    if(trigger instanceof CronTrigger){
+                        jobResponse.setCronExpression(((CronTrigger)trigger).getCronExpression());
+                    }
+                    jobResponse.setTriggerStatus(scheduler.getTriggerState(triggerKey).name().toUpperCase());
+
+                    jobResponseList.add(jobResponse);
+                }
+            }
+        } catch (SchedulerException e) {
+            log.error("Job 전체조회 중 에러[{}]가 발생했습니다.", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return jobResponseList;
+    }
+
+    // TODO pause 후에 다시 시작하면 다음실행시간이 최신화 되는지 확인필요
+    public void pause(TriggerKey triggerkey) throws SchedulerException {
+        scheduler.pauseTrigger(triggerkey);
+    }
+
+    public void resume(TriggerKey triggerkey) throws SchedulerException {
+        scheduler.resumeTrigger(triggerkey);
+    }
+
+    public String update(TriggerKey triggerkey, String cronExpression) throws SchedulerException, ParseException {
+        // 기존 트리거 조회
+        Trigger scheduledTrigger = scheduler.getTrigger(triggerkey);
+        JobDetail jobDetail = scheduler.getJobDetail(scheduledTrigger.getJobKey());
+
+        // 리스케쥴이 될 트리거 생성
+        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+        factoryBean.setName(triggerkey.getName());
+        factoryBean.setGroup(triggerkey.getGroup());
+        factoryBean.setDescription(scheduledTrigger.getDescription());
+        factoryBean.setCronExpression(cronExpression);
+        factoryBean.setJobDetail(jobDetail);
+        factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+        factoryBean.afterPropertiesSet();
+
+        // 리스케쥴
+        Date dateOfFirstFire = scheduler.rescheduleJob(triggerkey, factoryBean.getObject());
+        log.info("트리거({},{})에 대한 리스케쥴 완료. 첫 시작시간 : {}",
+                triggerkey.getName(), triggerkey.getGroup(), dateToString(dateOfFirstFire));
+
+        return dateToString(dateOfFirstFire);
+    }
+
+    public boolean delete(TriggerKey triggerKey) {
+        try {
+            return scheduler.unscheduleJob(triggerKey);
+        } catch (SchedulerException e) {
+            log.error("TriggerKey[{}]에 대한 삭제 중 에러[{}]발생", triggerKey, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // TODO guava에는 Date -> String 컨버터가 있는지?
+    public String dateToString(Date src){
+        String rslt = "";
+        if(src == null){
+            return rslt;
+        }else{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            rslt = sdf.format(src);
+        }
+        return rslt;
+    }
+
+    public boolean isExist(TriggerKey triggerKey) {
+        try {
+            boolean checkRslt = scheduler.checkExists(triggerKey);
+            log.info("TriggerKey[{}]에 대한 기존 등록여부 : [{}]", triggerKey, checkRslt);
+            return checkRslt;
+        } catch (SchedulerException e) {
+            log.error("TriggerKey[{}]에 대한 기존 등록여부 검사 중 에러[{}]발생", triggerKey, e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isRunning(TriggerKey triggerKey) throws SchedulerException {
+        List<JobExecutionContext> currentlyExecutingJobs = getCurrentlyExecutingJobs();
+        for(JobExecutionContext ctx : currentlyExecutingJobs){
+            TriggerKey runningTrigerKey = ctx.getTrigger().getKey();
+            if(runningTrigerKey.equals(triggerKey)){
+                log.info("Trigger[{}]는 현재 실행중입니다. 실행시간 : [{}]", ctx.getTrigger().getKey(), ctx.getFireTime());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getRunningTriggerCnt(TriggerKey triggerKey) throws SchedulerException {
+        int cnt = 0;
+        List<JobExecutionContext> currentlyExecutingJobs = getCurrentlyExecutingJobs();
+        for(JobExecutionContext ctx : currentlyExecutingJobs){
+            TriggerKey runningTrigerKey = ctx.getTrigger().getKey();
+            if(runningTrigerKey.equals(triggerKey)){
+                log.info("Trigger[{}]는 현재 실행중입니다. 실행시간 : [{}]", ctx.getTrigger().getKey(), ctx.getFireTime());
+                cnt++;
+            }
+        }
+        log.info("Trigger 실행 갯수 : [{}]", cnt);
+        return cnt;
+    }
+
+    private List<JobExecutionContext> getCurrentlyExecutingJobs() throws SchedulerException {
+        List<JobExecutionContext> currentlyExecutingJobs = null;
+        try {
+            currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
+        } catch (SchedulerException e) {
+            log.error("Trigger 실행중 여부체크를 위한 CurrentlyExecutingJobs 조회중 에러발생 : [{}]", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        return currentlyExecutingJobs;
+    }
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Schedule Management</title>
+</head>
+<script type="text/javascript">
+$(document).ready(function () {
+    refreshTable();
+
+    $('#searchBtn').on('click', function(){
+        $('#replace_div').load("/jobs");
+    });
+
+    $('#addBtn').on('click', function(){
+        $('#jobtable tr:first').after('' +
+            '<tr>' +
+                '<td></td>' +
+                '<td><input id="tgGroup" type="text"></td>' +
+                '<td><input id="tgName" type="text"></td>' +
+                '<td><input id="tgCronExpression" type="text"><a onclick="tgNew(this)"><i class="fa fa-floppy-o" aria-hidden="true"></i></a></td>' +
+                '<td><input id="tgShellScriptNm" type="text"></td>' +
+                '<td></td>' +
+                '<td></td>' +
+                '<td></td>' +
+            '</tr>'
+        );
+    });
+
+
+
+});
+
+function refreshTable(){
+    $('#replace_div').load("/jobs");
+}
+
+function tgNew(aTag){
+    var trObj = $(aTag).parent().parent();
+    var jsonData = JSON.stringify({
+        triggerGroup : trObj.find('input#tgGroup').val(),
+        triggerName : trObj.find('input#tgName').val(),
+        cronExpression : trObj.find('input#tgCronExpression').val(),
+        shellScriptNm : trObj.find('input#tgShellScriptNm').val()
+    });
+
+    $.ajax({
+        url: '/scheduler/job',
+        type: 'post',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            if(rslt.success === true){
+                refreshTable();
+            }
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+
+}
+
+function tgRun(tgGroup, tgName){
+    var param = {"triggerGroup" : tgGroup, "triggerName" : tgName};
+    var jsonData = JSON.stringify(param);
+    console.log('tgRun JSON param : ' + jsonData);
+
+    $.ajax({
+        url: '/scheduler/job/resume',
+        type: 'put',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+}
+
+function tgStop(tgGroup, tgName){
+    var jsonData = JSON.stringify(
+        {triggerGroup : tgGroup, triggerName : tgName}
+    );
+
+    $.ajax({
+        url: '/scheduler/job/pause',
+        type: 'put',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+}
+
+function tgEdit(tgGroup, tgName, aTag){
+    var cronExpression = $(aTag).parent().find('input').val();
+    var jsonData = JSON.stringify({
+        triggerGroup : tgGroup,
+        triggerName : tgName,
+        cronExpression : cronExpression
+    });
+
+    $.ajax({
+        url: '/scheduler/job/update',
+        type: 'put',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+
+}
+
+function tgDel(tgGroup, tgName){
+    var jsonData = JSON.stringify({
+        triggerGroup : tgGroup,
+        triggerName : tgName
+    });
+
+    $.ajax({
+        url: '/scheduler/job',
+        type: 'delete',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+}
+</script>
+<body>
+<div>
+    <div>
+        <input id="searchBtn" type="button" value="조회">
+        <input id="addBtn" type="button" value="추가">
+    </div>
+    <div id="replace_div">
+        Table here
+    </div>
+</div>
+</body>
+</html>

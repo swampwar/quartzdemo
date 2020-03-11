@@ -1,0 +1,1 @@
+echo im trigger3 shell script!!!!

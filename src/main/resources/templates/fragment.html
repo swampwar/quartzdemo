@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+<div th:fragment="jobtable-fragment">
+    <table class="table" id="jobtable">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Scheduler</th>
+            <th scope="col">Trigger Group</th>
+            <th scope="col">Trigger Name</th>
+            <th scope="col">CronExpression</th>
+            <th scope="col">Trigger Status</th>
+            <th scope="col" class="">Start Time</th>
+            <th scope="col">Next FireTime</th>
+            <th scope="col">Prev FireTime</th>
+        </tr>
+        </thead>
+        <tbody id="jobtable-body">
+        <th:block th:each="job : ${jobs}">
+            <tr>
+                <td><span th:text="${job.schedulerName}"> schedulerName </span></td>
+                <td><span th:text="${job.triggerGroup}"> triggerGroup </span></td>
+                <td><span th:text="${job.triggerName}"> triggerName </span>
+                    <a th:attr="onclick=|tgDel('${job.triggerGroup}', '${job.triggerName}')|">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td><input type="text" th:value="${job.cronExpression}"></input>
+                    <a th:attr="onclick=|tgEdit('${job.triggerGroup}', '${job.triggerName}', this)|">
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td><span th:text="${job.triggerStatus}" >Trigger Status</span>
+                    <span>
+                        <a th:attr="onclick=|tgRun('${job.triggerGroup}', '${job.triggerName}')|">
+                            <i class="fa fa-play" aria-hidden="true"></i>
+                        </a>
+                        <a th:attr="onclick=|tgStop('${job.triggerGroup}', '${job.triggerName}')|">
+                            <i class="fa fa-pause-circle-o" aria-hidden="true"></i>
+                        </a>
+                    </span>
+                </td>
+                <td><span th:text="${job.startTime}"> startTime </span></td>
+                <td><span th:text="${job.nextFireTime}"> nextFireTime </span></td>
+                <td><span th:text="${job.prevFireTime}"> prevFireTime </span></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
