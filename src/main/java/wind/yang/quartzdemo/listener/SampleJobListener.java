@@ -1,4 +1,4 @@
-package wind.yang.quartzdemo.quartz.listener;
+package wind.yang.quartzdemo.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;

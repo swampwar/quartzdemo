@@ -16,18 +16,4 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class DBConfig {
 
-//    @Bean
-//    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-//        final SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
-//        sessionFactoryBean.setDataSource(dataSource);
-//        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//        sessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/query/*.xml"));
-//        return sessionFactoryBean.getObject();
-//    }
-//
-//    @Bean
-//    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) throws Exception {
-//        final SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
-//        return sqlSessionTemplate;
-//    }
 }

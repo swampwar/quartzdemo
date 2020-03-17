@@ -1,4 +1,4 @@
-package wind.yang.quartzdemo.quartz.service;
+package wind.yang.quartzdemo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import wind.yang.quartzdemo.quartz.dto.JobRequest;
-import wind.yang.quartzdemo.quartz.dto.JobResponse;
-import wind.yang.quartzdemo.quartz.listener.SampleTriggerListener;
+import wind.yang.quartzdemo.dto.ExecProg;
+import wind.yang.quartzdemo.mapper.ExecProgMapper;
+import wind.yang.quartzdemo.dto.JobRequest;
+import wind.yang.quartzdemo.dto.JobResponse;
+import wind.yang.quartzdemo.listener.SampleTriggerListener;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
@@ -30,6 +31,9 @@ public class QuartzService {
     @Autowired
     SampleTriggerListener triggerListener;
 
+    @Autowired
+    ExecProgMapper execProgMapper;
+
     JobDetail defaultJob;
 
     @PostConstruct
@@ -45,7 +49,8 @@ public class QuartzService {
      */
     public boolean createJob(JobRequest jobRequest) {
         // 잡이 실행할 스크립트정보 저장
-        // triggerListener.addTriggerCmd(jobRequest.getTriggerName(), jobRequest.getShellScriptNm());
+        // TODO max+1 seq생성 후 저장
+        execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm()));
 
         // 리스케쥴이 될 트리거 생성
         CronTrigger trigger = null;
@@ -63,13 +68,13 @@ public class QuartzService {
             scheduler.scheduleJob(trigger);
         } catch (SchedulerException | ParseException e) {
             log.error("Trigger[{}]를 Scheduler에 등록 중 에러[{}]가 발생함", trigger, e.getMessage());
+            // TODO 삭제를 하지않고 트랜잭션 처리로 자동 롤백되도록 수정
 //            triggerListener.removeTriggerCmd(jobRequest.getTriggerName()); // 잡이 실행할 스크립트정보 삭제
             e.printStackTrace();
             return false;
         }
 
         // TODO 쉘스크립트 파일이 업로드 됬는지 체크필요
-        triggerListener.addTriggerCmd(jobRequest.getTriggerName(), jobRequest.getShellScriptNm());
         log.info("Trigger 등록완료 [{}], 실행 쉘스크립트정보 등록완료 [{}]", trigger, jobRequest.getShellScriptNm());
         return true;
     }

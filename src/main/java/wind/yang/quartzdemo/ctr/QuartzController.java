@@ -1,14 +1,14 @@
-package wind.yang.quartzdemo.quartz.controller;
+package wind.yang.quartzdemo.ctr;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wind.yang.quartzdemo.quartz.dto.ApiResponse;
-import wind.yang.quartzdemo.quartz.dto.JobRequest;
-import wind.yang.quartzdemo.quartz.dto.JobResponse;
-import wind.yang.quartzdemo.quartz.service.QuartzService;
+import wind.yang.quartzdemo.dto.ApiResponse;
+import wind.yang.quartzdemo.dto.JobRequest;
+import wind.yang.quartzdemo.dto.JobResponse;
+import wind.yang.quartzdemo.service.QuartzService;
 
 import java.text.ParseException;
 import java.util.List;

@@ -1,13 +1,13 @@
-package wind.yang.quartzdemo.quartz.job;
+package wind.yang.quartzdemo.job;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import wind.yang.quartzdemo.quartz.service.QuartzService;
+import wind.yang.quartzdemo.dto.ExecProg;
+import wind.yang.quartzdemo.service.QuartzService;
 
 import java.io.*;
 
@@ -38,7 +38,7 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();
-        fileName = jobExecutionContext.getJobDetail().getJobDataMap().getString("shFileName");
+        fileName = ((ExecProg)jobExecutionContext.getJobDetail().getJobDataMap().get("execProg")).getProgramName();
         log.info("Trigger[{}]에 의해 실행예정인 CMD[{}]", triggerKey, fileName);
 
         // Trigger가 실행중인지 체크

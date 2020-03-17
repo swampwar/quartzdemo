@@ -1,4 +1,4 @@
-package wind.yang.quartzdemo.quartz.config;
+package wind.yang.quartzdemo.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -9,15 +9,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.*;
-import org.springframework.util.Assert;
 import wind.yang.quartzdemo.quartz.AutoWiringSpringBeanJobFactory;
-import wind.yang.quartzdemo.quartz.job.SampleCronJob;
-import wind.yang.quartzdemo.quartz.job.SampleSimpleJob;
-import wind.yang.quartzdemo.quartz.listener.SampleTriggerListener;
+import wind.yang.quartzdemo.job.SampleCronJob;
+import wind.yang.quartzdemo.job.SampleSimpleJob;
 
 import javax.sql.DataSource;
-import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.stream.IntStream;
 

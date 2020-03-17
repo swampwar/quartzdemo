@@ -1,4 +1,4 @@
-package wind.yang.quartzdemo.quartz.dto;
+package wind.yang.quartzdemo.dto;
 
 import lombok.Getter;
 import lombok.Setter;
