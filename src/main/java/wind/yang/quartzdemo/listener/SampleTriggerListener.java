@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
-
 @Slf4j
 @Component
 public class SampleTriggerListener implements TriggerListener {

@@ -107,7 +107,7 @@ public class QuartzConfig {
         schedulerFactory.setDataSource(dataSource);
         schedulerFactory.setWaitForJobsToCompleteOnShutdown(true);
         schedulerFactory.setGlobalTriggerListeners(triggerListener);
-//        schedulerFactory.setGlobalJobListeners(jobListener);
+        schedulerFactory.setGlobalJobListeners(jobListener);
         return schedulerFactory;
     }
 

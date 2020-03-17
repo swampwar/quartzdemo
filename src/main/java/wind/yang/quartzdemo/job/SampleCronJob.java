@@ -36,10 +36,15 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
     }
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();
         fileName = ((ExecProg)jobExecutionContext.getJobDetail().getJobDataMap().get("execProg")).getProgramName();
-        log.info("Trigger[{}]에 의해 실행예정인 CMD[{}]", triggerKey, fileName);
+        log.info("Trigger[{}]에 의해 실행예정인 프로그램[{}]", triggerKey, fileName);
+
+        // TODO 테스트를 위한 소스
+        if(fileName.equals("trigger2.sh")){
+            throw new JobExecutionException("내가 만든 Exception!!");
+        }
 
         // Trigger가 실행중인지 체크
         try {

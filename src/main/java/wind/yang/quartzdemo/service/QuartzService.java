@@ -50,7 +50,12 @@ public class QuartzService {
     public boolean createJob(JobRequest jobRequest) {
         // 잡이 실행할 스크립트정보 저장
         // TODO max+1 seq생성 후 저장
-        execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm()));
+        if(execProgMapper.findOneByTrigger(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1) == null){
+            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm()));
+        }else{
+            // TODO 중복 데이터는 업데이트
+            log.info("중복 데이터는 업데이트");
+        }
 
         // 리스케쥴이 될 트리거 생성
         CronTrigger trigger = null;

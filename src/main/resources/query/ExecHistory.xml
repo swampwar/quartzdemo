@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace : Mapper I/F와 동일하도록 설정 -->
+<mapper namespace="wind.yang.quartzdemo.mapper.ExecHistoryMapper">
+    <select id="findByExecHistory" resultType="wind.yang.quartzdemo.dto.ExecHistory">
+        SELECT job_stt_dtm,
+               job_end_dtm,
+               trigger_group,
+               trigger_name,
+               job_group,
+               job_name,
+               job_exec_sta_cd,
+               exec_prog_name,
+               job_exec_rslt
+        FROM tb_exec_history
+        WHERE 1=1
+        <if test="triggerGroup != null">
+            AND trigger_group = #{triggerGroup}
+        </if>
+        <if test="triggerName != null">
+            AND trigger_name = #{triggerName}
+        </if>
+        <if test="jobGroup != null">
+            AND job_group = #{jobGroup}
+        </if>
+        <if test="jobName != null">
+            AND job_name = #{jobName}
+        </if>
+    </select>
+
+    <insert id="insertExecHistory">
+        <![CDATA[
+        insert into TB_EXEC_HISTORY
+        values (#{jobSttDtm}, #{jobEndDtm},
+                #{triggerGroup}, #{triggerName},
+                #{jobGroup}, #{jobName},
+                #{jobExecStaCd}, #{execProgName},
+                #{jobExecRslt})
+        ]]>
+    </insert>
+
+    <update id="updateExecHistory">
+        <![CDATA[
+        UPDATE tb_exec_history
+        SET job_end_dtm = #{jobEndDtm},
+            job_exec_sta_cd = #{jobExecStaCd},
+            job_exec_rslt = #{jobExecRslt}
+        WHERE job_stt_dtm = #{jobSttDtm}
+        AND trigger_group = #{triggerGroup}
+        AND trigger_name = #{triggerName}
+        AND job_group = #{jobGroup}
+        AND job_name = #{jobName}
+        ]]>
+    </update>
+
+    <delete id="deleteExecHistory">
+        <![CDATA[
+        DELETE FROM tb_exec_history
+        WHERE job_stt_dtm = #{jobSttDtm}
+          AND trigger_group = #{triggerGroup}
+          AND trigger_name = #{triggerName}
+          AND job_group = #{jobGroup}
+          AND job_name = #{jobName}
+        ]]>
+    </delete>
+</mapper>

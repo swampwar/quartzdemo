@@ -17,7 +17,7 @@ spring:
   quartz:
     job-store-type: jdbc
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
     properties:
       org.quartz.threadPool.threadCount: 5
       org.quartz.jobStore.misfireThreshold: 3000 # misfire라고 판단하는 기준시간
@@ -32,6 +32,7 @@ mybatis:
 logging:
   level:
     root: info
+    wind.yang.quartzdemo: debug
     wind.yang.quartzdemo.mapper: trace
 
 quartzdemo:

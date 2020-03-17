@@ -10,6 +10,14 @@
         and TRIGGER_NAME = #{triggerName}
     </select>
 
+    <select id="findOneByTrigger" resultType="wind.yang.quartzdemo.dto.ExecProg">
+        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME
+        from TB_EXEC_PROG
+        where TRIGGER_GROUP = #{triggerGroup}
+          and TRIGGER_NAME = #{triggerName}
+          and SEQ = #{seq}
+    </select>
+
     <insert id="insertExecProg">
         insert into TB_EXEC_PROG values (#{triggerGroup}, #{triggerName}, #{seq}, #{programName})
     </insert>
