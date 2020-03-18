@@ -16,6 +16,10 @@ $(document).ready(function () {
         $('#replace_div').load("/jobs");
     });
 
+    $('#historySearchBtn').on('click', function(){
+        $('#replace_div_history').load("/execHistory");
+    });
+
     $('#addBtn').on('click', function(){
         $('#jobtable tr:first').after('' +
             '<tr>' +
@@ -169,11 +173,15 @@ function tgDel(tgGroup, tgName){
 <body>
 <div>
     <div>
-        <input id="searchBtn" type="button" value="조회">
+        <input id="searchBtn" type="button" value="트리거 조회">
+        <input id="historySearchBtn" type="button" value="실행이력 조회">
         <input id="addBtn" type="button" value="추가">
     </div>
     <div id="replace_div">
         Table here
+    </div>
+    <div id="replace_div_history">
+        History Table here
     </div>
 </div>
 </body>

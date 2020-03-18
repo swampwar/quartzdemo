@@ -6,13 +6,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.QuartzService;
 
 @Slf4j
 @Controller
 public class MainController {
     @Autowired
-    private QuartzService service;
+    private QuartzService quartzService;
+
+    @Autowired
+    private ExecHistoryService ehService;
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String main(){
@@ -21,7 +25,13 @@ public class MainController {
 
     @RequestMapping(path = "/jobs", method = RequestMethod.GET)
     public String jobs(Model model){
-        model.addAttribute("jobs", service.readJobs());
+        model.addAttribute("jobs", quartzService.readJobs());
         return "fragment :: jobtable-fragment";
+    }
+
+    @RequestMapping(path = "/execHistory", method = RequestMethod.GET)
+    public String execHistory(Model model){
+        model.addAttribute("historyList", ehService.readExecHistory());
+        return "history_fragment :: historytable-fragment";
     }
 }

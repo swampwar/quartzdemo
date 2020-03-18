@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+<div th:fragment="historytable-fragment">
+    <table class="table" id="historytable">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">job_stt_dtm</th>
+            <th scope="col">job_end_dtm</th>
+            <th scope="col">trigger_group</th>
+            <th scope="col">trigger_name</th>
+            <th scope="col">job_group</th>
+            <th scope="col">job_name</th>
+            <th scope="col">job_exec_sta_cd</th>
+            <th scope="col">exec_prog_name</th>
+            <th scope="col">job_exec_rslt</th>
+        </tr>
+        </thead>
+        <tbody id="historytable-body">
+        <th:block th:each="history : ${historyList}">
+            <tr>
+                <td><span th:text="${history.jobSttDtm}"> jobSttDtm </span></td>
+                <td><span th:text="${history.jobEndDtm}"> jobEndDtm </span></td>
+                <td><span th:text="${history.triggerGroup}"> triggerGroup </span></td>
+                <td><span th:text="${history.triggerName}"> triggerName </span></td>
+                <td><span th:text="${history.jobGroup}"> jobGroup </span></td>
+                <td><span th:text="${history.jobName}"> jobName </span></td>
+                <td>
+                    <span th:text="${history.jobExecStaCd}"> jobExecStaCd </span>
+                    <span>
+                        <a th:attr="onclick=|jobRun('${history.triggerGroup}', '${history.triggerName}')|">
+                            <i class="fa fa-play" aria-hidden="true"></i>
+                        </a>
+                        <a th:attr="onclick=|jobStop('${history.triggerGroup}', '${history.triggerName}')|">
+                            <i class="fa fa-pause-circle-o" aria-hidden="true"></i>
+                        </a>
+                    </span>
+                </td>
+                <td><span th:text="${history.execProgName}"> execProgName </span></td>
+                <td><span th:text="${history.jobExecRslt}"> jobExecRslt </span></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -30,6 +30,7 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
 
     private String fileName;
     private int exitCode = -1;
+    private static final int SUCCESS = 0;
 
     public SampleCronJob() {
         log.debug("SampleCronJob 인스턴스가 생성!");
@@ -41,51 +42,44 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
         fileName = ((ExecProg)jobExecutionContext.getJobDetail().getJobDataMap().get("execProg")).getProgramName();
         log.info("Trigger[{}]에 의해 실행예정인 프로그램[{}]", triggerKey, fileName);
 
-        // TODO 테스트를 위한 소스
-        if(fileName.equals("trigger2.sh")){
-            throw new JobExecutionException("내가 만든 Exception!!");
-        }
-
         // Trigger가 실행중인지 체크
         try {
             int runningTriggerCnt = service.getRunningTriggerCnt(triggerKey);
             if(runningTriggerCnt > 1){ // 본인을 제외하고 실행중인 Job이 있으면
-                log.error("Trigger[{}]가 이미 실행중이므로 종료합니다.", triggerKey);
-                // TODO 실행결과에 대한 DB처리, 메세지와 코드를 저장하자.
-                return;
+                log.error("Trigger[{}]가 이미 실행중이므로 Job을 종료합니다.", triggerKey);
+                throw new JobExecutionException("실행할 Trigger가 이미 실행중입니다. 실행 건수 : " + runningTriggerCnt);
             }
         } catch (SchedulerException e) {
             log.error("Trigger[{}] 실행여부 조회 중 에러발생으로 Job을 종료합니다.", triggerKey);
-            // TODO 실행결과에 대한 DB처리, 메세지와 코드를 저장하자.
-            return;
+            throw new JobExecutionException(e);
         }
 
         // Trigger 실행
         try {
+            // TODO 실행할 스크립트가 classpath에 있으면 안될 것 같다... 업로드시 classpath에만 저장된다. 소스 재배포시 없어짐! 제3의 폴더로 옮기자
             String scriptFileFullPath = new ClassPathResource(SH_PATH + fileName).getFile().getAbsolutePath(); // 실행할 쉘스크립트
             String command = CMD + " " + scriptFileFullPath; // 실행할 Command
 
             try(FileOutputStream os = new FileOutputStream(new File(LOG_PATH + fileName + ".log"), true)) {
                 exitCode = executeShell(command, os, os); // 쉘스크립트 실행
-            } catch (IOException e) {
-                log.error("쉘스크립트 로그파일 에러발생 : [{}]", e.getMessage());
-                e.printStackTrace();
             }
         } catch (IOException e) {
             log.error("쉘스크립트에 대한 Path를 찾을 수 없습니다. : [{}]", e.getMessage());
-            e.printStackTrace();
+            throw new JobExecutionException(e);
         }
 
         log.info("Trigger[{}] 실행이 완료되었습니다. exitCode : {}", triggerKey, exitCode);
-        // TODO 실행결과에 대한 DB처리(exitCode에 따른 분기처리)
+        // TODO 0만 정상인가??
+        if(exitCode != SUCCESS){
+            throw new JobExecutionException("Job 실행결과(exitCode)가 0이 아닙니다. exitCode : " + exitCode);
+
+        }
     }
 
-    public int executeShell(String command, OutputStream out, OutputStream err) {
-        int errorExitCode = -1;
+    public int executeShell(String command, OutputStream out, OutputStream err) throws JobExecutionException {
         DefaultExecutor executor = new DefaultExecutor();
         CommandLine cmdLine = CommandLine.parse(command);
         log.info("실행을 위해 파싱된 CommandLine : [{}]", cmdLine);
-
         if (timeoutMillsecs > 0) {
             ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutMillsecs);
             executor.setWatchdog(watchdog);
@@ -98,12 +92,10 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
             return executor.execute(cmdLine);
         } catch (ExecuteException e) {
             log.info("쉘스크립트 실행 중 에러[{}]가 발생했습니다. 실행결과(exitCode)[{}]", e.getMessage(), e.getExitValue());
-            e.printStackTrace();
-            return e.getExitValue();
+            throw new JobExecutionException(e);
         } catch (IOException e) {
             log.info("쉘스크립트 실행을 위한 상태가 아닙니다. [{}]", e.getMessage());
-            e.printStackTrace();
-            return errorExitCode;
+            throw new JobExecutionException(e);
         }
     }
 }

@@ -25,21 +25,17 @@ public class SampleJobListener implements JobListener {
         return "SampleJobListener";
     }
 
+    /**
+     * 잡이 실행 전 시작 실행이력을 저장한다.
+     */
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         // TODO Job 연속실행시 수정되어야 함
-        String jobSttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        ExecHistory execHistory = new ExecHistory();
-        execHistory.setJobSttDtm(jobSttDtm);
-        execHistory.setTriggerGroup(context.getTrigger().getKey().getGroup());
-        execHistory.setTriggerName(context.getTrigger().getKey().getName());
-        execHistory.setJobGroup(context.getJobDetail().getKey().getGroup());
-        execHistory.setJobName(context.getJobDetail().getKey().getName());
-        execHistory.setExecProgName(((ExecProg)context.getJobDetail().getJobDataMap().get("execProg")).getProgramName());
-        execHistory.setJobExecStaCd("P"); // TODO 나중에 코드로
+        // 신규 실행이력 저장
+        ExecHistory execHistory = newExecHistory(context);
         mapper.insertExecHistory(execHistory);
 
-        // 실행 결과를 업데이트 하기위해 map에 넣는다.
+        // 실행종료 후 이력 업데이트용으로 JobDataMap에 넣는다.
         context.getJobDetail().getJobDataMap().put("execHistory", execHistory);
 
         JobKey jobKey = context.getJobDetail().getKey();
@@ -52,18 +48,44 @@ public class SampleJobListener implements JobListener {
         log.info("jobExecutionVetoed : jobKey : {}", jobKey);
     }
 
+    /**
+     * 잡이 실행 후 결과 실행이력을 저장한다.
+     * 정상실행시 : JobExecutionException = null
+     */
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
         // 실행결과 DB Update
-        // TODO Exception시 E 처리
-        String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         ExecHistory execHistory = (ExecHistory)context.getJobDetail().getJobDataMap().get("execHistory");
+        String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        if(jobException == null){ // 정상실행이면
+            execHistory.setJobExecStaCd("S");
+            execHistory.setJobExecRslt("잘 실행되었다~ :)");
+        }else{ // 에러발생이면
+            execHistory.setJobExecStaCd("E");
+            execHistory.setJobExecRslt(jobException.getMessage());
+        }
         execHistory.setJobEndDtm(jobEndDtm);
-        execHistory.setJobExecStaCd("S");
-        execHistory.setJobExecRslt("잘 끝남!");
         mapper.updateExecHistory(execHistory);
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobWasExecuted : jobKey : {}", jobKey);
+    }
+
+    /**
+     * 신규 실행이력 생성
+     *
+     * @return 신규 실행이력 ExecHistory
+     */
+    private ExecHistory newExecHistory(JobExecutionContext ctx){
+        String jobSttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        ExecHistory execHistory = new ExecHistory();
+        execHistory.setJobSttDtm(jobSttDtm);
+        execHistory.setTriggerGroup(ctx.getTrigger().getKey().getGroup());
+        execHistory.setTriggerName(ctx.getTrigger().getKey().getName());
+        execHistory.setJobGroup(ctx.getJobDetail().getKey().getGroup());
+        execHistory.setJobName(ctx.getJobDetail().getKey().getName());
+        execHistory.setExecProgName(((ExecProg)ctx.getJobDetail().getJobDataMap().get("execProg")).getProgramName());
+        execHistory.setJobExecStaCd("P"); // TODO 나중에 코드값으로
+        return execHistory;
     }
 }

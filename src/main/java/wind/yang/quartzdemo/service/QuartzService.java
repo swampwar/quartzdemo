@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.stereotype.Service;
+import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
 import wind.yang.quartzdemo.dto.JobRequest;
@@ -224,4 +225,6 @@ public class QuartzService {
         }
         return currentlyExecutingJobs;
     }
+
+
 }
