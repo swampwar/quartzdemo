@@ -169,6 +169,54 @@ function tgDel(tgGroup, tgName){
         }
     });
 }
+
+function jobKill(tgGroup, tgName){
+    var jsonData = JSON.stringify({
+        triggerGroup : tgGroup,
+        triggerName : tgName
+    });
+
+    $.ajax({
+        url: '/scheduler/job/kill',
+        type: 'post',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+}
+
+function jobRunNow(tgGroup, tgName){
+    var jsonData = JSON.stringify({
+        triggerGroup : tgGroup,
+        triggerName : tgName
+    });
+
+    $.ajax({
+        url: '/scheduler/job/runNow',
+        type: 'post',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            refreshTable();
+        },
+        error : function(){
+            alert('실패!');
+            refreshTable();
+        }
+    });
+}
 </script>
 <body>
 <div>

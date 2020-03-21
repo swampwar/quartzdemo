@@ -6,17 +6,17 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.stereotype.Service;
-import wind.yang.quartzdemo.dto.ExecHistory;
-import wind.yang.quartzdemo.dto.ExecProg;
+import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
-import wind.yang.quartzdemo.dto.JobRequest;
-import wind.yang.quartzdemo.dto.JobResponse;
 import wind.yang.quartzdemo.listener.SampleTriggerListener;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +35,9 @@ public class QuartzService {
     @Autowired
     ExecProgMapper execProgMapper;
 
+    @Autowired
+    TriggerService triggerService;
+
     JobDetail defaultJob;
 
     @PostConstruct
@@ -51,7 +54,7 @@ public class QuartzService {
     public boolean createJob(JobRequest jobRequest) {
         // 잡이 실행할 스크립트정보 저장
         // TODO max+1 seq생성 후 저장
-        if(execProgMapper.findOneByTrigger(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1) == null){
+        if(execProgMapper.findOneByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), 1) == null){
             execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm()));
         }else{
             // TODO 중복 데이터는 업데이트
@@ -82,6 +85,30 @@ public class QuartzService {
 
         // TODO 쉘스크립트 파일이 업로드 됬는지 체크필요
         log.info("Trigger 등록완료 [{}], 실행 쉘스크립트정보 등록완료 [{}]", trigger, jobRequest.getShellScriptNm());
+        return true;
+    }
+
+    public boolean createForceJob(TriggerKey origTriggerKey){
+        TriggerKey fTriggerKey = new TriggerKey(origTriggerKey.getName() + ".F."
+                                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+                                , origTriggerKey.getGroup());
+
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        factoryBean.setName(fTriggerKey.getName());
+        factoryBean.setGroup(fTriggerKey.getGroup());
+        factoryBean.setDescription("강제실행 트리거");
+        factoryBean.setRepeatCount(0);
+        factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT);
+        factoryBean.setJobDetail(defaultJob);
+        factoryBean.afterPropertiesSet();
+        try {
+            scheduler.scheduleJob(factoryBean.getObject());
+        } catch (SchedulerException e) {
+            log.error("Trigger[{}]를 강제실행을 위해 Scheduler에 등록 중 에러[{}]가 발생함", fTriggerKey, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
     }
 
@@ -226,5 +253,14 @@ public class QuartzService {
         return currentlyExecutingJobs;
     }
 
-
+    public void kill(TriggerKey triggerKey) throws SchedulerException {
+        List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
+        for(JobExecutionContext ctx : currentlyExecutingJobs){
+            if(ctx.getTrigger().getKey().equals(triggerKey)){
+                String fireInstanceId = ctx.getFireInstanceId();
+                log.info("Trigger[{}]에 대한 강제종료를 실행합니다. FireInstanceId[{}]", triggerKey, fireInstanceId);
+                scheduler.interrupt(fireInstanceId);
+            }
+        }
+    }
 }

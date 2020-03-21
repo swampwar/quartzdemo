@@ -12,7 +12,7 @@ import wind.yang.quartzdemo.service.QuartzService;
 import java.io.*;
 
 @Slf4j
-public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하여 Job 작성
+public class SampleCronJob implements Job, InterruptableJob{ // TODO QuartzJobBean 을 구현하여 Job 작성
     @Value("${quartzdemo.shell.timeout}")
     private int timeoutMillsecs;
 
@@ -28,9 +28,11 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
     @Autowired
     QuartzService service;
 
+    private TriggerKey triggerKey = null;
     private String fileName;
     private int exitCode = -1;
     private static final int SUCCESS = 0;
+    private DefaultExecutor executor = null;
 
     public SampleCronJob() {
         log.debug("SampleCronJob 인스턴스가 생성!");
@@ -38,8 +40,8 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();
-        fileName = ((ExecProg)jobExecutionContext.getJobDetail().getJobDataMap().get("execProg")).getProgramName();
+        this.triggerKey = jobExecutionContext.getTrigger().getKey();
+        this.fileName = ((ExecProg)jobExecutionContext.getJobDetail().getJobDataMap().get("execProg")).getProgramName();
         log.info("Trigger[{}]에 의해 실행예정인 프로그램[{}]", triggerKey, fileName);
 
         // Trigger가 실행중인지 체크
@@ -64,22 +66,30 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
                 exitCode = executeShell(command, os, os); // 쉘스크립트 실행
             }
         } catch (IOException e) {
-            log.error("쉘스크립트에 대한 Path를 찾을 수 없습니다. : [{}]", e.getMessage());
+            log.error("Trigger[{}] 쉘스크립트에 대한 Path를 찾을 수 없습니다. : [{}]", triggerKey, e.getMessage());
             throw new JobExecutionException(e);
         }
 
         log.info("Trigger[{}] 실행이 완료되었습니다. exitCode : {}", triggerKey, exitCode);
         // TODO 0만 정상인가??
         if(exitCode != SUCCESS){
-            throw new JobExecutionException("Job 실행결과(exitCode)가 0이 아닙니다. exitCode : " + exitCode);
+            throw new JobExecutionException("Trigger[" + triggerKey +"] Job 실행결과(exitCode)가 0이 아닙니다. exitCode : " + exitCode);
 
         }
     }
 
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        if(executor != null){
+            executor.getWatchdog().destroyProcess(); // 자식 프로세스 종료
+            log.info("Trigger[{}] 강제종료가 완료되었습니다.", triggerKey);
+        }
+    }
+
     public int executeShell(String command, OutputStream out, OutputStream err) throws JobExecutionException {
-        DefaultExecutor executor = new DefaultExecutor();
+        executor = new DefaultExecutor();
         CommandLine cmdLine = CommandLine.parse(command);
-        log.info("실행을 위해 파싱된 CommandLine : [{}]", cmdLine);
+        log.info("Trigger[{}] 실행을 위해 파싱된 CommandLine : [{}] 실행시작!", triggerKey, cmdLine);
         if (timeoutMillsecs > 0) {
             ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutMillsecs);
             executor.setWatchdog(watchdog);
@@ -91,11 +101,13 @@ public class SampleCronJob implements Job { // TODO QuartzJobBean 을 구현하�
         try {
             return executor.execute(cmdLine);
         } catch (ExecuteException e) {
-            log.info("쉘스크립트 실행 중 에러[{}]가 발생했습니다. 실행결과(exitCode)[{}]", e.getMessage(), e.getExitValue());
+            log.info("Trigger[{}] 쉘스크립트 실행 중 에러[{}]가 발생했습니다. 실행결과(exitCode)[{}]", triggerKey, e.getMessage(), e.getExitValue());
             throw new JobExecutionException(e);
         } catch (IOException e) {
-            log.info("쉘스크립트 실행을 위한 상태가 아닙니다. [{}]", e.getMessage());
+            log.info("Trigger[{}] 쉘스크립트 실행을 위한 상태가 아닙니다. [{}]", triggerKey, e.getMessage());
             throw new JobExecutionException(e);
         }
     }
+
+
 }

@@ -56,4 +56,23 @@ Content-Type: application/json
   "triggerGroup" : "MGT"
 }
 
-###
+### Job 강제종료
+POST http://localhost:8080/scheduler/job/kill
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER1",
+  "triggerGroup" : "MGT"
+}
+
+### Job 강제실행
+POST http://localhost:8080/scheduler/job/runNow
+Accept: application/json
+Content-Type: application/json
+
+{
+  "triggerName" : "MGT_TRIGGER1",
+  "triggerGroup" : "MGT"
+}
+

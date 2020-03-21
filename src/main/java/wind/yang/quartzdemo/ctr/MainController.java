@@ -2,12 +2,14 @@ package wind.yang.quartzdemo.ctr;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.QuartzService;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Controller

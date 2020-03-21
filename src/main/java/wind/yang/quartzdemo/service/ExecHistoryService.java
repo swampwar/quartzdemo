@@ -17,4 +17,12 @@ public class ExecHistoryService {
         historyList = ehMapper.findAll();
         return historyList;
     }
+
+    public void insertExecHistory(ExecHistory execHistory) {
+        ehMapper.insertExecHistory(execHistory);
+    }
+
+    public void updateExecHistory(ExecHistory execHistory) {
+        ehMapper.updateExecHistory(execHistory);
+    }
 }

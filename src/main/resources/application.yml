@@ -40,4 +40,5 @@ quartzdemo:
     script-path: shell/script/ # classpath 이하에서 경로를 작성
     log-path: /Users/jaeseok/Documents/Yang/Dev/02.CNS/log/
     cmd: sh
-    timeout: 60000 # 60초
+    timeout: 600000 # 600초
+

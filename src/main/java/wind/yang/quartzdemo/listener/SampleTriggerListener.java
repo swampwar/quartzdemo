@@ -6,14 +6,16 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
+import wind.yang.quartzdemo.service.ExecProgService;
 
 @Slf4j
 @Component
 public class SampleTriggerListener implements TriggerListener {
     @Autowired
-    ExecProgMapper execProgMapper;
+    ExecProgService epSvc;
 
     @Override
     public String getName() {
@@ -24,8 +26,13 @@ public class SampleTriggerListener implements TriggerListener {
     public void triggerFired(Trigger trigger, JobExecutionContext context) {
         log.debug("triggerFired at {} : JobKey : {}", trigger.getStartTime(), trigger.getJobKey());
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-        // TODO 현재는 단일파일만 실행되도록 되어있다. 리스트 반환결과를 순차실행 하는 기능은 개발이 필요함
-        jobDataMap.put("execProg", execProgMapper.findByTrigger(trigger.getKey().getGroup(), trigger.getKey().getName()).get(0));
+
+        if(trigger.getKey().getName().contains(".F.")){
+            jobDataMap.put("execProg", epSvc.findOriginalByTrigger(trigger.getKey()).get(0));
+        }else{
+            // TODO 현재는 단일파일만 실행되도록 되어있다. 리스트 반환결과를 순차실행 하는 기능은 개발이 필요함
+            jobDataMap.put("execProg", epSvc.findByTrigger(trigger.getKey()).get(0));
+        }
     }
 
     @Override

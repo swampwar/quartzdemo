@@ -104,4 +104,33 @@ public class QuartzController {
 
         return new ApiResponse(true, "Trigger 수정이 완료되었습니다.");
     }
+
+    @PostMapping("/job/kill")
+    @ResponseBody
+    public ApiResponse killJob(@RequestBody JobRequest jobRequest) {
+        // TODO 파라미터 필수검사
+        log.info("killJob 파라미터 : {}", jobRequest);
+
+        try{
+            quartzService.kill(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+        }catch(SchedulerException e){
+            return new ApiResponse(false, "Trigger 강제종료가 실패하였습니다.");
+        }
+
+        return new ApiResponse(true, "Trigger 강제종료가 완료되었습니다.");
+    }
+
+    @PostMapping("/job/runNow")
+    @ResponseBody
+    public ApiResponse runNowJob(@RequestBody JobRequest jobRequest) {
+        // TODO 파라미터 필수검사
+        log.info("runNowJob 파라미터 : {}", jobRequest);
+
+        // Job(Trigger) 생성
+        if(quartzService.createForceJob(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()))){
+            return new ApiResponse(true, "Trigger 강제실행 등록이 완료되었습니다.");
+        }else{
+            return new ApiResponse(false, "Trigger 강제실행 등록이 실패하였습니다.");
+        }
+    }
 }

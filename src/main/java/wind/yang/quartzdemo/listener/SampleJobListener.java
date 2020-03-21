@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
 import wind.yang.quartzdemo.mapper.ExecHistoryMapper;
+import wind.yang.quartzdemo.service.ExecHistoryService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class SampleJobListener implements JobListener {
     @Autowired
-    ExecHistoryMapper mapper;
+    ExecHistoryService ehSvc;
 
     @Override
     public String getName() {
@@ -33,7 +34,7 @@ public class SampleJobListener implements JobListener {
         // TODO Job 연속실행시 수정되어야 함
         // 신규 실행이력 저장
         ExecHistory execHistory = newExecHistory(context);
-        mapper.insertExecHistory(execHistory);
+        ehSvc.insertExecHistory(execHistory);
 
         // 실행종료 후 이력 업데이트용으로 JobDataMap에 넣는다.
         context.getJobDetail().getJobDataMap().put("execHistory", execHistory);
@@ -65,7 +66,7 @@ public class SampleJobListener implements JobListener {
             execHistory.setJobExecRslt(jobException.getMessage());
         }
         execHistory.setJobEndDtm(jobEndDtm);
-        mapper.updateExecHistory(execHistory);
+        ehSvc.updateExecHistory(execHistory);
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobWasExecuted : jobKey : {}", jobKey);

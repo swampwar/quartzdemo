@@ -33,10 +33,10 @@
                 <td>
                     <span th:text="${history.jobExecStaCd}"> jobExecStaCd </span>
                     <span>
-                        <a th:attr="onclick=|jobRun('${history.triggerGroup}', '${history.triggerName}')|">
+                        <a th:attr="onclick=|jobRunNow('${history.triggerGroup}', '${history.triggerName}')|">
                             <i class="fa fa-play" aria-hidden="true"></i>
                         </a>
-                        <a th:attr="onclick=|jobStop('${history.triggerGroup}', '${history.triggerName}')|">
+                        <a th:attr="onclick=|jobKill('${history.triggerGroup}', '${history.triggerName}')|">
                             <i class="fa fa-pause-circle-o" aria-hidden="true"></i>
                         </a>
                     </span>
