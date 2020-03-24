@@ -26,7 +26,7 @@ docker exec -i -t QSchedulerCtn bash
 psql -U cns -d QSchedulerDB # CLI 접속
 ```
 
-### 프로젝트 Import
+### 프로젝트 실행
 1. 프로젝트 import
 2. application.yml 설정파일 수정
    - spring.datasource 설정이 위 DB설정과 일치하는지 확인
