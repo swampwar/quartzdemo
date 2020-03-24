@@ -13,8 +13,8 @@
     <select id="findOneByTrigger" resultType="wind.yang.quartzdemo.dto.ExecProg">
         select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME
         from TB_EXEC_PROG
-        where TRIGGER_GROUP = #{group}
-          and TRIGGER_NAME = #{name}
+        where TRIGGER_GROUP = #{key.group}
+          and TRIGGER_NAME = #{key.name}
           and SEQ = #{seq}
     </select>
 
