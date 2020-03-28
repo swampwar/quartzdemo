@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import wind.yang.quartzdemo.dto.ApiResponse;
+import wind.yang.quartzdemo.dto.ExecProg;
 import wind.yang.quartzdemo.dto.JobRequest;
 import wind.yang.quartzdemo.dto.JobResponse;
+import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.QuartzService;
 
 import java.text.ParseException;
@@ -19,6 +21,8 @@ import java.util.List;
 public class QuartzController {
     @Autowired
     QuartzService quartzService;
+    @Autowired
+    ExecProgService execProgService;
 
     @GetMapping("/jobs")
     @ResponseBody
@@ -132,5 +136,17 @@ public class QuartzController {
         }else{
             return new ApiResponse(false, "Trigger 강제실행 등록이 실패하였습니다.");
         }
+    }
+
+    @PostMapping("/monitoring/getJob")
+    @ResponseBody
+    public List<ExecProg> getJobDatas(@RequestBody JobRequest jobRequest) {
+        // TODO 파라미터 필수검사
+        log.info("getJobDatas 파라미터 : {}", jobRequest);
+
+        // Job list 호출
+        List<ExecProg> execProgList = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+
+        return execProgList;
     }
 }

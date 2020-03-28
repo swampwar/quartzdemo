@@ -25,6 +25,17 @@ public class MainController {
         return "main";
     }
 
+    @RequestMapping(path = "/index", method = RequestMethod.GET)
+    public String index(){
+        return "index";
+    }
+
+    @RequestMapping(path = "/monitoring", method = RequestMethod.GET)
+    public String monitoring(Model model){
+        model.addAttribute("triggers", quartzService.readJobs());
+        return "monitoring :: monitoring-fragment";
+    }
+
     @RequestMapping(path = "/jobs", method = RequestMethod.GET)
     public String jobs(Model model){
         model.addAttribute("jobs", quartzService.readJobs());
@@ -33,7 +44,7 @@ public class MainController {
 
     @RequestMapping(path = "/execHistory", method = RequestMethod.GET)
     public String execHistory(Model model){
-        model.addAttribute("historyList", ehService.readExecHistory());
+        model.addAttribute("historyList", ehService.readExLisecHistory());
         return "history_fragment :: historytable-fragment";
     }
 }
