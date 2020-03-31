@@ -1,40 +1,67 @@
-create table TB_EXEC_PROG
+create table if not exists tb_exec_history
 (
-    TRIGGER_GROUP varchar,
-    TRIGGER_NAME varchar,
-    SEQ int,
-    PROGRAM_NAME varchar,
-    constraint TB_EXEC_PROG_pk
-        primary key (TRIGGER_GROUP, TRIGGER_NAME, SEQ)
-);
-
-comment on table TB_EXEC_PROG is '실행프로그램';
-
-create table tb_exec_history
-(
-    job_stt_dtm     varchar,
-    job_end_dtm     varchar,
-    trigger_group   varchar,
-    trigger_name    varchar,
-    job_group       varchar,
-    job_name        varchar,
+    trigger_stt_dtm varchar not null,
+    trigger_group varchar not null,
+    trigger_name varchar not null,
+    job_group varchar not null,
+    job_name varchar not null,
+    exec_prog_seq integer not null,
+    exec_prog_name varchar,
+    job_stt_dtm varchar,
+    job_end_dtm varchar,
     job_exec_sta_cd varchar,
-    exec_prog_name  varchar,
-    job_exec_rslt   varchar,
+    job_exec_rslt varchar,
     constraint tb_exec_history_pk
-        primary key (job_stt_dtm, trigger_group, trigger_name, job_group, job_name)
+        primary key (trigger_stt_dtm, trigger_group, trigger_name, job_group, job_name, exec_prog_seq)
 );
 
 comment on table tb_exec_history is '작업이력';
 
-create table TB_TRIGGER
+alter table tb_exec_history owner to cns;
+
+create table if not exists tb_exec_prog
 (
-    TRIGGER_GROUP varchar,
-    TRIGGER_NAME varchar,
-    TRIGGER_TYPE varchar,
-    constraint TB_TRIGGER_pk
-        primary key (TRIGGER_GROUP, TRIGGER_NAME)
+    trigger_group varchar not null,
+    trigger_name varchar not null,
+    seq integer not null,
+    program_name varchar,
+    exec_param1 varchar,
+    exec_param2 varchar,
+    exec_param3 varchar,
+    constraint tb_exec_prog_pk
+        primary key (trigger_group, trigger_name, seq)
 );
 
-comment on table tb_trigger is '트리거';
+alter table tb_exec_prog owner to cns;
 
+comment on table tb_exec_prog is '실행프로그램';
+
+INSERT INTO tb_exec_prog
+    (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+    ('MGT','MGT_TRIGGER1',1,'trigger1.sh','param1','param2','param3');
+
+INSERT INTO tb_exec_prog
+    (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+    ('MGT','MGT_TRIGGER1',2,'trigger2.sh','param4','param5','param6');
+
+INSERT INTO tb_exec_prog
+    (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+    ('MGT','MGT_TRIGGER1',3,'trigger3.sh','param7','param8','param9');
+
+INSERT INTO tb_exec_prog
+(trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+('MGT','MGT_TRIGGER2',1,'trigger4.sh','param1','param2','param3');
+
+INSERT INTO tb_exec_prog
+(trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+('MGT','MGT_TRIGGER2',2,'trigger5.sh','param4','param5','param6');
+
+INSERT INTO tb_exec_prog
+(trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
+VALUES
+('MGT','MGT_TRIGGER2',3,'trigger6.sh','param7','param8','param9');

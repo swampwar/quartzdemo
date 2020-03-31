@@ -4,7 +4,8 @@
 <!-- namespace : Mapper I/F와 동일하도록 설정 -->
 <mapper namespace="wind.yang.quartzdemo.mapper.ExecHistoryMapper">
     <select id="findByExecHistory" resultType="wind.yang.quartzdemo.dto.ExecHistory">
-        SELECT job_stt_dtm,
+        SELECT trigger_stt_dtm,
+               job_stt_dtm,
                job_end_dtm,
                trigger_group,
                trigger_name,
@@ -12,9 +13,13 @@
                job_name,
                job_exec_sta_cd,
                exec_prog_name,
+               exec_prog_seq,
                job_exec_rslt
         FROM tb_exec_history
         WHERE 1=1
+        <if test="triggerSttDtm != null">
+            AND trigger_stt_dtm = #{triggerSttDtm}
+        </if>
         <if test="triggerGroup != null">
             AND trigger_group = #{triggerGroup}
         </if>
@@ -27,6 +32,12 @@
         <if test="jobName != null">
             AND job_name = #{jobName}
         </if>
+        <if test="execProgName != null">
+            AND exec_prog_name = #{execProgName}
+        </if>
+        <if test="execProgSeq != null">
+            AND exec_prog_seq = #{execProgSeq}
+        </if>
     </select>
 
     <select id="findAll" resultType="wind.yang.quartzdemo.dto.ExecHistory">
@@ -38,6 +49,7 @@
         job_name,
         job_exec_sta_cd,
         exec_prog_name,
+        exec_prog_seq,
         job_exec_rslt
         FROM tb_exec_history
         WHERE 1=1
@@ -46,26 +58,33 @@
 
     <insert id="insertExecHistory">
         <![CDATA[
-        insert into TB_EXEC_HISTORY
-        values (#{jobSttDtm}, #{jobEndDtm},
+        INSERT INTO tb_exec_history
+            (trigger_stt_dtm, exec_prog_seq, exec_prog_name,
+             trigger_group, trigger_name,
+             job_group, job_name,
+             job_stt_dtm, job_end_dtm,
+             job_exec_sta_cd, job_exec_rslt)
+        values (#{triggerSttDtm}, #{execProgSeq}, #{execProgName},
                 #{triggerGroup}, #{triggerName},
                 #{jobGroup}, #{jobName},
-                #{jobExecStaCd}, #{execProgName},
-                #{jobExecRslt})
+                #{jobSttDtm}, #{jobEndDtm},
+                #{jobExecStaCd}, #{jobExecRslt})
         ]]>
     </insert>
 
     <update id="updateExecHistory">
         <![CDATA[
         UPDATE tb_exec_history
-        SET job_end_dtm = #{jobEndDtm},
+        SET job_stt_dtm = #{jobSttDtm},
+            job_end_dtm = #{jobEndDtm},
             job_exec_sta_cd = #{jobExecStaCd},
             job_exec_rslt = #{jobExecRslt}
-        WHERE job_stt_dtm = #{jobSttDtm}
+        WHERE trigger_stt_dtm = #{triggerSttDtm}
         AND trigger_group = #{triggerGroup}
         AND trigger_name = #{triggerName}
         AND job_group = #{jobGroup}
         AND job_name = #{jobName}
+        AND exec_prog_seq = #{execProgSeq}
         ]]>
     </update>
 

@@ -74,7 +74,6 @@ public class SampleCronJob implements Job, InterruptableJob{ // TODO QuartzJobBe
         // TODO 0만 정상인가??
         if(exitCode != SUCCESS){
             throw new JobExecutionException("Trigger[" + triggerKey +"] Job 실행결과(exitCode)가 0이 아닙니다. exitCode : " + exitCode);
-
         }
     }
 

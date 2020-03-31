@@ -10,7 +10,6 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.stereotype.Service;
 import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
-import wind.yang.quartzdemo.listener.SampleTriggerListener;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
@@ -28,9 +27,6 @@ public class QuartzService {
     @Qualifier("qScheduler")
     @Autowired
     Scheduler scheduler;
-
-    @Autowired
-    SampleTriggerListener triggerListener;
 
     @Autowired
     ExecProgMapper execProgMapper;
@@ -55,7 +51,7 @@ public class QuartzService {
         // 잡이 실행할 스크립트정보 저장
         // TODO max+1 seq생성 후 저장
         if(execProgMapper.findOneByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), 1) == null){
-            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm()));
+            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm(), "a", "b", "c"));
         }else{
             // TODO 중복 데이터는 업데이트
             log.info("중복 데이터는 업데이트");
@@ -78,8 +74,6 @@ public class QuartzService {
         } catch (SchedulerException | ParseException e) {
             log.error("Trigger[{}]를 Scheduler에 등록 중 에러[{}]가 발생함", trigger, e.getMessage());
             // TODO 삭제를 하지않고 트랜잭션 처리로 자동 롤백되도록 수정
-//            triggerListener.removeTriggerCmd(jobRequest.getTriggerName()); // 잡이 실행할 스크립트정보 삭제
-            e.printStackTrace();
             return false;
         }
 
@@ -88,6 +82,11 @@ public class QuartzService {
         return true;
     }
 
+    /**
+     * 강제실행을 위한 Job 등록
+     * @param origTriggerKey : 강제실행 대상이 되는 트리거의 키
+     * @return
+     */
     public boolean createForceJob(TriggerKey origTriggerKey){
         TriggerKey fTriggerKey = new TriggerKey(origTriggerKey.getName() + ".F."
                                 + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
