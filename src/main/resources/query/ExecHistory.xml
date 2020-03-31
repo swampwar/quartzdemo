@@ -44,6 +44,25 @@
         ORDER BY trigger_group ASC, trigger_name ASC, job_stt_dtm ASC
     </select>
 
+    <select id="findLastExecHistory" resultType="wind.yang.quartzdemo.dto.ExecHistory">
+        SELECT job_stt_dtm,
+        job_end_dtm,
+        trigger_group,
+        trigger_name,
+        job_group,
+        job_name,
+        job_exec_sta_cd,
+        exec_prog_name,
+        job_exec_rslt
+        FROM tb_exec_history
+        WHERE 1=1
+        <if test="programName != null">
+            AND exec_prog_name = #{programName}
+        </if>
+        ORDER BY job_stt_dtm DESC
+        limit 1
+    </select>
+
     <insert id="insertExecHistory">
         <![CDATA[
         insert into TB_EXEC_HISTORY

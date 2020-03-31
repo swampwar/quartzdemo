@@ -1,4 +1,4 @@
-const getJobDatas = (triggerName, triggerGroup) => {
+const openJobDatas = (triggerName, triggerGroup) => {
     console.log(triggerGroup, triggerName);
     const jsonData = JSON.stringify({
         triggerGroup : triggerGroup,
@@ -6,51 +6,72 @@ const getJobDatas = (triggerName, triggerGroup) => {
     });
 
     $.ajax({
-        url: '/scheduler/job/update',
-        type: 'put',
+        url: '/scheduler/monitoring/getJob',
+        type: 'POST',
         dataType: 'json',
         data: jsonData,
         contentType: 'application/json',
         async: false,
-        success : function(rslt){
-            alert(rslt.msg);
-            // refreshTable();
-            $('.job-lists-box').append();
-        },
-        error : function(){
-            alert('실패!');
-            return false;
-        }
+    }).done(function (datas) {
+        $.each(datas, function (i, data) {
+            addJobDetail(triggerName, data);
+        });
     });
+
+    $('.' + triggerName + '-con .pull-right').html("잡 닫기 <i class='fa fa-arrow-circle-up'></i>");
+    $('.' + triggerName + '-con a').attr("onclick", "closeJobDatas('"+triggerName+"','" +triggerGroup+"');");
 
 };
 
-function tgEdit(tgGroup, tgName, aTag){
-    var cronExpression = $(aTag).parent().find('input').val();
-    var jsonData = JSON.stringify({
-        triggerGroup : tgGroup,
-        triggerName : tgName,
-        cronExpression : cronExpression
-    });
+const closeJobDatas = (triggerName, triggerGroup) => {
+    $('.' + triggerName + '-box').empty();
 
-    $.ajax({
-        url: '/scheduler/job/update',
-        type: 'put',
-        dataType: 'json',
-        data: jsonData,
-        contentType: 'application/json',
-        async: false,
-        success : function(rslt){
-            alert(rslt.msg);
-            refreshTable();
-        },
-        error : function(){
-            alert('실패!');
-            refreshTable();
-        }
-    });
+    $('.' + triggerName + '-con .pull-right').html("잡 펼치기 <i class='fa fa-arrow-circle-down'></i>");
+    $('.' + triggerName + '-con a').attr("onclick", "openJobDatas('"+triggerName+"','" +triggerGroup+"');");
 
-}
+};
+
+// const addJobDetail= (target, rslt) => {
+//
+//     $('.' + target + '-box').append(''+
+//         '<div class="'+rslt.seq+'-job job-container">' +
+//             '<div class="job-box">' +
+//                 '<span class="pull-left job-seq">'+ rslt.seq +'</span>' +
+//                 '<span class="pull-right job-name">' + rslt.jobName + '</span>' +
+//             '</div>' +
+//             '<div class="job-box">' +
+//                 '<span class="pull-right">' + rslt.programName + '</span>' +
+//             '</div>' +
+//         '</div>'
+//     );
+// };
+
+const addJobDetail= (target, rslt) => {
+
+    $('.' + target + '-box').append(''+
+        '<div class="'+rslt.seq+'-job job-container panel-'+ rslt.jobExecStaCd +'">' +
+            '<div class="panel-heading">' +
+                '<div class="row job-box">' +
+                    '<div class="col-xs-2">' +
+                        // '<i class="fa fa-comments fa-4x"></i>' +
+                        '<span class="pull-left job-seq">'+ rslt.seq +'</span>' +
+                    '</div>' +
+                    '<div class="col-xs-10 text-right" style="display: inline-grid">' +
+                        '<div class="huge"><span class="pull-right job-name">' + rslt.jobName + '</span></div>' +
+                        '<div><span class="pull-right">' + rslt.programName + '</span></div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<a href="#">' +
+                '<div class="panel-footer">' +
+                    '<span class="pull-right">' + rslt.jobExecStaCd +'</span>' +
+                    '<div class="clearfix"></div>' +
+                '</div>' +
+            '</a>' +
+        '</div>'
+    );
+};
+
 
 
 

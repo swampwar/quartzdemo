@@ -5,14 +5,13 @@ import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wind.yang.quartzdemo.dto.ApiResponse;
-import wind.yang.quartzdemo.dto.ExecProg;
-import wind.yang.quartzdemo.dto.JobRequest;
-import wind.yang.quartzdemo.dto.JobResponse;
+import wind.yang.quartzdemo.dto.*;
+import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.QuartzService;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +22,8 @@ public class QuartzController {
     QuartzService quartzService;
     @Autowired
     ExecProgService execProgService;
+    @Autowired
+    ExecHistoryService execHistoryService;
 
     @GetMapping("/jobs")
     @ResponseBody
@@ -140,13 +141,29 @@ public class QuartzController {
 
     @PostMapping("/monitoring/getJob")
     @ResponseBody
-    public List<ExecProg> getJobDatas(@RequestBody JobRequest jobRequest) {
+    public List<ExecProgAndHistory> getJobDatas(@RequestBody JobRequest jobRequest) {
         // TODO 파라미터 필수검사
         log.info("getJobDatas 파라미터 : {}", jobRequest);
+        List<ExecProgAndHistory> execProgAndHistoryList = new ArrayList<>();
 
         // Job list 호출
         List<ExecProg> execProgList = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
 
-        return execProgList;
+        for (ExecProg execProg : execProgList) {
+            ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
+            ExecProgAndHistory execProgAndHistory;
+            if(execHistory != null) {
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
+                        execProg.getProgramName(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
+                        execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
+
+            }else {
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
+                        execProg.getProgramName());
+
+            }
+            execProgAndHistoryList.add(execProgAndHistory);
+        }
+        return execProgAndHistoryList;
     }
 }

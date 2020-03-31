@@ -5,7 +5,7 @@
 
 </head>
 <body>
-<div th:fragment="monitoring-fragment">
+<div th:fragment="dashboard-fragment">
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">Dashboard</h1>
@@ -14,49 +14,11 @@
     </div>
     <!-- /.row -->
     <div class="row">
-<!--        <div class="col-lg-6 col-md-12" th:attrappend="class=${}">-->
-            <th:block th:each="trigger : ${triggers}">
-            <div class="col-lg-3 col-md-6">
-                <div class="panel" th:attrappend="class=${' panel-' +trigger.triggerExecStaCd}">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-comments fa-4x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge"><span th:text="${trigger.triggerName}"> triggerStatus </span></div>
-                                <div><span th:text="${trigger.triggerGroup}"> triggerGroup </span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#">
-                        <div class="panel-footer">
-                            <span class="pull-left">최근 수행 시간 </span>
-                            <span class="pull-right" th:text="${trigger.prevFireTime}"> prevFireTime</span>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="panel-footer">
-                            <span class="pull-left">다음 수행 시간</span>
-                            <span class="pull-right" th:text="${trigger.nextFireTime}"> nextFireTime</span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
-                    <div class="job-lists-container" th:attrappend="class=${' ' +trigger.triggerName + '-con'}">
-                        <a class="job-lists-opener-con before-open" th:attr="onclick=|openJobDatas('${trigger.triggerName}', '${trigger.triggerGroup}');|">
-                            <div class="job-lists-opener">
-                                <span class="pull-right">잡 펼치기 <i class="fa fa-arrow-circle-down"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="job-lists-box" th:attrappend="class=${' ' +trigger.triggerName + '-box'}">
+        <th:block th:each="triggersGroup : ${triggersGroup}">
+            <div class="col-lg-6 col-md-12 group-container" th:attrappend="class=${' ' +triggersGroup+ '-container'}">
 
-                    </div>
-                </div>
             </div>
-            </th:block>
-
-<!--        </div>-->
+        </th:block>
     </div>
     <!-- /.row -->
     <div class="row">

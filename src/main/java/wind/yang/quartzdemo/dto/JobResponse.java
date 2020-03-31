@@ -18,4 +18,5 @@ public class JobResponse {
     private String startTime;
     private String nextFireTime;
     private String prevFireTime;
+    private String triggerExecStaCd;
 }

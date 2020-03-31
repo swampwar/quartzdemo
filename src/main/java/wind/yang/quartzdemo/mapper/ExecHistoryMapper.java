@@ -13,4 +13,5 @@ public interface ExecHistoryMapper {
     void insertExecHistory(ExecHistory execHistory);
     void updateExecHistory(ExecHistory execHistory);
     void deleteExecHistory(ExecHistory execHistory);
+    ExecHistory findLastExecHistory(ExecProg execProg);
 }
