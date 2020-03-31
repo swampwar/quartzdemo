@@ -36,6 +36,22 @@ alter table tb_exec_prog owner to cns;
 
 comment on table tb_exec_prog is '실행프로그램';
 
+create table tb_trigger_group
+(
+    trigger_group varchar
+        constraint tb_trigger_group_pk
+            primary key,
+    description varchar,
+    use_yn varchar
+);
+
+alter table tb_trigger_group owner to cns;
+
+comment on table tb_trigger_group is '트리거그룹';
+
+
+
+
 INSERT INTO tb_exec_prog
     (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
 VALUES

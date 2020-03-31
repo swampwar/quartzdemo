@@ -10,6 +10,7 @@ import wind.yang.quartzdemo.dto.JobRequest;
 import wind.yang.quartzdemo.dto.JobResponse;
 import wind.yang.quartzdemo.service.QuartzService;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.util.List;
 
@@ -132,5 +133,12 @@ public class QuartzController {
         }else{
             return new ApiResponse(false, "Trigger 강제실행 등록이 실패하였습니다.");
         }
+    }
+
+    @PostMapping("/job/test")
+    @ResponseBody
+    public String test(){
+
+        return "";
     }
 }

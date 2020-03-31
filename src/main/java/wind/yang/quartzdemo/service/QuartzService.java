@@ -51,7 +51,7 @@ public class QuartzService {
         // 잡이 실행할 스크립트정보 저장
         // TODO max+1 seq생성 후 저장
         if(execProgMapper.findOneByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), 1) == null){
-            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm(), "a", "b", "c"));
+            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm(),"", "", "a", "b", "c"));
         }else{
             // TODO 중복 데이터는 업데이트
             log.info("중복 데이터는 업데이트");
