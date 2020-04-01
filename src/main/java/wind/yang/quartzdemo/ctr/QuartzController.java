@@ -5,6 +5,7 @@ import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.ExecProgService;
@@ -159,8 +160,7 @@ public class QuartzController {
 
             }else {
                 execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName());
-
+                        execProg.getProgramName(), JobExecutionStatusCode.READY , "DEFAULT_JOB");
             }
             execProgAndHistoryList.add(execProgAndHistory);
         }

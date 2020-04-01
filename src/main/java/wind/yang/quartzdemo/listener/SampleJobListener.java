@@ -1,19 +1,17 @@
 package wind.yang.quartzdemo.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.JobListener;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
-import wind.yang.quartzdemo.mapper.ExecHistoryMapper;
 import wind.yang.quartzdemo.service.ExecHistoryService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -27,17 +25,16 @@ public class SampleJobListener implements JobListener {
     }
 
     /**
-     * 잡이 실행 전 시작 실행이력을 저장한다.
+     * 잡이 실행전 시작 실행이력을 저장한다.
      */
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        // TODO Job 연속실행시 수정되어야 함
         // 신규 실행이력 저장
-        ExecHistory execHistory = newExecHistory(context);
-        ehSvc.insertExecHistory(execHistory);
+        List<ExecProg> execProgList = (List<ExecProg>) context.getJobDetail().getJobDataMap().get("execProg");
+        ExecHistory masterExecHistory = ehSvc.insertStartExecHistory(context.getTrigger().getKey(), context.getJobDetail().getKey(), execProgList);
 
         // 실행종료 후 이력 업데이트용으로 JobDataMap에 넣는다.
-        context.getJobDetail().getJobDataMap().put("execHistory", execHistory);
+        context.getJobDetail().getJobDataMap().put("execHistory", masterExecHistory);
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobToBeExecuted : jobKey : {}", jobKey);
@@ -46,7 +43,19 @@ public class SampleJobListener implements JobListener {
     @Override
     public void jobExecutionVetoed(JobExecutionContext context) {
         JobKey jobKey = context.getJobDetail().getKey();
-        log.info("jobExecutionVetoed : jobKey : {}", jobKey);
+        Trigger trigger = context.getTrigger();
+        log.error("잡 실행이 거부되었습니다. : TRIGGER[{}], JOB[{}]", trigger.getKey(), jobKey);
+
+        // 신규 실행이력 저장
+        List<ExecProg> execProgList = (List<ExecProg>) context.getJobDetail().getJobDataMap().get("execProg");
+        ExecHistory masterExecHistory = ehSvc.insertStartExecHistory(context.getTrigger().getKey(), context.getJobDetail().getKey(), execProgList);
+
+        // 거부된 실행이력을 업데이트 한다.
+        masterExecHistory.setJobExecStaCd((JobExecutionStatusCode) context.getJobDetail().getJobDataMap().get("vetoJobRsltCode"));
+        masterExecHistory.setJobExecRslt((String) context.getJobDetail().getJobDataMap().get("vetoJobRsltMsg"));
+        String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        masterExecHistory.setJobEndDtm(jobEndDtm);
+        ehSvc.updateExecHistory(masterExecHistory);
     }
 
     /**
@@ -59,10 +68,10 @@ public class SampleJobListener implements JobListener {
         ExecHistory execHistory = (ExecHistory)context.getJobDetail().getJobDataMap().get("execHistory");
         String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         if(jobException == null){ // 정상실행이면
-            execHistory.setJobExecStaCd("S");
-            execHistory.setJobExecRslt("잘 실행되었다~ :)");
+            execHistory.setJobExecStaCd(JobExecutionStatusCode.SUCCESS);
+            execHistory.setJobExecRslt(JobExecutionStatusCode.SUCCESS.getMsg());
         }else{ // 에러발생이면
-            execHistory.setJobExecStaCd("E");
+            execHistory.setJobExecStaCd(JobExecutionStatusCode.ERROR);
             execHistory.setJobExecRslt(jobException.getMessage());
         }
         execHistory.setJobEndDtm(jobEndDtm);
@@ -70,23 +79,5 @@ public class SampleJobListener implements JobListener {
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobWasExecuted : jobKey : {}", jobKey);
-    }
-
-    /**
-     * 신규 실행이력 생성
-     *
-     * @return 신규 실행이력 ExecHistory
-     */
-    private ExecHistory newExecHistory(JobExecutionContext ctx){
-        String jobSttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        ExecHistory execHistory = new ExecHistory();
-        execHistory.setJobSttDtm(jobSttDtm);
-        execHistory.setTriggerGroup(ctx.getTrigger().getKey().getGroup());
-        execHistory.setTriggerName(ctx.getTrigger().getKey().getName());
-        execHistory.setJobGroup(ctx.getJobDetail().getKey().getGroup());
-        execHistory.setJobName(ctx.getJobDetail().getKey().getName());
-        execHistory.setExecProgName(((ExecProg)ctx.getJobDetail().getJobDataMap().get("execProg")).getProgramName());
-        execHistory.setJobExecStaCd("P"); // TODO 나중에 코드값으로
-        return execHistory;
     }
 }

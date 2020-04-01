@@ -33,11 +33,11 @@ logging:
   level:
     root: info
     wind.yang.quartzdemo: debug
-    wind.yang.quartzdemo.mapper: trace
+    wind.yang.quartzdemo.mapper: debug
 
 quartzdemo:
   shell:
-    script-path: shell/script/ # classpath 이하에서 경로를 작성
+    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
     log-path: /Users/kyun/workspace/2020-중점추진과제/log/
     cmd: sh
     timeout: 600000 # 600초

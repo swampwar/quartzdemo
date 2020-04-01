@@ -4,9 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.JobListener;
+import org.quartz.TriggerListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.ExecHistory;
 
 import java.util.List;
@@ -30,7 +33,7 @@ public class ExecHistoryMapperTest {
         insertHist.setJobGroup("TEST_GROUP");
         insertHist.setJobName("TEST_JOB");
         insertHist.setExecProgName("trigger1.sh");
-        insertHist.setJobExecStaCd("P");
+        insertHist.setJobExecStaCd(JobExecutionStatusCode.READY);
         insertHist.setJobExecRslt("정상 시작");
 
         mapper.insertExecHistory(insertHist);
@@ -58,13 +61,13 @@ public class ExecHistoryMapperTest {
         insertHist.setJobGroup("TEST_GROUP");
         insertHist.setJobName("TEST_JOB");
         insertHist.setExecProgName("trigger1.sh");
-        insertHist.setJobExecStaCd("P");
+        insertHist.setJobExecStaCd(JobExecutionStatusCode.READY);
         insertHist.setJobExecRslt("정상 시작");
 
         mapper.insertExecHistory(insertHist);
 
         insertHist.setJobEndDtm("20200317160109");
-        insertHist.setJobExecStaCd("S");
+        insertHist.setJobExecStaCd(JobExecutionStatusCode.SUCCESS);
         insertHist.setJobExecRslt("정상 종료");
         mapper.updateExecHistory(insertHist);
 
@@ -75,7 +78,7 @@ public class ExecHistoryMapperTest {
         Assert.assertEquals(1, histories.size());
 
         ExecHistory execHistory = histories.get(0);
-        assertEquals("S", execHistory.getJobExecStaCd());
+        assertEquals(JobExecutionStatusCode.SUCCESS, execHistory.getJobExecStaCd());
         assertEquals("20200317160109", execHistory.getJobEndDtm());
         assertEquals("정상 종료", execHistory.getJobExecRslt());
         log.info("수정된 실행히스토리 : {}", execHistory);

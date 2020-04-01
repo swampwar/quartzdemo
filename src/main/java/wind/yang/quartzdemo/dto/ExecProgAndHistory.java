@@ -1,6 +1,7 @@
 package wind.yang.quartzdemo.dto;
 
 import lombok.*;
+import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 
 @Getter
 @Setter
@@ -17,11 +18,11 @@ public class ExecProgAndHistory {
     String jobEndDtm;
     String jobGroup;
     String jobName;
-    String jobExecStaCd;
+    JobExecutionStatusCode jobExecStaCd;
     String jobExecRslt;
 
-    public ExecProgAndHistory(String triggerGroup, String triggerName, int seq, String programName) {
+    public ExecProgAndHistory(String triggerGroup, String triggerName, int seq, String programName, JobExecutionStatusCode jobExecStaCd, String jobName) {
         this.triggerGroup = triggerGroup; this.triggerName = triggerName; this.seq = seq;
-        this.programName = programName;
+        this.programName = programName; this.jobExecStaCd = jobExecStaCd; this.jobName = jobName;
     }
 }

@@ -1,5 +1,6 @@
 package wind.yang.quartzdemo.ctr;
 
+import com.oracle.tools.packager.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,13 +42,17 @@ public class MainController {
     public String monitoring(Model model){
         List<JobResponse> jobResponseList = quartzService.readJobs();
 
-//        for(JobResponse jobResponse : jobResponseList) {
-//            String triggerName = jobResponse.getTriggerName();
-//            ExecProg execProgSample = new ExecProg();
-//            execProgSample.setProgramName(triggerName);
-//            String triggerExecStaCd = execHistoryService.readLastExecHistory(execProgSample).getJobExecStaCd();
-//            jobResponse.setTriggerExecStaCd(triggerExecStaCd);
-//        }
+        for(JobResponse jobResponse : jobResponseList) {
+            String triggerName = jobResponse.getTriggerName();
+            ExecProg execProgSample = new ExecProg();
+
+            // 검색 조건을 넣어준다
+            execProgSample.setTriggerName(triggerName); execProgSample.setSeq(0);
+
+            String triggerExecStaCd = ehService.readLastExecHistory(execProgSample).getJobExecStaCd().toString();
+            log.info("{} => triggerExecStaCd : {}", triggerName, triggerExecStaCd);
+            jobResponse.setTriggerExecStaCd(triggerExecStaCd);
+        }
 
         model.addAttribute("triggers", jobResponseList);
         return "monitoring :: monitoring-fragment";

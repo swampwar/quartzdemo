@@ -73,91 +73,91 @@
 
 
 /****** dashboard panel *****/
-.panel-null {
-    border-color: #8f8f8f;
-}
 
-.panel-null > .panel-heading {
-    border-color: #8f8f8f;
-    color: #fff;
-    background-color: #8f8f8f;
-}
-
-.panel-null .panel-footer {
-    border-bottom: 1px solid #6f6f6f;
-}
-
-.panel-null a {
-    color: #8f8f8f;
-}
-
-.panel-null a:hover {
-    color: #6f6f6f;
-}
-
-
-.panel-S {
-    border-color: #5cb85c;
-}
-
-.panel-S > .panel-heading {
-    border-color: #5cb85c;
-    color: #fff;
-    background-color: #5cb85c;
-}
-
-.panel-S .panel-footer {
-    border-bottom: 1px solid #8f8f8f;
-}
-
-.panel-S a {
-    color: #5cb85c;
-}
-
-.panel-S a:hover {
-    color: #3d8b3d;
-}
-
-.panel-E {
+.panel-ERROR {
     border-color: #d9534f;
 }
 
-.panel-E > .panel-heading {
+.panel-ERROR > .panel-heading {
     border-color: #d9534f;
     color: #fff;
     background-color: #d9534f;
 }
 
-.panel-E .panel-footer {
-    border-bottom: 1px solid #8f8f8f;
+.panel-ERROR .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
 }
 
-.panel-E a {
+.panel-ERROR a {
     color: #d9534f;
 }
 
-.panel-E a:hover {
+.panel-ERROR a:hover {
     color: #b52b27;
 }
 
-.panel-P {
+.panel-SUCCESS {
+    border-color: #5cb85c;
+}
+
+.panel-SUCCESS > .panel-heading {
+    border-color: #5cb85c;
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.panel-SUCCESS .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.panel-SUCCESS a {
+    color: #5cb85c;
+}
+
+.panel-SUCCESS a:hover {
+    color: #3d8b3d;
+}
+
+.panel-START {
     border-color: #f0ad4e;
 }
 
-.panel-P > .panel-heading {
+.panel-START > .panel-heading {
     border-color: #f0ad4e;
     color: #fff;
     background-color: #f0ad4e;
 }
 
-.panel-P .panel-footer {
-    border-bottom: 1px solid #8f8f8f;
+.panel-START .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
 }
 
-.panel-P a {
+.panel-START a {
     color: #f0ad4e;
 }
 
-.panel-P a:hover {
+.panel-START a:hover {
     color: #df8a13;
+}
+
+.panel-READY {
+    border-color: #8f8f8f;
+}
+
+.panel-READY > .panel-heading {
+    border-color: #8f8f8f;
+    color: #fff;
+    background-color: #8f8f8f;
+}
+
+.panel-READY .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.panel-READY a {
+    color: #8f8f8f;
+}
+
+.panel-READY a:hover {
+    color: #6f6f6f;
 }
