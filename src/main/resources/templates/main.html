@@ -221,6 +221,48 @@ function jobRunNow(tgGroup, tgName){
 <body>
 <div>
     <div>
+        <div th:if="${message}">
+            <h2 th:text="${message}"/>
+        </div>
+        <form method="POST" enctype="multipart/form-data" action="/fileupload">
+            <table>
+                <tr><input type="text" name="triggerGroup.triggerGroup" value="NEWGROUP"/></tr>
+                <tr><input type="text" name="triggerGroup.description" value="신규그룹"/></tr>
+                <tr><input type="text" name="triggerName" value="NEWTRIGGER"/></tr>
+                <tr><input type="text" name="triggerDescription" value="신규트리거다!"/></tr>
+                <tr><input type="text" name="cronExpression" value="0 11 * * * ?"/></tr>
+
+                <tr><td>File1 to upload:</td><td><input type="file" name="execProgFileList[0]" /></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].seq" value="1"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].programName" value="programName1"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].summary" value="테스트용 잡1"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].description" value="테스트용입니당1"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].execParam1" value="a"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[0].execParam2" value="b"/></td></tr>
+
+                <tr><td>File2 to upload:</td><td><input type="file" name="execProgFileList[1]" /></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].seq" value="2"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].programName" value="programName2"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].summary" value="테스트용 잡2"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].description" value="테스트용입니당2"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].execParam1" value="c"/></td></tr>
+                <tr><td><input type="text" name="execProgInfoList[1].execParam2" value="d"/></td></tr>
+
+                <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+            </table>
+        </form>
+    </div>
+
+    <div>
+        <ul>
+            <li th:each="file : ${files}">
+                <a th:href="${file}" th:text="${file}" />
+            </li>
+        </ul>
+    </div>
+</div>
+<div>
+    <div>
         <input id="searchBtn" type="button" value="트리거 조회">
         <input id="historySearchBtn" type="button" value="실행이력 조회">
         <input id="addBtn" type="button" value="추가">

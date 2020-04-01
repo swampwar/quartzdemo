@@ -11,6 +11,7 @@ import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.QuartzService;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,17 +154,25 @@ public class QuartzController {
         for (ExecProg execProg : execProgList) {
             ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
             ExecProgAndHistory execProgAndHistory;
-            if(execHistory != null) {
+            if (execHistory != null) {
                 execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
                         execProg.getProgramName(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
                         execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
 
-            }else {
+            } else {
                 execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), JobExecutionStatusCode.READY , "DEFAULT_JOB");
+                        execProg.getProgramName(), JobExecutionStatusCode.READY, "DEFAULT_JOB");
             }
             execProgAndHistoryList.add(execProgAndHistory);
         }
         return execProgAndHistoryList;
+    }
+
+    @PostMapping("/job/test")
+    @ResponseBody
+    public String test(){
+
+        return "";
+
     }
 }

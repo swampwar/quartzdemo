@@ -55,7 +55,6 @@ public abstract class BaseJob implements Job, InterruptableJob {
             try {
                 executeInternal(execProg);
             } catch (JobExecutionException e) {
-                // TODO 해당 실행건 '오류' 업데이트 및 마스터 '오류', 프로그램 종료
                 // 상세이력 '에러' 업데이트
                 afterExecuteJob(detail, JobExecutionStatusCode.ERROR, e.getMessage());
                 throw e;
