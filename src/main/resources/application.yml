@@ -1,5 +1,8 @@
 # 공통으로 사용할 어플리케이션 프로퍼티 설정
 spring:
+  thymeleaf:
+    cache: false
+
   quartz:
     job-store-type: jdbc
     jdbc:
