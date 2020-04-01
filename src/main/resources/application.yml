@@ -1,19 +1,5 @@
+# 공통으로 사용할 어플리케이션 프로퍼티 설정
 spring:
-  thymeleaf:
-    cache: false
-
-  h2:
-    console:
-      enabled: true # 웹 콘솔 사용
-      path: /h2-console # 콘솔의 경로
-
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/kyun
-    # url: jdbc:h2:/Users/jaeseok/Documents/Yang/Dev/02.CNS/DB/test_db   # jdbc:h2:mem:testDB
-    username: kyun
-    password: 1234
-
   quartz:
     job-store-type: jdbc
     jdbc:
@@ -24,21 +10,12 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
     scheduler-name: 지역스케줄러
 
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB
+
 mybatis:
   mapper-locations: classpath:query/*.xml
   configuration:
     map-underscore-to-camel-case: true
-
-logging:
-  level:
-    root: info
-    wind.yang.quartzdemo: debug
-    wind.yang.quartzdemo.mapper: debug
-
-quartzdemo:
-  shell:
-    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
-    log-path: /Users/kyun/workspace/2020-중점추진과제/log/
-    cmd: sh
-    timeout: 600000 # 600초
-

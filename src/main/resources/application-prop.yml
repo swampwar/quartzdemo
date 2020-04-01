@@ -1,0 +1,22 @@
+# 운영환경에서 기동시 사용할 어플리케이션 프로퍼티 설정
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/QSchedulerDB
+    # url: jdbc:h2:/Users/jaeseok/Documents/Yang/Dev/02.CNS/DB/test_db   # jdbc:h2:mem:testDB
+    username: cns
+    password: 1234
+
+logging:
+  level:
+    root: info
+    wind.yang.quartzdemo: debug
+    wind.yang.quartzdemo.mapper: debug
+
+quartzdemo:
+  shell:
+    script-path: /Users/jaeseok/Documents/Yang/Dev/02.CNS/script/
+    log-path: /Users/jaeseok/Documents/Yang/Dev/02.CNS/log/
+    cmd: sh
+    timeout: 600000 # 600초
+
