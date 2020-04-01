@@ -32,7 +32,9 @@ public class ExecHistory {
      */
     public static ExecHistory newMaster(TriggerKey triggerKey, JobKey jobKey){
         String sttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        return newExecHistory(triggerKey, jobKey, sttDtm, sttDtm, "", 0);
+        ExecHistory master = newExecHistory(triggerKey, jobKey, sttDtm, sttDtm, "", 0);
+        master.setJobExecStaCd(JobExecutionStatusCode.START);
+        return master;
     }
 
     /**
