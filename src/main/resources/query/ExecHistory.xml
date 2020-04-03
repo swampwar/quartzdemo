@@ -68,6 +68,9 @@
         job_exec_rslt
         FROM tb_exec_history
         WHERE 1=1
+        <if test="triggerGroup != null">
+            AND trigger_group = #{triggerGroup}
+        </if>
         <if test="triggerName != null">
             AND trigger_name = #{triggerName}
         </if>
