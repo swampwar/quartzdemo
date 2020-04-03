@@ -1,3 +1,4 @@
+# 공통으로 사용할 어플리케이션 프로퍼티 설정
 spring:
   thymeleaf:
     cache: false
@@ -17,9 +18,13 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
     scheduler-name: 지역스케줄러
 
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB
+
 mybatis:
   mapper-locations: classpath:query/*.xml
   configuration:
     map-underscore-to-camel-case: true
-
 
