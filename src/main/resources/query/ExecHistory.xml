@@ -68,6 +68,9 @@
         job_exec_rslt
         FROM tb_exec_history
         WHERE 1=1
+        <if test="triggerGroup != null">
+            AND trigger_group = #{triggerGroup}
+        </if>
         <if test="triggerName != null">
             AND trigger_name = #{triggerName}
         </if>
@@ -113,11 +116,12 @@
     <delete id="deleteExecHistory">
         <![CDATA[
         DELETE FROM tb_exec_history
-        WHERE job_stt_dtm = #{jobSttDtm}
+        WHERE trigger_stt_dtm = #{triggerSttDtm}
           AND trigger_group = #{triggerGroup}
           AND trigger_name = #{triggerName}
           AND job_group = #{jobGroup}
           AND job_name = #{jobName}
+          AND exec_prog_seq = #{execProgSeq}
         ]]>
     </delete>
 </mapper>

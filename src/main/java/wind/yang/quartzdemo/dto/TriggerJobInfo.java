@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TriggerJobInfo {
-    private TriggerGroup triggerGroup;
+    private String triggerGroup;
     private String triggerName;
     private String triggerDescription;
     private String cronExpression;
@@ -20,7 +20,7 @@ public class TriggerJobInfo {
     @Override
     public String toString() {
         return "TriggerJobInfo{" +
-                "triggerGroup=" + triggerGroup +
+                "triggerGroup='" + triggerGroup + '\'' +
                 ", triggerName='" + triggerName + '\'' +
                 ", triggerDescription='" + triggerDescription + '\'' +
                 ", cronExpression='" + cronExpression + '\'' +

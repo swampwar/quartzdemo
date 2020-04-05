@@ -1,6 +1,5 @@
 package wind.yang.quartzdemo.ctr;
 
-import com.oracle.tools.packager.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,11 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import wind.yang.quartzdemo.dto.ExecProg;
 import wind.yang.quartzdemo.dto.JobResponse;
+import wind.yang.quartzdemo.dto.TriggerGroup;
 import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.QuartzService;
+import wind.yang.quartzdemo.service.TriggerGroupService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -28,13 +30,17 @@ public class MainController {
     @Autowired
     private ExecProgService epServive;
 
+    @Autowired
+    private TriggerGroupService triggerGroupService;
+
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String main(){
         return "main";
     }
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String index(){
+    public String index(Model model){
+        model.addAttribute("triggerGroup", triggerGroupService.findAllTriggerGroup());
         return "index";
     }
 
@@ -58,10 +64,32 @@ public class MainController {
         return "monitoring :: monitoring-fragment";
     }
 
-    @RequestMapping(path = "/dashboard", method = RequestMethod.GET)
-    public String dashboard(Model model) {
-        List<String> groups = null;
-        return "";
+    @RequestMapping(path = "/dashboard/{active}", method = RequestMethod.GET)
+    public String dashboard(Model model, @PathVariable String active) {
+        List<JobResponse> jobResponseList = new ArrayList<>();
+        if("ALL".equals(active)) {
+            model.addAttribute("activeGroup",triggerGroupService.findAllTriggerGroup());
+            jobResponseList = quartzService.readJobs();
+        }else {
+            model.addAttribute("activeGroup",triggerGroupService.findByTriggerGroup(active));
+            jobResponseList = quartzService.readJobsByTriggerGroup(active);
+        }
+
+        for(JobResponse jobResponse : jobResponseList) {
+            ExecProg execProgSample = new ExecProg();
+
+            // 검색 조건을 넣어준다
+            execProgSample.setTriggerName(jobResponse.getTriggerName());
+            execProgSample.setTriggerGroup(jobResponse.getTriggerGroup());
+            execProgSample.setSeq(0);
+
+            String triggerExecStaCd = ehService.readLastExecHistory(execProgSample).getJobExecStaCd().toString();
+            log.info("{} => triggerExecStaCd : {}", jobResponse.getTriggerName(), triggerExecStaCd);
+            jobResponse.setTriggerExecStaCd(triggerExecStaCd);
+        }
+
+        model.addAttribute("triggers", jobResponseList);
+        return "dashboard :: dashboard-fragment";
     }
 
     @RequestMapping(path = "/jobs", method = RequestMethod.GET)

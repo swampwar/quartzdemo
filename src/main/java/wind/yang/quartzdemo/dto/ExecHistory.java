@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @ToString
 public class ExecHistory {
     String triggerSttDtm;
@@ -26,6 +27,18 @@ public class ExecHistory {
     String execProgName;
     int execProgSeq;
     String jobExecRslt;
+
+    @Builder
+    public ExecHistory(String triggerSttDtm, String jobSttDtm, String triggerGroup, String triggerName, String jobGroup, String jobName, JobExecutionStatusCode jobExecStaCd, int execProgSeq) {
+        this.triggerSttDtm = triggerSttDtm;
+        this.jobSttDtm = jobSttDtm;
+        this.triggerGroup = triggerGroup;
+        this.triggerName = triggerName;
+        this.jobGroup = jobGroup;
+        this.jobName = jobName;
+        this.jobExecStaCd = jobExecStaCd;
+        this.execProgSeq = execProgSeq;
+    }
 
     /**
      * 신규 마스터 실행이력 생성

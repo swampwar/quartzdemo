@@ -148,6 +148,45 @@ public class QuartzService {
         return jobResponseList;
     }
 
+    /**
+     * Job 부분조회 (trigger group 별 조회)
+     * @return
+     */
+    public List<JobResponse> readJobsByTriggerGroup(String triggerGroup){
+        List<JobResponse> jobResponseList = new ArrayList<>();
+        try {
+            List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
+            for(String group : triggerGroupNames){
+                Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.groupEquals(group));
+                for(TriggerKey triggerKey : triggerKeys){
+                    if(triggerKey.getGroup().equals(triggerGroup)) {
+                        Trigger trigger = scheduler.getTrigger(triggerKey);
+                        JobResponse jobResponse = new JobResponse();
+                        jobResponse.setSchedulerName(scheduler.getSchedulerName());
+                        jobResponse.setTriggerGroup(triggerKey.getGroup());
+                        jobResponse.setTriggerName(triggerKey.getName());
+                        jobResponse.setJobGroup(trigger.getJobKey().getGroup());
+                        jobResponse.setJobName(trigger.getJobKey().getName());
+                        jobResponse.setNextFireTime(dateToString(trigger.getNextFireTime()));
+                        jobResponse.setPrevFireTime(dateToString(trigger.getPreviousFireTime()));
+                        jobResponse.setStartTime(dateToString(trigger.getStartTime()));
+                        if(trigger instanceof CronTrigger){
+                            jobResponse.setCronExpression(((CronTrigger)trigger).getCronExpression());
+                        }
+                        jobResponse.setTriggerStatus(scheduler.getTriggerState(triggerKey).name().toUpperCase());
+
+                        jobResponseList.add(jobResponse);
+                    }
+                }
+            }
+        } catch (SchedulerException e) {
+            log.error("Job 전체조회 중 에러[{}]가 발생했습니다.", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return jobResponseList;
+    }
+
     // TODO pause 후에 다시 시작하면 다음실행시간이 최신화 되는지 확인필요
     public void pause(TriggerKey triggerkey) throws SchedulerException {
         scheduler.pauseTrigger(triggerkey);

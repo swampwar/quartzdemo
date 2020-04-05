@@ -1,3 +1,11 @@
+let activeButton = $('.active-button').val();
+console.log($('.group-container'));
+if(activeButton === 'ALL') {
+    $('.group-container').addClass("col-md-6");
+}else {
+    $('.group-container').addClass("col-md-12");
+}
+
 const openJobDatas = (triggerName, triggerGroup) => {
     console.log(triggerGroup, triggerName);
     const jsonData = JSON.stringify({
