@@ -3,6 +3,11 @@ spring:
   thymeleaf:
     cache: false
 
+  h2:
+    console:
+      enabled: true # 웹 콘솔 사용
+      path: /h2-console # 콘솔의 경로
+
   quartz:
     job-store-type: jdbc
     jdbc:

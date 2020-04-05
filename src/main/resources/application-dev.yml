@@ -1,11 +1,10 @@
-# 개발시 개별로 사용할 어플리케이션 프로퍼티 설정
-# 로그레벨, DB설정, 디렉터리 등
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/QSchedulerDB
+    url: jdbc:postgresql://localhost:5432/kyun
     # url: jdbc:h2:/Users/jaeseok/Documents/Yang/Dev/02.CNS/DB/test_db   # jdbc:h2:mem:testDB
-    username: cns
+    username: kyun
     password: 1234
 
 logging:
@@ -16,8 +15,8 @@ logging:
 
 quartzdemo:
   shell:
-    script-path: /Users/jaeseok/Documents/Yang/Dev/02.CNS/script/
-    log-path: /Users/jaeseok/Documents/Yang/Dev/02.CNS/log/
+    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
+    log-path: /Users/kyun/workspace/2020-중점추진과제/log/
     cmd: sh
     timeout: 600000 # 600초
 
