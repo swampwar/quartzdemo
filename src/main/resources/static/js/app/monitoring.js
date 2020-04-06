@@ -57,7 +57,7 @@ const closeJobDatas = (triggerName, triggerGroup) => {
 const addJobDetail= (target, rslt) => {
 
     $('.' + target + '-box').append(''+
-        '<div class="'+rslt.seq+'-job job-container panel-'+ rslt.jobExecStaCd +'">' +
+        '<div class="job-'+rslt.seq+' job-container panel-'+ rslt.jobExecStaCd +'">' +
             '<div class="panel-heading">' +
                 '<div class="row job-box">' +
                     '<div class="col-xs-2">' +
@@ -73,6 +73,16 @@ const addJobDetail= (target, rslt) => {
             '<a href="#">' +
                 '<div class="panel-footer">' +
                     '<span class="pull-right">' + rslt.jobExecStaCd +'</span>' +
+                    '<div class="clearfix"></div>' +
+                '</div>' +
+                '<div class="panel-footer">' +
+                    '<span class="pull-left">잡 시작 시간 </span>' +
+                    '<span class="pull-right">' + rslt.jobSttDtm +'</span>' +
+                    '<div class="clearfix"></div>' +
+                '</div>' +
+                '<div class="panel-footer">' +
+                    '<span class="pull-left">잡 종료 시간 </span>' +
+                    '<span class="pull-right">' + rslt.jobEndDtm +'</span>' +
                     '<div class="clearfix"></div>' +
                 '</div>' +
             '</a>' +

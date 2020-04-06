@@ -155,13 +155,15 @@ public class QuartzController {
             ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
             ExecProgAndHistory execProgAndHistory;
             if (execHistory != null) {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
+                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
+                        execHistory.getTriggerSttDtm(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
                         execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
 
             } else {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), JobExecutionStatusCode.READY, "DEFAULT_JOB");
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
+                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
+                        JobExecutionStatusCode.READY, "DEFAULT_JOB");
             }
             execProgAndHistoryList.add(execProgAndHistory);
         }
