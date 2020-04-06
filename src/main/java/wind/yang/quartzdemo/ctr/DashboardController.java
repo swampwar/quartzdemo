@@ -8,11 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.*;
-import wind.yang.quartzdemo.service.ExecHistoryService;
-import wind.yang.quartzdemo.service.ExecProgService;
-import wind.yang.quartzdemo.service.QuartzService;
-import wind.yang.quartzdemo.service.TriggerGroupService;
+import wind.yang.quartzdemo.service.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +36,9 @@ public class DashboardController {
 
     @Autowired
     ExecHistoryService execHistoryService;
+
+    @Autowired
+    DashboardService dashboardService;
 
     @RequestMapping(path = "/{active}", method = RequestMethod.GET)
     public String dashboard(Model model, @PathVariable String active) {
@@ -99,4 +100,17 @@ public class DashboardController {
         return execProgAndHistoryList;
     }
 
+    @GetMapping("/execProg/{execProgNm}")
+    @ResponseBody
+    public String execProg(@PathVariable String execProgNm){
+        // TODO 화면에서 반환결과가 없으면 "내용이 없거나 파일을 찾을 수 없습니다." 메세지
+        return dashboardService.getExecProgContents(execProgNm);
+    }
+
+    @GetMapping("/execLog/{execProgNm}")
+    @ResponseBody
+    public String execLog(@PathVariable String execProgNm){
+        // TODO 화면에서 반환결과가 없으면 "내용이 없거나 파일을 찾을 수 없습니다." 메세지
+        return dashboardService.getExecLog(execProgNm);
+    }
 }
