@@ -5,6 +5,7 @@ import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.ExecHistory;
@@ -25,7 +26,6 @@ public class ExecHistoryService {
         historyList = ehMapper.findAll();
         return historyList;
     }
-
 
     public ExecHistory readLastExecHistory(ExecProg execProg) {
         ExecHistory execHistory = null;

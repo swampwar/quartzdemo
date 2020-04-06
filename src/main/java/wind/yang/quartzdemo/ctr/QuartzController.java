@@ -16,6 +16,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Quartz Scheduler Controller
+ * 쿼츠 스케쥴러에 대한 조회/업데이트
+ */
 @Slf4j
 @Controller
 @RequestMapping(path = "/scheduler")
@@ -141,38 +145,5 @@ public class QuartzController {
         }
     }
 
-    @PostMapping("/monitoring/getJob")
-    @ResponseBody
-    public List<ExecProgAndHistory> getJobDatas(@RequestBody JobRequest jobRequest) {
-        // TODO 파라미터 필수검사
-        log.info("getJobDatas 파라미터 : {}", jobRequest);
-        List<ExecProgAndHistory> execProgAndHistoryList = new ArrayList<>();
 
-        // Job list 호출
-        List<ExecProg> execProgList = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
-
-        for (ExecProg execProg : execProgList) {
-            ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
-            ExecProgAndHistory execProgAndHistory;
-            if (execHistory != null) {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
-                        execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
-
-            } else {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), JobExecutionStatusCode.READY, "DEFAULT_JOB");
-            }
-            execProgAndHistoryList.add(execProgAndHistory);
-        }
-        return execProgAndHistoryList;
-    }
-
-    @PostMapping("/job/test")
-    @ResponseBody
-    public String test(){
-
-        return "";
-
-    }
 }
