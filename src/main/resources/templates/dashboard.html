@@ -8,7 +8,7 @@
 <div th:fragment="dashboard-fragment">
     <!-- /.row -->
     <div class="row">
-        <th:block th:each="activeGroup : ${activeGroup}">
+        <th:block th:each="activeGroup : ${activeGroups}">
             <div class="group-container" th:attrappend="class=${' ' +activeGroup.triggerGroup+ '-container'}">
                 <th:block th:each="trigger : ${triggers}">
                     <div class="col-lg-3 col-md-6" th:if="${#strings.equals(activeGroup.triggerGroup, trigger.triggerGroup)}">
