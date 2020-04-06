@@ -21,7 +21,8 @@ import java.util.List;
  * 대시보드에서 화면조회용 컨트롤러
  */
 @Slf4j
-@Controller("/dashboard")
+@Controller
+@RequestMapping("/dashboard")
 public class DashboardController {
     @Autowired
     private QuartzService quartzService;
