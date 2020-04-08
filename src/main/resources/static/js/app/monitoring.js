@@ -1,10 +1,5 @@
-let activeButton = $('.active-button').val();
-console.log($('.group-container'));
-if(activeButton === 'ALL') {
-    $('.group-container').addClass("col-md-6");
-}else {
-    $('.group-container').addClass("col-md-12");
-}
+let winRef;
+
 
 const openJobDatas = (triggerName, triggerGroup) => {
     console.log(triggerGroup, triggerName);
@@ -58,12 +53,12 @@ const addJobDetail= (target, rslt) => {
                     '</div>' +
                     '<div class="col-xs-10 text-right" style="display: inline-grid">' +
                         '<div class="huge"><span class="pull-right job-name">' + rslt.jobName + '</span></div>' +
-                        '<div><span class="pull-right">' + rslt.programName + '</span></div>' +
+                        '<div onclick="popupProgram(\'execProg\',\''+ rslt.programName +'\');" style="cursor:pointer;"><span class="pull-right">' + rslt.programName + '</span></div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<a href="#">' +
-                '<div class="panel-footer">' +
+            '<a>' +
+                '<div class="panel-footer" onclick="popupProgram(\'execLog\',\''+ rslt.programName +'\');" style="cursor:pointer;">' +
                     '<span class="pull-right">' + rslt.jobExecStaCd +'</span>' +
                     '<div class="clearfix"></div>' +
                 '</div>' +
@@ -81,3 +76,31 @@ const addJobDetail= (target, rslt) => {
         '</div>'
     );
 };
+
+const popupProgram = (target, progName) => {
+    console.log(target, progName);
+
+    let contents = "";
+
+    const input = JSON.stringify({
+        shellScriptNm : progName
+    });
+
+    let popUrl = 'dashboard/popup/' + target +'/' +progName;
+    let popupWidth = 650; let popupHeight = 800;
+    let popupX = (window.screen.width/2) - (popupWidth/2) ;
+    let popupY = (window.screen.height/2) - (popupHeight/2) ;
+
+    let popOption = 'width='+popupWidth+'px, height='+popupHeight+'px, resizable=no, location=no, top='+popupY+'px, left='+popupX+'px';
+
+    if(winRef == null) {
+        winRef = window.open(popUrl, target, popOption);
+    }else {
+        if (winRef.closed == false) {
+            winRef.focus();
+        }else{
+            winRef = window.open(popUrl, target, popOption);
+        }
+    }
+};
+

@@ -153,6 +153,9 @@ public class QuartzService {
      * @return
      */
     public List<JobResponse> readJobsByTriggerGroup(String triggerGroup){
+        if (triggerGroup.equals("ALL")) {
+            return readJobs();
+        }
         List<JobResponse> jobResponseList = new ArrayList<>();
         try {
             List<String> triggerGroupNames = scheduler.getTriggerGroupNames();

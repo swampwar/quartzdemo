@@ -7,7 +7,6 @@
         select TRIGGER_GROUP, DESCRIPTION, USE_YN
         from TB_TRIGGER_GROUP
         where 1=1
-        and USE_YN = 'Y'
         order by TRIGGER_GROUP ASC;
     </select>
 
@@ -15,7 +14,7 @@
         select TRIGGER_GROUP, DESCRIPTION, USE_YN
         from TB_TRIGGER_GROUP
         where 1=1
-        <if test="triggerGroup != null">
+        <if test="triggerGroup != ALL">
             AND TRIGGER_GROUP = #{triggerGroup}
         </if>
         and USE_YN = 'Y';
