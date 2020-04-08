@@ -47,10 +47,10 @@ public class DashboardController {
         // TODO DashboardService 생성
         // TODO 중복코드 제거
         if("ALL".equals(active)) {
-            model.addAttribute("activeGroup",triggerGroupService.findAllTriggerGroup());
+            model.addAttribute("activeGroups",triggerGroupService.findAllTriggerGroup());
             jobResponseList = quartzService.readJobs();
         }else {
-            model.addAttribute("activeGroup",triggerGroupService.findByTriggerGroup(active));
+            model.addAttribute("activeGroups",triggerGroupService.findByTriggerGroup(active));
             jobResponseList = quartzService.readJobsByTriggerGroup(active);
         }
 
@@ -85,13 +85,15 @@ public class DashboardController {
             ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
             ExecProgAndHistory execProgAndHistory;
             if (execHistory != null) {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
+                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
+                        execHistory.getTriggerSttDtm(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
                         execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
 
             } else {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(),
-                        execProg.getProgramName(), JobExecutionStatusCode.READY, "DEFAULT_JOB");
+                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
+                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
+                        JobExecutionStatusCode.READY, "DEFAULT_JOB");
             }
             execProgAndHistoryList.add(execProgAndHistory);
         }
