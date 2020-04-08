@@ -144,6 +144,4 @@ public class QuartzController {
             return new ApiResponse(false, "Trigger 강제실행 등록이 실패하였습니다.");
         }
     }
-
-
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments/commonHead"></th:block>
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body>
+<div class="popup-box">
+    <h1 id="target" name="target"><spen th:text="${progName}">progName</spen></h1>
+    <h4 id="contents" name="contents"><pre th:text="${contents}">contents</pre></h4>
+<!--    <br>-->
+<!--    <p >This example uses the MDL-Libary for the CSS layout,<br/> the popup itself works it just fine without.</p>-->
+</div>
+</body>
+</html>
