@@ -14,5 +14,5 @@ public class TriggerGroupService {
 
     public List<TriggerGroup> findAllTriggerGroup() {return triggerGroupMapper.findAll();}
 
-    public  TriggerGroup findByTriggerGroup(String triggerGroup) {return triggerGroupMapper.findByTriggerGroup(triggerGroup);}
+    public List<TriggerGroup> findByTriggerGroup(String triggerGroup) {return triggerGroupMapper.findByTriggerGroup(triggerGroup);}
 }

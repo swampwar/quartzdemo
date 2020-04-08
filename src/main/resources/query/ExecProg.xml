@@ -19,6 +19,14 @@
           and SEQ = #{seq}
     </select>
 
+    <select id="findByTriggerGroup" resultType="wind.yang.quartzdemo.dto.ExecProg">
+        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3
+        from TB_EXEC_PROG
+        where TRIGGER_GROUP = #{triggerGroup}
+          and SEQ = 1
+        order by TRIGGER_GROUP ASC;
+    </select>
+
     <insert id="insertExecProg">
         insert into TB_EXEC_PROG
             (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)

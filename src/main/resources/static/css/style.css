@@ -179,3 +179,19 @@
     color: white;
     border-bottom: 1px solid #dfdfdf;
 }
+
+/************* dashboard button End ******************/
+
+/************* dashboard popup  ******************/
+.popup-box {
+    padding: 50px;
+}
+
+.popup-box h1 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+.popup-box pre {
+    font-size: 15px;
+}

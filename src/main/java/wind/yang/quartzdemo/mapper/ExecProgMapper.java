@@ -13,5 +13,7 @@ public interface ExecProgMapper {
     ExecProg findOneByTrigger(@Param("key") TriggerKey key, @Param("seq") int seq);
     void insertExecProg(ExecProg execProg);
 
+    List<ExecProg> findByTriggerGroup(String triggerGroup);
+
     // TODO update, delete 추가
 }

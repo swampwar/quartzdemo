@@ -26,4 +26,6 @@ public class ExecProgService {
 
         return epMapper.findByTrigger(new TriggerKey(origName, key.getGroup()));
     }
+
+    public List<ExecProg> findByTriggerGroup(String triggerGroup) { return epMapper.findByTriggerGroup(triggerGroup);}
 }
