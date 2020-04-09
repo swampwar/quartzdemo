@@ -24,7 +24,7 @@ comment on table tb_exec_history is '작업이력';
 
 alter table tb_exec_history owner to cns;
 
-create table if not exists tb_exec_prog
+create table tb_exec_prog
 (
     trigger_group varchar not null,
     trigger_name varchar not null,
@@ -33,13 +33,15 @@ create table if not exists tb_exec_prog
     exec_param1 varchar,
     exec_param2 varchar,
     exec_param3 varchar,
+    summary varchar,
+    description varchar,
     constraint tb_exec_prog_pk
         primary key (trigger_group, trigger_name, seq)
 );
 
-alter table tb_exec_prog owner to cns;
-
 comment on table tb_exec_prog is '실행프로그램';
+
+alter table tb_exec_prog owner to cns;
 
 create table tb_trigger_group
 (
@@ -53,8 +55,6 @@ create table tb_trigger_group
 alter table tb_trigger_group owner to cns;
 
 comment on table tb_trigger_group is '트리거그룹';
-
-
 
 
 INSERT INTO tb_exec_prog
