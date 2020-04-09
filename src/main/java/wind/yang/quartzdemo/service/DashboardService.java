@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
+import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.*;
 
 import java.io.FileReader;
@@ -70,7 +71,7 @@ public class DashboardService {
         if(isFiredToday){ // 마지막 실행이력(TB_EXEC_HISTORY)을 보여준다.
             historyList = execHistoryService.readLastDetailExecHistory(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
         }else{ // 실행프로그램(TB_EXEC_PROG)기준 실행될 계획을 보여준다.
-            List<ExecProg> execProgs = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerGroup(), jobRequest.getTriggerName()));
+            List<ExecProg> execProgs = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
             historyList = new ArrayList<>();
             for(ExecProg execProg : execProgs){
                 historyList.add(ExecHistory.of(execProg));
@@ -90,7 +91,11 @@ public class DashboardService {
         // 트리거의 최종 실행이력을 조회
         for(JobResponse job : jobResponseList){
             ExecHistory lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
-            job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
+            if(lastMaster != null){
+                job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
+            }else{
+                job.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
+            }
         }
 
         return jobResponseList;
