@@ -56,7 +56,7 @@ public class QuartzConfig {
         factoryBean.setName("MGT_TRIGGER1");
         factoryBean.setGroup("MGT");
         factoryBean.setDescription("관리 크론트리거1");
-        factoryBean.setCronExpression("0 10 * * * ?"); // 매분 n초마다 실행
+        factoryBean.setCronExpression("40 30 * * * ?"); // 매분 n초마다 실행
         factoryBean.setJobDetail(cronJobDetail);
         factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
         return factoryBean;

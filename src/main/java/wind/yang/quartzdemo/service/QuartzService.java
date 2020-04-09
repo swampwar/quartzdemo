@@ -8,18 +8,21 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.mapper.ExecProgMapper;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static wind.yang.quartzdemo.util.QuartzStringUtils.dateToString;
 
 @Slf4j
 @Service
@@ -112,32 +115,17 @@ public class QuartzService {
     }
 
     /**
-     * Job 전체조회
-     * @return
+     * Trigger 조회
      */
-    public List<JobResponse> readJobs(){
+    private List<JobResponse> readTriggers(String triggerGroup){
         List<JobResponse> jobResponseList = new ArrayList<>();
         try {
-            List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
+            List<String> triggerGroupNames = readTriggerGroupNames(triggerGroup);
             for(String group : triggerGroupNames){
                 Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.groupEquals(group));
                 for(TriggerKey triggerKey : triggerKeys){
-                    Trigger trigger = scheduler.getTrigger(triggerKey);
-                    JobResponse jobResponse = new JobResponse();
-                    jobResponse.setSchedulerName(scheduler.getSchedulerName());
-                    jobResponse.setTriggerGroup(triggerKey.getGroup());
-                    jobResponse.setTriggerName(triggerKey.getName());
-                    jobResponse.setJobGroup(trigger.getJobKey().getGroup());
-                    jobResponse.setJobName(trigger.getJobKey().getName());
-                    jobResponse.setNextFireTime(dateToString(trigger.getNextFireTime()));
-                    jobResponse.setPrevFireTime(dateToString(trigger.getPreviousFireTime()));
-                    jobResponse.setStartTime(dateToString(trigger.getStartTime()));
-                    if(trigger instanceof CronTrigger){
-                        jobResponse.setCronExpression(((CronTrigger)trigger).getCronExpression());
-                    }
-                    jobResponse.setTriggerStatus(scheduler.getTriggerState(triggerKey).name().toUpperCase());
-
-                    jobResponseList.add(jobResponse);
+                    jobResponseList.add(JobResponse.of(scheduler.getTrigger(triggerKey),
+                                                       scheduler.getTriggerState(triggerKey).name().toUpperCase()));
                 }
             }
         } catch (SchedulerException e) {
@@ -149,45 +137,33 @@ public class QuartzService {
     }
 
     /**
-     * Job 부분조회 (trigger group 별 조회)
-     * @return
+     * Trigger 전체조회
      */
-    public List<JobResponse> readJobsByTriggerGroup(String triggerGroup){
+    public List<JobResponse> readTriggersAll(){
+        return readTriggers(null);
+    }
+
+    /**
+     * Trigger 부분조회 (trigger group 별 조회)
+     * TriggerGroup이 "ALL"이면 전체조회
+     */
+    public List<JobResponse> readTriggersByTriggerGroup(String triggerGroup){
         if (triggerGroup.equals("ALL")) {
-            return readJobs();
+            return readTriggersAll();
         }
-        List<JobResponse> jobResponseList = new ArrayList<>();
-        try {
-            List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
-            for(String group : triggerGroupNames){
-                Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.groupEquals(group));
-                for(TriggerKey triggerKey : triggerKeys){
-                    if(triggerKey.getGroup().equals(triggerGroup)) {
-                        Trigger trigger = scheduler.getTrigger(triggerKey);
-                        JobResponse jobResponse = new JobResponse();
-                        jobResponse.setSchedulerName(scheduler.getSchedulerName());
-                        jobResponse.setTriggerGroup(triggerKey.getGroup());
-                        jobResponse.setTriggerName(triggerKey.getName());
-                        jobResponse.setJobGroup(trigger.getJobKey().getGroup());
-                        jobResponse.setJobName(trigger.getJobKey().getName());
-                        jobResponse.setNextFireTime(dateToString(trigger.getNextFireTime()));
-                        jobResponse.setPrevFireTime(dateToString(trigger.getPreviousFireTime()));
-                        jobResponse.setStartTime(dateToString(trigger.getStartTime()));
-                        if(trigger instanceof CronTrigger){
-                            jobResponse.setCronExpression(((CronTrigger)trigger).getCronExpression());
-                        }
-                        jobResponse.setTriggerStatus(scheduler.getTriggerState(triggerKey).name().toUpperCase());
+        return readTriggers(triggerGroup);
+    }
 
-                        jobResponseList.add(jobResponse);
-                    }
-                }
-            }
-        } catch (SchedulerException e) {
-            log.error("Job 전체조회 중 에러[{}]가 발생했습니다.", e.getMessage());
-            e.printStackTrace();
-        }
+    private List<String> readTriggerGroupNames(String triggerGroup) throws SchedulerException {
+        return scheduler.getTriggerGroupNames()
+                        .stream()
+                        .filter(name -> groupChecker(triggerGroup, name))
+                        .collect(toList());
+    }
 
-        return jobResponseList;
+    private static boolean groupChecker(String expectedName, String name){
+        if(StringUtils.isEmpty(expectedName)) return true;
+        else return expectedName.equals(name);
     }
 
     // TODO pause 후에 다시 시작하면 다음실행시간이 최신화 되는지 확인필요
@@ -230,18 +206,6 @@ public class QuartzService {
             e.printStackTrace();
             return false;
         }
-    }
-
-    // TODO guava에는 Date -> String 컨버터가 있는지?
-    public String dateToString(Date src){
-        String rslt = "";
-        if(src == null){
-            return rslt;
-        }else{
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            rslt = sdf.format(src);
-        }
-        return rslt;
     }
 
     public boolean isExist(TriggerKey triggerKey) {

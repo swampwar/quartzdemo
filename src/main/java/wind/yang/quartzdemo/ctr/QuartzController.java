@@ -5,15 +5,12 @@ import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.service.ExecHistoryService;
 import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.QuartzService;
 
-import javax.annotation.PostConstruct;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +32,7 @@ public class QuartzController {
     @ResponseBody
     public List<JobResponse> readJobs() {
         log.info("Job(Trigger) 조회 시작");
-        return quartzService.readJobs();
+        return quartzService.readTriggersAll();
     }
 
     @PostMapping("/job")

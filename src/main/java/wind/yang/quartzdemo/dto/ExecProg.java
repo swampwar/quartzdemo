@@ -17,4 +17,10 @@ public class ExecProg {
     String execParam1;
     String execParam2;
     String execParam3;
+
+    public ExecProg(String triggerGroup, String triggerName, int seq) {
+        this.triggerGroup = triggerGroup;
+        this.triggerName = triggerName;
+        this.seq = seq;
+    }
 }

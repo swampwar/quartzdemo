@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 public class ExecHistory {
     String triggerSttDtm;
     String jobSttDtm;
@@ -28,24 +29,18 @@ public class ExecHistory {
     int execProgSeq;
     String jobExecRslt;
 
-    @Builder
-    public ExecHistory(String triggerSttDtm, String jobSttDtm, String triggerGroup, String triggerName, String jobGroup, String jobName, JobExecutionStatusCode jobExecStaCd, int execProgSeq) {
-        this.triggerSttDtm = triggerSttDtm;
-        this.jobSttDtm = jobSttDtm;
-        this.triggerGroup = triggerGroup;
-        this.triggerName = triggerName;
-        this.jobGroup = jobGroup;
-        this.jobName = jobName;
-        this.jobExecStaCd = jobExecStaCd;
-        this.execProgSeq = execProgSeq;
-    }
+    String execParam1;
+    String execParam2;
+    String execParam3;
+    String execCmd;
+    String summary;
 
     /**
      * 신규 마스터 실행이력 생성
      */
     public static ExecHistory newMaster(TriggerKey triggerKey, JobKey jobKey){
         String sttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        ExecHistory master = newExecHistory(triggerKey, jobKey, sttDtm, sttDtm, "", 0);
+        ExecHistory master = newExecHistory(new ExecProg(triggerKey.getGroup(), triggerKey.getName(), 0), jobKey, sttDtm, sttDtm);
         master.setJobExecStaCd(JobExecutionStatusCode.START);
         return master;
     }
@@ -53,26 +48,35 @@ public class ExecHistory {
     /**
      * 신규 상세 실행이력 생성
      */
-    public static ExecHistory newDetail(ExecHistory master, String execProgName, int execProgSeq){
-        TriggerKey triggerKey = new TriggerKey(master.getTriggerName(), master.getTriggerGroup());
+    public static ExecHistory newDetail(ExecProg execProg, ExecHistory master){
         JobKey jobkey = new JobKey(master.getJobName(), master.getJobGroup());
-        return newExecHistory(triggerKey, jobkey, master.getTriggerSttDtm(), null, execProgName, execProgSeq);
+        return newExecHistory(execProg, jobkey, master.getTriggerSttDtm(),null);
     }
 
     /**
      * 신규 실행이력 생성
      */
-    public static ExecHistory newExecHistory(TriggerKey triggerKey, JobKey jobKey, String triggerSttDtm, String jobSttDtm, String execProgName, int execProgSeq){
-        ExecHistory execHistory = new ExecHistory();
+    public static ExecHistory newExecHistory(ExecProg execProg, JobKey jobKey, String triggerSttDtm, String jobSttDtm){
+        ExecHistory execHistory = ExecHistory.of(execProg);
         execHistory.setTriggerSttDtm(triggerSttDtm);
-        execHistory.setTriggerGroup(triggerKey.getGroup());
-        execHistory.setTriggerName(triggerKey.getName());
         if(!StringUtils.isEmpty(jobSttDtm)) execHistory.setJobSttDtm(jobSttDtm);
         execHistory.setJobGroup(jobKey.getGroup());
         execHistory.setJobName(jobKey.getName());
-        execHistory.setExecProgName(execProgName);
-        execHistory.setExecProgSeq(execProgSeq);
-        execHistory.setJobExecStaCd(JobExecutionStatusCode.READY);
         return execHistory;
     }
+
+    public static ExecHistory of(ExecProg execProg) {
+        return ExecHistory.builder()
+                .triggerGroup(execProg.getTriggerGroup())
+                .triggerName(execProg.getTriggerName())
+                .execProgSeq(execProg.getSeq())
+                .execProgName(execProg.getProgramName())
+                .execParam1(execProg.getExecParam1())
+                .execParam2(execProg.getExecParam2())
+                .execParam3(execProg.getExecParam3())
+                .summary(execProg.getSummary())
+                .jobExecStaCd(JobExecutionStatusCode.READY)
+                .build();
+    }
+
 }
