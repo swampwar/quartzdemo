@@ -7,22 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
-import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.*;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
 public class DashboardService {
-    @Autowired TriggerGroupService triggerGroupService;
-    @Autowired ExecProgService execProgService;
-    @Autowired ExecHistoryService execHistoryService;
+    @Autowired private TriggerGroupService triggerGroupService;
+    @Autowired private ExecProgService execProgService;
+    @Autowired private ExecHistoryService execHistoryService;
+    @Autowired private QuartzService quartzService;
 
     @Value("${quartzdemo.shell.script-path}")
     protected String SH_PATH;
@@ -65,50 +63,37 @@ public class DashboardService {
         return triggerGroupService.findByTriggerGroup(active);
     }
 
-    public List<JobResponse> getTriggerMaster(List<JobResponse> jobResponseList) {
-        for (JobResponse jobResponse : jobResponseList) {
-            ExecProg execProgSample = new ExecProg();
 
-            // 검색 조건을 넣어준다
-            execProgSample.setTriggerName(jobResponse.getTriggerName());
-            execProgSample.setTriggerGroup(jobResponse.getTriggerGroup());
-            execProgSample.setSeq(0);
+    public List<ExecHistory> getExecHistoryList(JobRequest jobRequest) {
+        List<ExecHistory> historyList;
+        boolean isFiredToday = execHistoryService.isFiredToday(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
 
-            ExecHistory execHistory = execHistoryService.readLastExecHistory(execProgSample);
-            if (execHistory != null) {
-                String triggerExecStaCd = execHistory.getJobExecStaCd().toString();
-                log.info("{} => triggerExecStaCd : {}", jobResponse.getTriggerName(), triggerExecStaCd);
-                jobResponse.setTriggerExecStaCd(triggerExecStaCd);
-            }else {
-                jobResponse.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
+        if(isFiredToday){ // 마지막 실행이력(TB_EXEC_HISTORY)을 보여준다.
+            historyList = execHistoryService.readLastDetailExecHistory(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
+        }else{ // 실행프로그램(TB_EXEC_PROG)기준 실행될 계획을 보여준다.
+            List<ExecProg> execProgs = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerGroup(), jobRequest.getTriggerName()));
+            historyList = new ArrayList<>();
+            for(ExecProg execProg : execProgs){
+                historyList.add(ExecHistory.of(execProg));
             }
         }
-        return jobResponseList;
+
+        return historyList;
     }
 
-    public List<ExecProgAndHistory> getExecJobAndHistory(JobRequest jobRequest) {
-        List<ExecProgAndHistory> execProgAndHistoryList = new ArrayList<>();
+    /**
+     * Dashboard에 출력할 트리거 정보를 조회한다.
+     */
+    public List<JobResponse> readTriggers(String triggerGroup) {
+        // 스케쥴러의 트리거 정보를 조회
+        List<JobResponse> jobResponseList = quartzService.readTriggersByTriggerGroup(triggerGroup);
 
-        // Job list 호출
-        List<ExecProg> execProgList = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
-
-        for (ExecProg execProg : execProgList) {
-            ExecHistory execHistory = execHistoryService.readLastExecHistory(execProg);
-            ExecProgAndHistory execProgAndHistory;
-            if (execHistory != null) {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
-                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
-                        execHistory.getTriggerSttDtm(), execHistory.getJobSttDtm(), execHistory.getJobEndDtm(), execHistory.getJobGroup(), execHistory.getJobName(),
-                        execHistory.getJobExecStaCd(), execHistory.getJobExecRslt());
-
-            } else {
-                execProgAndHistory = new ExecProgAndHistory(execProg.getTriggerGroup(), execProg.getTriggerName(), execProg.getSeq(), execProg.getProgramName(),
-                        execProg.getSummary(), execProg.getDescription(), execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(),
-                        JobExecutionStatusCode.READY, "DEFAULT_JOB");
-            }
-            execProgAndHistoryList.add(execProgAndHistory);
+        // 트리거의 최종 실행이력을 조회
+        for(JobResponse job : jobResponseList){
+            ExecHistory lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
+            job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
         }
 
-        return execProgAndHistoryList;
+        return jobResponseList;
     }
 }

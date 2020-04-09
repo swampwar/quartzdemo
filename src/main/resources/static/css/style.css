@@ -283,7 +283,7 @@
 }
 
 .scrollbar-track-x {
-    height: 2px !important;
+    height: 1px !important;
     /*bottom: 40px !important;*/
     margin-bottom: 20px !important;
     left: 0 !important;
@@ -292,12 +292,15 @@
 }
 
 .scrollbar-track-x .scrollbar-thumb {
-    height: 3px;
-    top: -1px;
+    height: 5px;
+    top: -1.5px;
     background: rgba(0, 0, 0, .1);
 }
 
 .scrollbar-track-y {
+    background: rgba(0,0,0,0);
+}
+.scrollbar-track-y .scrollbar-thumb{
     display: none;
 }
 
@@ -343,9 +346,9 @@
 
 .pagination {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 40px;
+    left: 55%;
+    /*transform: translateX(-50%)*/
     white-space: none;
     display: flex;
 }
@@ -367,7 +370,7 @@
      position: absolute;
      top: 50%;
      left: 50%;
-     transform: translate(-50%, -50%);
+     transform: translate(-50%, -50%)
      border: 1px solid #aaa;
      width: 7px;
      height: 7px;

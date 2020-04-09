@@ -99,10 +99,10 @@ const addJobDetail= (target, rslt) => {
                 '<div class="row job-box">' +
                     '<div class="col-xs-2">' +
                         // '<i class="fa fa-comments fa-4x"></i>' +
-                        '<span class="pull-left job-seq">'+ rslt.seq +'</span>' +
+                        '<span class="pull-left job-seq">'+ rslt.execProgSeq +'</span>' +
                     '</div>' +
                     '<div class="col-xs-10 text-right" style="display: inline-grid">' +
-                        '<div class="huge"><span class="pull-right job-name">' + rslt.jobName + '</span></div>' +
+                        '<div class="huge"><span class="pull-right job-name">' + rslt.summary + '</span></div>' +
                         '<div ><span class="pull-right" onclick="popupProgram(\'execProg\',\''+ rslt.programName +'\');" style="cursor:pointer;" data-tooltip-text="소스 보기">' + rslt.programName + '</span></div>' +
                     '</div>' +
                 '</div>' +
@@ -110,6 +110,7 @@ const addJobDetail= (target, rslt) => {
             '<a>' +
                 '<div class="panel-footer">' +
                     '<span class="pull-right" onclick="popupProgram(\'execLog\',\''+ rslt.programName +'\');" style="cursor:pointer;" data-tooltip-text="로그 보기">' + rslt.jobExecStaCd +'</span>' +
+
                     '<div class="clearfix"></div>' +
                 '</div>' +
             '</a>' +

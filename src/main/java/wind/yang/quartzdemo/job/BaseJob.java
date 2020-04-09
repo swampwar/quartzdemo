@@ -70,7 +70,7 @@ public abstract class BaseJob implements Job, InterruptableJob {
     private ExecHistory beforeExecuteJob(ExecProg execProg) {
         // 상세이력 '시작' 업데이트
         String sttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        ExecHistory detail = ExecHistory.newDetail(masterExecHistory, execProg.getProgramName(), execProg.getSeq());
+        ExecHistory detail = ExecHistory.newDetail(execProg, masterExecHistory);
         detail.setJobSttDtm(sttDtm);
         detail.setJobExecStaCd(JobExecutionStatusCode.START);
         detail.setJobExecRslt(JobExecutionStatusCode.START.getMsg());

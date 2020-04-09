@@ -1,4 +1,4 @@
-create table if not exists tb_exec_history
+create table tb_exec_history
 (
     trigger_stt_dtm varchar not null,
     trigger_group varchar not null,
@@ -11,6 +11,11 @@ create table if not exists tb_exec_history
     job_end_dtm varchar,
     job_exec_sta_cd varchar,
     job_exec_rslt varchar,
+    exec_param1 varchar,
+    exec_param2 varchar,
+    exec_param3 varchar,
+    exec_cmd varchar,
+    summary varchar,
     constraint tb_exec_history_pk
         primary key (trigger_stt_dtm, trigger_group, trigger_name, job_group, job_name, exec_prog_seq)
 );
