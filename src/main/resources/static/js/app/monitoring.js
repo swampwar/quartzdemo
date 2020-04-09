@@ -1,5 +1,55 @@
 let winRef;
 
+$('.huge').contextmenu(function(e){
+    // console.log("context menu works");
+    //Get window size:
+    let winWidth = $(document).width();
+    let winHeight = $(document).height();
+    //Get pointer position:
+    let posX = e.pageX;
+    let posY = e.pageY;
+    //Get contextmenu size:
+    let menuWidth = $(".contextmenu").width();
+    let menuHeight = $(".contextmenu").height();
+    //Security margin:
+    let secMargin = 10;
+    //Prevent page overflow:
+    let posLeft;
+    let posTop;
+    if(posX + menuWidth + secMargin >= winWidth
+        && posY + menuHeight + secMargin >= winHeight){
+        //Case 1: right-bottom overflow:
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
+    }
+    else if(posX + menuWidth + secMargin >= winWidth){
+        //Case 2: right overflow:
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY + secMargin + "px";
+    }
+    else if(posY + menuHeight + secMargin >= winHeight){
+        //Case 3: bottom overflow:
+        posLeft = posX + secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
+    }
+    else {
+        //Case 4: default values:
+        posLeft = posX + secMargin + "px";
+        posTop = posY + secMargin + "px";
+    };
+    //Display contextmenu:
+    $(".contextmenu").css({
+        "left": posLeft,
+        "top": posTop
+    }).show();
+    // console.log("before return false", posLeft, posTop, posX, posY);
+    //Prevent browser default contextmenu.
+    return false;
+});
+//Hide contextmenu:
+$(document).click(function(){
+    $(".contextmenu").hide();
+});
 
 const openJobDatas = (triggerName, triggerGroup) => {
     console.log(triggerGroup, triggerName);
@@ -53,20 +103,24 @@ const addJobDetail= (target, rslt) => {
                     '</div>' +
                     '<div class="col-xs-10 text-right" style="display: inline-grid">' +
                         '<div class="huge"><span class="pull-right job-name">' + rslt.jobName + '</span></div>' +
-                        '<div onclick="popupProgram(\'execProg\',\''+ rslt.programName +'\');" style="cursor:pointer;"><span class="pull-right">' + rslt.programName + '</span></div>' +
+                        '<div ><span class="pull-right" onclick="popupProgram(\'execProg\',\''+ rslt.programName +'\');" style="cursor:pointer;" data-tooltip-text="소스 보기">' + rslt.programName + '</span></div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
             '<a>' +
-                '<div class="panel-footer" onclick="popupProgram(\'execLog\',\''+ rslt.programName +'\');" style="cursor:pointer;">' +
-                    '<span class="pull-right">' + rslt.jobExecStaCd +'</span>' +
+                '<div class="panel-footer">' +
+                    '<span class="pull-right" onclick="popupProgram(\'execLog\',\''+ rslt.programName +'\');" style="cursor:pointer;" data-tooltip-text="로그 보기">' + rslt.jobExecStaCd +'</span>' +
                     '<div class="clearfix"></div>' +
                 '</div>' +
+            '</a>' +
+            '<a>' +
                 '<div class="panel-footer">' +
                     '<span class="pull-left">잡 시작 시간 </span>' +
                     '<span class="pull-right">' + jobSttDtm +'</span>' +
                     '<div class="clearfix"></div>' +
                 '</div>' +
+            '</a>' +
+            '<a>' +
                 '<div class="panel-footer">' +
                     '<span class="pull-left">잡 종료 시간 </span>' +
                     '<span class="pull-right">' + jobEndDtm +'</span>' +

@@ -74,9 +74,14 @@ public class DashboardService {
             execProgSample.setTriggerGroup(jobResponse.getTriggerGroup());
             execProgSample.setSeq(0);
 
-            String triggerExecStaCd = execHistoryService.readLastExecHistory(execProgSample).getJobExecStaCd().toString();
-            log.info("{} => triggerExecStaCd : {}", jobResponse.getTriggerName(), triggerExecStaCd);
-            jobResponse.setTriggerExecStaCd(triggerExecStaCd);
+            ExecHistory execHistory = execHistoryService.readLastExecHistory(execProgSample);
+            if (execHistory != null) {
+                String triggerExecStaCd = execHistory.getJobExecStaCd().toString();
+                log.info("{} => triggerExecStaCd : {}", jobResponse.getTriggerName(), triggerExecStaCd);
+                jobResponse.setTriggerExecStaCd(triggerExecStaCd);
+            }else {
+                jobResponse.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
+            }
         }
         return jobResponseList;
     }

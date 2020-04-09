@@ -19,7 +19,7 @@
                         <span>ALL</span>
                     </div>
                     <th:block th:each="triggerGroup : ${triggerGroup}">
-                        <div class="group-button" th:attrappend="class=${' ' + triggerGroup.triggerGroup + '-button'}" th:attr="onclick=|getDashboardSection('${triggerGroup.triggerGroup}');|" >
+                        <div class="group-button not-all" th:attrappend="class=${' ' + triggerGroup.triggerGroup + '-button'}" th:attr="onclick=|getDashboardSection('${triggerGroup.triggerGroup}');|" th:name="${triggerGroup.triggerGroup}">
                             <span th:text="${triggerGroup.triggerGroup}">triggerGroup</span>
                         </div>
                     </th:block>
@@ -27,7 +27,25 @@
             </div>
             <!-- /.col-lg-12 -->
         </div>
-        <div id="page-wrapper-inside"></div>
+        <ul class="contextmenu">
+            <li><a href="#">Simple link</a></li>
+            <li><a href="#">Link to somewhere</a></li>
+            <li><a href="#">Another link</a></li>
+            <li><a href="#">Link to nowhere</a></li>
+            <li><a href="#">Random link</a></li>
+        </ul>
+        <div id="page-wrapper-inside">
+            <div id="scrollbar">
+                <div class="wrapper">
+                    <th:block th:each="triggerGroup : ${triggerGroup}">
+                        <div class="group-container item " th:attrappend="class=${' ' +triggerGroup.triggerGroup+ '-container'}" th:name="${triggerGroup.triggerGroup}">
+                            <h2><span th:text="${triggerGroup.triggerGroup}">triggerGroup</span></h2>
+                            <div class="group-trigger-container" th:attrappend="class=${' ' +triggerGroup.triggerGroup+ '-trigger-container'}"></div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
     </div>
 </th:block>
 
@@ -35,7 +53,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
             getDashboardSection("ALL");
-            // getTriggerDashboard("ALL");
         });
 
         const getDashboardSection = (activeButton) => {
@@ -43,14 +60,29 @@
 
             $('.active-button').val(activeButton);
 
-            $('#page-wrapper-inside').empty();
-            $('#page-wrapper-inside').load("/dashboard/" + activeButton);
+            $('#group-trigger-container').empty();
+
+            if(activeButton==='ALL') {
+                $('.group-container').css({"display": "block"});
+                $.each(document.getElementsByClassName("not-all"), function (i, div) {
+                    const target = div.getAttribute("name");
+                    $('.'+ target + "-trigger-container").load("/dashboard/" + target);
+                });
+            } else {
+                $('.group-container').css({"display": "none"});
+                $('.'+ activeButton + "-container").css({"display": "block"});
+                $('.'+ activeButton + "-trigger-container").load("/dashboard/" + activeButton);
+            }
 
             $('.active.group-button').removeClass("active");
             $('.' + activeButton + '-button').addClass("active");
         };
 
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/smooth-scrollbar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/plugins/overscroll.js"></script>
+    <script th:src="@{/js/app/dashboard-scroll.js}"></script>
     <script th:src="@{/js/app/monitoring.js}"></script>
 </th:block>
 </body>
