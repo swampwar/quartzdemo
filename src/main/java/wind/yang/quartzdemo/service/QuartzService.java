@@ -37,6 +37,9 @@ public class QuartzService {
     @Autowired
     TriggerService triggerService;
 
+    @Autowired
+    ExecHistoryService ehService;
+
     JobDetail defaultJob;
 
     @PostConstruct
@@ -90,28 +93,32 @@ public class QuartzService {
      * @param origTriggerKey : 강제실행 대상이 되는 트리거의 키
      * @return
      */
-    public boolean createForceJob(TriggerKey origTriggerKey){
-        TriggerKey fTriggerKey = new TriggerKey(origTriggerKey.getName() + ".F."
-                                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-                                , origTriggerKey.getGroup());
+    public String createForceJob(TriggerKey origTriggerKey){
+        if(!"START".equals(getTriggerExecutionStatusCd(origTriggerKey))) {
+            TriggerKey fTriggerKey = new TriggerKey(origTriggerKey.getName() + ".F."
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+                    , origTriggerKey.getGroup());
 
-        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-        factoryBean.setName(fTriggerKey.getName());
-        factoryBean.setGroup(fTriggerKey.getGroup());
-        factoryBean.setDescription("강제실행 트리거");
-        factoryBean.setRepeatCount(0);
-        factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT);
-        factoryBean.setJobDetail(defaultJob);
-        factoryBean.afterPropertiesSet();
-        try {
-            scheduler.scheduleJob(factoryBean.getObject());
-        } catch (SchedulerException e) {
-            log.error("Trigger[{}]를 강제실행을 위해 Scheduler에 등록 중 에러[{}]가 발생함", fTriggerKey, e.getMessage());
-            e.printStackTrace();
-            return false;
+            SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+            factoryBean.setName(fTriggerKey.getName());
+            factoryBean.setGroup(fTriggerKey.getGroup());
+            factoryBean.setDescription("강제실행 트리거");
+            factoryBean.setRepeatCount(0);
+            factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT);
+            factoryBean.setJobDetail(defaultJob);
+            factoryBean.afterPropertiesSet();
+            try {
+                scheduler.scheduleJob(factoryBean.getObject());
+            } catch (SchedulerException e) {
+                log.error("Trigger[{}]를 강제실행을 위해 Scheduler에 등록 중 에러[{}]가 발생함", fTriggerKey, e.getMessage());
+                e.printStackTrace();
+                return "서버오류로 Trigger 강제실행 등록에 실패하였습니다.";
+            }
+
+            return "Trigger 강제실행 등록이 완료되었습니다.";
+        }else {
+            return "현재 실행중인 Trigger는 강제실행할 수 없습니다.";
         }
-
-        return true;
     }
 
     /**
@@ -167,12 +174,27 @@ public class QuartzService {
     }
 
     // TODO pause 후에 다시 시작하면 다음실행시간이 최신화 되는지 확인필요
-    public void pause(TriggerKey triggerkey) throws SchedulerException {
-        scheduler.pauseTrigger(triggerkey);
+    public String pause(TriggerKey triggerkey) throws SchedulerException {
+        if (!"PAUSED".equals(getTriggerState(triggerkey))) {
+            scheduler.pauseTrigger(triggerkey);
+            return "Trigger 정지가 완료되었습니다.";
+        }else {
+            return "이미 정지된 Trigger는 다시 정지 할 수 없습니다.";
+        }
     }
 
-    public void resume(TriggerKey triggerkey) throws SchedulerException {
-        scheduler.resumeTrigger(triggerkey);
+    public String resume(TriggerKey triggerkey) throws SchedulerException {
+        if ("PAUSED".equals(getTriggerState(triggerkey))) {
+            scheduler.resumeTrigger(triggerkey);
+            return "Trigger 재개가 완료되었습니다.";
+        }else {
+            return "정지된 Trigger만 재개 할 수 없습니다.";
+        }
+    }
+
+    // quartz 에서 제공하는 triggerState 를 조회해서 PAUSE 혹은 RESUME 가능한지 validate 하기 위힘
+    public String getTriggerState(TriggerKey triggerKey) throws SchedulerException {
+        return scheduler.getTriggerState(triggerKey).name().toUpperCase();
     }
 
     public String update(TriggerKey triggerkey, String cronExpression) throws SchedulerException, ParseException {
@@ -258,14 +280,24 @@ public class QuartzService {
         return currentlyExecutingJobs;
     }
 
-    public void kill(TriggerKey triggerKey) throws SchedulerException {
-        List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
-        for(JobExecutionContext ctx : currentlyExecutingJobs){
-            if(ctx.getTrigger().getKey().equals(triggerKey)){
-                String fireInstanceId = ctx.getFireInstanceId();
-                log.info("Trigger[{}]에 대한 강제종료를 실행합니다. FireInstanceId[{}]", triggerKey, fireInstanceId);
-                scheduler.interrupt(fireInstanceId);
+    public String kill(TriggerKey triggerKey) throws SchedulerException {
+        if("START".equals(getTriggerExecutionStatusCd(triggerKey))) {
+            List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
+            for (JobExecutionContext ctx : currentlyExecutingJobs) {
+                if (ctx.getTrigger().getKey().equals(triggerKey)) {
+                    String fireInstanceId = ctx.getFireInstanceId();
+                    log.info("Trigger[{}]에 대한 강제종료를 실행합니다. FireInstanceId[{}]", triggerKey, fireInstanceId);
+                    scheduler.interrupt(fireInstanceId);
+                }
             }
+            return "Trigger 강제종료가 완료되었습니다.";
+        }else {
+            return "실행중인 Trigger만 강제종료를 할 수 있습니다.\n현재 선택된 Trigger는 실행중이지 않습니다.";
         }
+    }
+
+    // execution history에서 최근 트리거 실행 상태 코드를 가져와 Kill 또는 CreateForce(재실행) 하기위한 validation으로 사용
+    public String getTriggerExecutionStatusCd(TriggerKey triggerKey) {
+        return ehService.readLastMasterExecHistory(triggerKey.getGroup(), triggerKey.getName()).getJobExecStaCd().toString();
     }
 }

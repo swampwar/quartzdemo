@@ -44,6 +44,27 @@
 }
 
 /************** dashboard panel ***************/
+.panel-PAUSED {
+    border-color: #58607b;
+}
+
+.panel-PAUSED > .panel-heading {
+    border-color: #58607b;
+    color: #fff;
+    background-color: #58607b;
+}
+
+.panel-PAUSED .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.panel-PAUSED a {
+    color: #58607b;
+}
+
+.panel-PAUSED a:hover {
+    color: #4a547b;
+}
 
 .panel-ERROR {
     border-color: #d9534f;
@@ -236,7 +257,7 @@
 .contextmenu li a {
     display: block;
     padding: 10px;
-    color: #B0BEC5;
+    color: #777;
     text-decoration: none;
     transition: ease .2s;
 }
@@ -297,9 +318,6 @@
     background: rgba(0, 0, 0, .1);
 }
 
-.scrollbar-track-y {
-    background: rgba(0,0,0,0);
-}
 .scrollbar-track-y .scrollbar-thumb{
     display: none;
 }
@@ -315,7 +333,7 @@
 .item {
     position: relative;
     padding: 10px 30px;
-    flex: 0 0 600px;
+    flex: 0 0 700px;
     /*height: 100vh;*/
     display: flex;
     align-items: center;

@@ -80,28 +80,27 @@ public class QuartzController {
     public ApiResponse pauseJob(@RequestBody JobRequest jobRequest) {
         // TODO 파라미터 필수검사
         log.info("pauseJob 파라미터 : {}", jobRequest);
-
+        String msg = "서버오류로 Trigger 정지에 실패했습니다.";
         try{
-            quartzService.pause(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+            msg = quartzService.pause(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
         }catch(SchedulerException e){
-            return new ApiResponse(false, "Trigger 정지가 실패하였습니다.");
+            return new ApiResponse(false, msg);
         }
-
-        return new ApiResponse(true, "Trigger 정지가 완료되었습니다.");
+        return new ApiResponse(true, msg);
     }
 
     @PutMapping("/job/resume")
     @ResponseBody
     public ApiResponse resumeJob(@RequestBody JobRequest jobRequest) {
         log.info("resumeJob 파라미터 : {}", jobRequest);
-
+        String msg = "서버오류로 Trigger 재개에 실패했습니다.";
         try{
-            quartzService.resume(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+            msg = quartzService.resume(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
         }catch(SchedulerException e){
-            return new ApiResponse(false, "Trigger 재개가 실패하였습니다.");
+            return new ApiResponse(false, msg);
         }
 
-        return new ApiResponse(true, "Trigger 재개가 완료되었습니다.");
+        return new ApiResponse(true, msg);
     }
 
     @PutMapping("/job/update")
@@ -118,14 +117,14 @@ public class QuartzController {
     public ApiResponse killJob(@RequestBody JobRequest jobRequest) {
         // TODO 파라미터 필수검사
         log.info("killJob 파라미터 : {}", jobRequest);
-
+        String msg = "서버오류로 Trigger 강제종료에 실패했습니다.";
         try{
-            quartzService.kill(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+            msg = quartzService.kill(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
         }catch(SchedulerException e){
-            return new ApiResponse(false, "Trigger 강제종료가 실패하였습니다.");
+            return new ApiResponse(false, msg);
         }
 
-        return new ApiResponse(true, "Trigger 강제종료가 완료되었습니다.");
+        return new ApiResponse(true, msg);
     }
 
     @PostMapping("/job/runNow")
@@ -133,12 +132,9 @@ public class QuartzController {
     public ApiResponse runNowJob(@RequestBody JobRequest jobRequest) {
         // TODO 파라미터 필수검사
         log.info("runNowJob 파라미터 : {}", jobRequest);
-
+        String msg = "";
         // Job(Trigger) 생성
-        if(quartzService.createForceJob(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()))){
-            return new ApiResponse(true, "Trigger 강제실행 등록이 완료되었습니다.");
-        }else{
-            return new ApiResponse(false, "Trigger 강제실행 등록이 실패하였습니다.");
-        }
+        msg = quartzService.createForceJob(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+        return new ApiResponse(true, msg);
     }
 }

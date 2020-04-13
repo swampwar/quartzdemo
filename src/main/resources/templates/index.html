@@ -28,11 +28,13 @@
             <!-- /.col-lg-12 -->
         </div>
         <ul class="contextmenu">
-            <li><a href="#">Simple link</a></li>
-            <li><a href="#">Link to somewhere</a></li>
-            <li><a href="#">Another link</a></li>
-            <li><a href="#">Link to nowhere</a></li>
-            <li><a href="#">Random link</a></li>
+            <li><a class="pause-a" href="javascript:void(0);">Pause</a></li>
+            <li><a class="resume-a" href="javascript:void(0);">Resume</a></li>
+            <li><a class="kill-a" href="javascript:void(0);">Kill</a></li>
+            <li><a class="rerun-a" href="javascript:void(0);">Rerun</a></li>
+            <li><a class="modify-a" href="javascript:void(0);">Modify</a></li>
+<!--            <li><a href="#">Link to nowhere</a></li>-->
+<!--            <li><a href="#">Random link</a></li>-->
         </ul>
         <div id="page-wrapper-inside">
             <div id="scrollbar">
@@ -79,7 +81,7 @@
         };
 
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/smooth-scrollbar.js"></script>
+    <script src="/js/smooth-scrollbar-8.3.1-smooth-scrollbar.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/plugins/overscroll.js"></script>
     <script th:src="@{/js/app/dashboard-scroll.js}"></script>
