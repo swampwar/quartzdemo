@@ -30,6 +30,8 @@ create table tb_exec_prog
     trigger_name varchar not null,
     seq integer not null,
     program_name varchar,
+    summery varchar,
+    discription varchar,
     exec_param1 varchar,
     exec_param2 varchar,
     exec_param3 varchar,

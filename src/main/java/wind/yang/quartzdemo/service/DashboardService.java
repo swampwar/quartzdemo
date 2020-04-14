@@ -64,6 +64,7 @@ public class DashboardService {
         return triggerGroupService.findByTriggerGroup(active);
     }
 
+
     public List<ExecHistory> getExecHistoryList(JobRequest jobRequest) {
         List<ExecHistory> historyList;
         boolean isFiredToday = execHistoryService.isFiredToday(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
@@ -90,11 +91,15 @@ public class DashboardService {
 
         // 트리거의 최종 실행이력을 조회
         for(JobResponse job : jobResponseList){
-            ExecHistory lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
-            if(lastMaster != null){
-                job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
-            }else{
-                job.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
+            if (!"PAUSED".equals(job.getTriggerStatus())) {
+                ExecHistory lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
+                if (lastMaster != null) {
+                    job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
+                } else {
+                    job.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
+                }
+            }else {
+                job.setTriggerExecStaCd(job.getTriggerStatus());
             }
         }
 

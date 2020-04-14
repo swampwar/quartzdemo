@@ -28,4 +28,9 @@ public class MainController {
         model.addAttribute("triggerGroup", triggerGroupService.findAllTriggerGroup());
         return "index";
     }
+
+    @RequestMapping(path = "/history", method = RequestMethod.GET)
+    public String history(Model model){
+        return "history";
+    }
 }

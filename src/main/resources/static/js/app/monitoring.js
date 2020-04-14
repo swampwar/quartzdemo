@@ -1,6 +1,5 @@
 let winRef;
 
-
 const openJobDatas = (triggerName, triggerGroup) => {
     console.log(triggerGroup, triggerName);
     const jsonData = JSON.stringify({
@@ -53,20 +52,25 @@ const addJobDetail= (target, rslt) => {
                     '</div>' +
                     '<div class="col-xs-10 text-right" style="display: inline-grid">' +
                         '<div class="huge"><span class="pull-right job-name">' + rslt.summary + '</span></div>' +
-                        '<div onclick="popupProgram(\'execProg\',\''+ rslt.execProgName +'\');" style="cursor:pointer;"><span class="pull-right">' + rslt.execProgName + '</span></div>' +
+                        '<div ><span class="pull-right" onclick="popupProgram(\'execProg\',\''+ rslt.execProgName +'\');" style="cursor:pointer;" data-tooltip-text="소스 보기">' + rslt.execProgName + '</span></div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
             '<a>' +
-                '<div class="panel-footer" onclick="popupProgram(\'execLog\',\''+ rslt.execProgName +'\');" style="cursor:pointer;">' +
-                    '<span class="pull-right">' + rslt.jobExecStaCd +'</span>' +
+                '<div class="panel-footer">' +
+                    '<span class="pull-right" onclick="popupProgram(\'execLog\',\''+ rslt.execProgName +'\');" style="cursor:pointer;" data-tooltip-text="로그 보기">' + rslt.jobExecStaCd +'</span>' +
+
                     '<div class="clearfix"></div>' +
                 '</div>' +
+            '</a>' +
+            '<a>' +
                 '<div class="panel-footer">' +
                     '<span class="pull-left">잡 시작 시간 </span>' +
                     '<span class="pull-right">' + jobSttDtm +'</span>' +
                     '<div class="clearfix"></div>' +
                 '</div>' +
+            '</a>' +
+            '<a>' +
                 '<div class="panel-footer">' +
                     '<span class="pull-left">잡 종료 시간 </span>' +
                     '<span class="pull-right">' + jobEndDtm +'</span>' +
@@ -102,5 +106,115 @@ const popupProgram = (target, progName) => {
             winRef = window.open(popUrl, target, popOption);
         }
     }
+};
+
+const pauseTrigger = (triggerGroup, triggerName) => {
+    const target = $('.'+triggerGroup+'-'+triggerName);
+    // console.log(target.parent('div'));
+    const panel = target.parent('div');
+
+    const jsonData = JSON.stringify(
+        {triggerGroup : triggerGroup, triggerName : triggerName}
+    );
+
+    $.ajax({
+        url: '/scheduler/job/pause',
+        type: 'put',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            getDashboardSection($('.active-button').val());
+        },
+        error : function(rslt){
+            alert(rslt.msg);
+        }
+    });
+
+};
+
+const resumeTrigger = (triggerGroup, triggerName) => {
+    const target = $('.'+triggerGroup+'-'+triggerName);
+    // console.log(target.parent('div'));
+    const panel = target.parent('div');
+
+    const jsonData = JSON.stringify(
+        {triggerGroup : triggerGroup, triggerName : triggerName}
+    );
+
+    $.ajax({
+        url: '/scheduler/job/resume',
+        type: 'put',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            getDashboardSection($('.active-button').val());
+        },
+        error : function(rslt){
+            alert(rslt.msg);
+        }
+    });
+};
+
+const killTrigger = (triggerGroup, triggerName) => {
+    const target = $('.'+triggerGroup+'-'+triggerName);
+    // console.log(target.parent('div'));
+    const panel = target.parent('div');
+
+    const jsonData = JSON.stringify(
+        {triggerGroup : triggerGroup, triggerName : triggerName}
+    );
+
+    $.ajax({
+        url: '/scheduler/job/kill',
+        type: 'post',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            getDashboardSection($('.active-button').val());
+        },
+        error : function(rslt){
+            alert(rslt.msg);
+        }
+    });
+};
+
+const rerunTrigger = (triggerGroup, triggerName) => {
+    const target = $('.'+triggerGroup+'-'+triggerName);
+    // console.log(target.parent('div'));
+    const panel = target.parent('div');
+
+    const jsonData = JSON.stringify(
+        {triggerGroup : triggerGroup, triggerName : triggerName}
+    );
+
+    $.ajax({
+        url: '/scheduler/job/runNow',
+        type: 'post',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json',
+        async: false,
+        success : function(rslt){
+            alert(rslt.msg);
+            getDashboardSection($('.active-button').val());
+        },
+        error : function(rslt){
+            alert(rslt.msg);
+        }
+    });
+};
+
+const modifyTrigger = (triggerGroup, triggerName) => {
+    const target = $('.'+triggerGroup+'-'+triggerName);
+    // console.log(target.parent('div'));
 };
 

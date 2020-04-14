@@ -44,6 +44,7 @@ public class DashboardController {
         return "dashboard :: dashboard-fragment";
     }
 
+
     @PostMapping("/getJob")
     @ResponseBody
     public List<ExecHistory> getJobDatas(@RequestBody JobRequest jobRequest) {

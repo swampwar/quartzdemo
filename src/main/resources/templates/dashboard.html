@@ -5,54 +5,123 @@
 
 </head>
 <body>
+
 <div th:fragment="dashboard-fragment">
     <!-- /.row -->
     <div class="row">
-        <th:block th:each="activeGroup : ${activeGroups}">
-            <div class="group-container" th:attrappend="class=${' ' +activeGroup.triggerGroup+ '-container'}">
-                <th:block th:each="trigger : ${triggers}">
-                    <div class="col-lg-3 col-md-6" th:if="${#strings.equals(activeGroup.triggerGroup, trigger.triggerGroup)}">
-                        <div class="panel" th:attrappend="class=${' panel-' +trigger.triggerExecStaCd}">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-comments fa-4x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge"><span th:text="${trigger.triggerName}"> triggerStatus </span></div>
-                                        <div><span th:text="${trigger.triggerGroup}"> triggerGroup </span></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">최근 수행 시간 </span>
-                                    <span class="pull-right" th:text="${trigger.prevFireTime}"> prevFireTime</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="panel-footer">
-                                    <span class="pull-left">다음 수행 시간</span>
-                                    <span class="pull-right" th:text="${trigger.nextFireTime}"> nextFireTime</span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                            <div class="job-lists-container" th:attrappend="class=${' ' +trigger.triggerName + '-con'}">
-                                <a class="job-lists-opener-con before-open" th:attr="onclick=|openJobDatas('${trigger.triggerName}', '${trigger.triggerGroup}');|">
-                                    <div class="job-lists-opener">
-                                        <span class="pull-right">잡 펼치기 <i class="fa fa-arrow-circle-down"></i></span>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="job-lists-box" th:attrappend="class=${' ' +trigger.triggerName + '-box'}">
-
-                            </div>
+        <th:block th:each="trigger : ${triggers}">
+        <div class="col-md-6" > <!--th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}"> -->
+            <div class="panel" th:attrappend="class=${' panel-' +trigger.triggerExecStaCd}">
+                <div class="panel-heading" th:attrappend="class=${' '+trigger.triggerGroup+'-'+trigger.triggerName}, triggerGroup=${trigger.triggerGroup}, triggerName=${trigger.triggerName}">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-4x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge"><span th:text="${trigger.triggerName}"> triggerStatus </span></div>
+                            <div><span th:text="${trigger.triggerGroup}"> triggerGroup </span></div>
                         </div>
                     </div>
-                </th:block>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">최근 수행 시간 </span>
+                        <span class="pull-right" th:text="${trigger.prevFireTime}"> prevFireTime</span>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <span class="pull-left">다음 수행 시간</span>
+                        <span class="pull-right" th:text="${trigger.nextFireTime}"> nextFireTime</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+                <div class="job-lists-container" th:attrappend="class=${' ' +trigger.triggerName + '-con'}">
+                    <a class="job-lists-opener-con before-open" th:attr="onclick=|openJobDatas('${trigger.triggerName}', '${trigger.triggerGroup}');|">
+                        <div class="job-lists-opener">
+                            <span class="pull-right">잡 펼치기 <i class="fa fa-arrow-circle-down"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+                <div class="job-lists-box" th:attrappend="class=${' ' +trigger.triggerName + '-box'}">
+
+                </div>
             </div>
+        </div>
         </th:block>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $('.panel-heading').contextmenu(function(e){
+            // console.log("context menu works");
+            //Get window size:
+            let winWidth = $(document).width();
+            let winHeight = $(document).height();
+            //Get pointer position:
+            let posX = e.pageX;
+            let posY = e.pageY;
+            //Get contextmenu size:
+            let menuWidth = $(".contextmenu").width();
+            let menuHeight = $(".contextmenu").height();
+            //Security margin:
+            let secMargin = 10;
+            //Prevent page overflow:
+            let posLeft;
+            let posTop;
+            if(posX + menuWidth + secMargin >= winWidth
+                && posY + menuHeight + secMargin >= winHeight){
+                //Case 1: right-bottom overflow:
+                posLeft = posX - menuWidth - secMargin + "px";
+                posTop = posY - menuHeight - secMargin + "px";
+            }
+            else if(posX + menuWidth + secMargin >= winWidth){
+                //Case 2: right overflow:
+                posLeft = posX - menuWidth - secMargin + "px";
+                posTop = posY + secMargin + "px";
+            }
+            else if(posY + menuHeight + secMargin >= winHeight){
+                //Case 3: bottom overflow:
+                posLeft = posX + secMargin + "px";
+                posTop = posY - menuHeight - secMargin + "px";
+            }
+            else {
+                //Case 4: default values:
+                posLeft = posX + secMargin + "px";
+                posTop = posY + secMargin + "px";
+            };
+            //Display contextmenu:
+            const triggerGroup = $(this).attr("triggerGroup");
+            const triggerName = $(this).attr("triggerName");
+            // console.log($(".contextmenu").children('li'));
+            $.each($(".contextmenu").children('li'), function(i, li){
+                const a = li.children;
+                // console.log(a);
+                if($(a).hasClass('pause-a')) {
+                    $(a).attr('onclick', "pauseTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }else if($(a).hasClass('resume-a')) {
+                    $(a).attr('onclick', "resumeTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }else if($(a).hasClass('modify-a')) {
+                    $(a).attr('onclick', "modifyTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }else if($(a).hasClass('kill-a')) {
+                    $(a).attr('onclick', "killTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }else if($(a).hasClass('rerun-a')) {
+                    $(a).attr('onclick', "rerunTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }
+            });
+
+            $(".contextmenu").css({
+                "left": posLeft,
+                "top": posTop
+            }).show();
+            // console.log("before return false", posLeft, posTop, posX, posY);
+            //Prevent browser default contextmenu.
+            return false;
+        });
+        //Hide contextmenu:
+        $(document).click(function(){
+            $(".contextmenu").hide();
+        });
+    </script>
 </div>
 </body>
 </html>
