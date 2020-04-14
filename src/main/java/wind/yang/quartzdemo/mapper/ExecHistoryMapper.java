@@ -10,6 +10,7 @@ import java.util.List;
 public interface ExecHistoryMapper {
     List<ExecHistory> findByExecHistory(ExecHistory execHistory);
     List<ExecHistory> findAll();
+    List<ExecHistory> findDetailAll();
     void insertExecHistory(ExecHistory execHistory);
     void updateExecHistory(ExecHistory execHistory);
     void deleteExecHistory(ExecHistory execHistory);

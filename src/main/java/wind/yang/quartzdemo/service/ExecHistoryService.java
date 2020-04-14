@@ -17,10 +17,14 @@ public class ExecHistoryService {
     @Autowired
     ExecHistoryMapper ehMapper;
 
-    public List<ExecHistory> readExecHistory() {
+    public List<ExecHistory> readExecHistoryAll() {
         List<ExecHistory> historyList = null;
         historyList = ehMapper.findAll();
         return historyList;
+    }
+
+    public List<ExecHistory> readDetailAllExecHistory() {
+        return ehMapper.findDetailAll();
     }
 
     public List<ExecHistory> readLastAllExecHistory(String group, String name) {
