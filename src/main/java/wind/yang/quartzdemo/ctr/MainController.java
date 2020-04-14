@@ -33,4 +33,10 @@ public class MainController {
     public String history(Model model){
         return "history";
     }
+
+    @RequestMapping(path = "/triggerGroup", method = RequestMethod.GET)
+    public String triggerGroup(Model model) {
+
+        return "triggerGroup";
+    }
 }

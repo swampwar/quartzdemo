@@ -7,7 +7,16 @@
         select TRIGGER_GROUP, DESCRIPTION, USE_YN
         from TB_TRIGGER_GROUP
         where 1=1
-        order by TRIGGER_GROUP ASC;
+        <if test="triggerGroup != null">
+            AND TRIGGER_GROUP = #{triggerGroup}
+        </if>
+        <if test="description != null">
+            AND DESCRIPTION = #{description}
+        </if>
+        <if test="useYn != null">
+            AND USE_YN = #{useYn}
+        </if>
+        order by USE_YN DESC, TRIGGER_GROUP ASC;
     </select>
 
     <select id="findByTriggerGroup" resultType="wind.yang.quartzdemo.dto.TriggerGroup">

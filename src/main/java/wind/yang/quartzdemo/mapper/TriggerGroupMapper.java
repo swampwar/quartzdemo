@@ -8,5 +8,6 @@ import java.util.List;
 @Mapper
 public interface TriggerGroupMapper {
     List<TriggerGroup> findAll();
+    List<TriggerGroup> findAll(TriggerGroup triggerGroup);
     List<TriggerGroup> findByTriggerGroup(String triggerGroup);
 }
