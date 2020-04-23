@@ -8,6 +8,10 @@ import java.util.List;
 @Mapper
 public interface TriggerGroupMapper {
     List<TriggerGroup> findAll();
-    List<TriggerGroup> findAll(TriggerGroup triggerGroup);
+    TriggerGroup findAll(TriggerGroup triggerGroup);
     List<TriggerGroup> findByTriggerGroup(String triggerGroup);
+
+    void insertTriggerGroup(TriggerGroup triggerGroup);
+    void updateTriggerGroup(TriggerGroup triggerGroup);
+    void deleteTriggerGroup(String triggerGroup);
 }

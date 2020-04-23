@@ -51,7 +51,9 @@ create table tb_trigger_group
         constraint tb_trigger_group_pk
             primary key,
     description varchar,
-    use_yn varchar
+    use_yn varchar,
+    rgt_dtm varchar(14),
+    udt_dtm varchar(14)
 );
 
 alter table tb_trigger_group owner to cns;

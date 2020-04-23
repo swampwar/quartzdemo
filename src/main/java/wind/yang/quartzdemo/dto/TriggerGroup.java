@@ -11,4 +11,6 @@ public class TriggerGroup {
     String triggerGroup;
     String description;
     String useYn;
+    String rgtDtm;
+    String udtDtm;
 }
