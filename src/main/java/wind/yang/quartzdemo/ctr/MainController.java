@@ -38,4 +38,10 @@ public class MainController {
     public String triggerGroup(Model model) {
         return "triggerGroup";
     }
+
+    @RequestMapping(path = "/triggerDetail", method = RequestMethod.GET)
+    public String triggerDetail(Model model) {
+
+        return "triggerDetail";
+    }
 }

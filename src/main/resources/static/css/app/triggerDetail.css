@@ -1,0 +1,227 @@
+.control-label.col-md-2 {
+    text-align: left;
+}
+span.choose {
+    color: #555;
+    display: inherit
+}
+
+/* Styling Selectbox */
+.selectbox {
+    width: 25%;
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 2px rgb(204, 204, 204);
+    transition: all .5s ease;
+    position: relative;
+    font-size: 14px;
+    color: #474747;
+    height: 100%;
+    text-align: left;
+    margin-bottom: 15px;
+}
+.selectbox .select {
+    cursor: pointer;
+    display: block;
+    padding: 7px;
+}
+.selectbox .select > i {
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    float: right;
+    line-height: 20px
+}
+.selectbox:hover {
+    box-shadow: 0 0 4px rgb(204, 204, 204)
+}
+.selectbox:active {
+    background-color: #f8f8f8
+}
+.selectbox.active:hover,
+.selectbox.active {
+    box-shadow: 0 0 4px rgb(204, 204, 204);
+    border-radius: 5px 5px 0 0;
+    background-color: #f8f8f8
+}
+.selectbox.active .select > i {
+    transform: rotate(-90deg)
+}
+.selectbox .selectbox-menu {
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+    left: 0;
+    margin-top: 1px;
+    box-shadow: 0 1px 2px rgb(204, 204, 204);
+    border-radius: 0 1px 5px 5px;
+    overflow: hidden;
+    display: none;
+    max-height: 144px;
+    overflow-y: auto;
+    z-index: 9
+}
+.selectbox .selectbox-menu li {
+    padding: 10px;
+    transition: all .2s ease-in-out;
+    cursor: pointer
+}
+.selectbox .selectbox-menu {
+    padding: 0;
+    list-style: none
+}
+.selectbox .selectbox-menu li:hover {
+    background-color: #f2f2f2
+}
+.selectbox .selectbox-menu li:active {
+    background-color: #e2e2e2
+}
+
+/* Start Job List Table Form */
+th{
+    text-align: center;
+    padding: 4px !important;
+    width: 14%
+}
+
+td {
+    padding: 4px !important;
+    font-size: 14px;
+    vertical-align: middle !important;
+    width: 14%;
+}
+
+.btn {
+    font-weight: bolder;
+    letter-spacing: .1em;
+    width: 48%;
+    padding: 2.4%;
+    font-size: 12px;
+}
+
+.btn-primary {
+    width: 80%;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+/* Start Modal */
+.modal {
+    color: white;
+}
+
+.modal-content{
+    border-radius: 0;
+}
+
+.modal-header, .modal-footer {
+    background-color: white;
+    color: black;
+    border: 0;
+}
+
+.modal-body {
+    background: white;
+    color: black;
+}
+
+.close, .close:hover {
+    color: white;
+}
+/* end Modal*/
+/* End Job List Table Form */
+
+/* Start JOB Create Form */
+.form-job 			  {
+    position:relative;
+    float: left;
+    display:inline-block;
+    width: 15%;
+}
+
+.input-job 				{
+    font-size:14px;
+    padding:7px 7px 7px 5px;
+    display:inline;
+    width: 90%;
+    border:none;
+    border-bottom:1px solid #757575;
+    outline: none;
+    margin-left: 5px;
+}
+
+.label-job 				 {
+    color:#999;
+    font-size:14px;
+    font-weight:normal;
+    position:relative;
+    pointer-events:none;
+    left:5px;
+    top:-25px;
+    margin-left: 5px;
+    transition:0.2s ease all;
+    -moz-transition:0.2s ease all;
+    -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+.input-job:focus ~ .label-job, .input-job:not(:placeholder-shown) ~ .label-job		{
+    top:-50px;
+    color:#5264AE;
+}
+
+.bar 	{ position:relative; display:block; width:140px; }
+.bar:before, .bar:after 	{
+    content:'';
+    height:2px;
+    width:0;
+    bottom:1px;
+    position:relative;
+    background:#5264AE;
+    transition:0.2s ease all;
+    -moz-transition:0.2s ease all;
+    -webkit-transition:0.2s ease all;
+}
+.bar:before {
+    left:50%;
+}
+.bar:after {
+    right:50%;
+}
+
+/* active state */
+.input-job:focus ~ .bar:before, .input-job:focus ~ .bar:after {
+    width:50%;
+}
+
+.highlight {
+    position:relative;
+    height:60%;
+    width:100px;
+    top:25%;
+    left:0;
+    pointer-events:none;
+    opacity:0.5;
+}
+
+.input-job:focus ~ .highlight {
+    -webkit-animation:inputHighlighter 0.3s ease;
+    -moz-animation:inputHighlighter 0.3s ease;
+    animation:inputHighlighter 0.3s ease;
+}
+
+@-webkit-keyframes inputHighlighter {
+    from { background:#5264AE; }
+    to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+    from { background:#5264AE; }
+    to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+    from { background:#5264AE; }
+    to 	{ width:0; background:transparent; }
+}
+/* END Job Create Form */

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="~{layout/baseLayout}" lang="">
+<head>
+    <th:block layout:fragment="pageCustomCss">
+        <link rel="stylesheet" href="/css/app/triggerDetail.css">
+    </th:block>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <div id='page-wrapper'>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="page-header">Trigger Detail</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form class='form-horizontal' role='form'>
+                        <div class='form-group'>
+                            <label class='control-label col-md-2' for='trigger_group'>Trigger Group</label>
+                            <div class="selectbox">
+                                <div class="select">
+                                    <span>Select Group</span>
+                                    <i class="fa fa-chevron-left"></i>
+                                </div>
+                                <input type="hidden" name="trigger_group" id="trigger_group">
+                                <ul class="selectbox-menu">
+                                    <li id="group1">group1</li>
+                                    <li id="group2">group2</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class='form-group'>
+                            <label class='control-label col-md-2' for='trigger_name'>Trigger Name</label>
+                             <div class="selectbox">
+                                 <div class="select">
+                                     <span>Select Trigger</span>
+                                     <i class="fa fa-chevron-left"></i>
+                                 </div>
+                                 <input type="hidden" name="trigger_group" id="trigger_name">
+                                 <ul class="selectbox-menu">
+                                     <li id="name1">group1</li>
+                                     <li id="name2">group2</li>
+                                 </ul>
+                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label class='control-label col-md-2' for='cron_expr'>Cron Expr</label>
+                            <div class='col-md-3 indent-small'>
+                                <div class='form-group internal'>
+                                    <input class='form-control' id='cron_expr' placeholder='0 0/10 * * * ?' type='text'>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='form-group'>
+                            <label class='control-label col-md-2' for='job_list'>Job List</label>
+                        </div>
+                        <div class="form-group">
+                            <table id="job_list" class="table table-bordered table-hover">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Param1</th>
+                                    <th>Param2</th>
+                                    <th>Param3</th>
+                                    <th>Remark</th>
+                                    <th>File</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>
+                                            <button class="btn btn-success form-control" onClick="editJob()" data-toggle="modal" data-target="#myModal")>EDIT</button>
+                                            <button class="btn btn-danger form-control" onClick="">DELETE</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class='form-group'>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="label-job">Job Name</label>
+                            </div>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="label-job">Param1</label>
+                            </div>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="label-job">Param2</label>
+                            </div>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="label-job">Param3</label>
+                            </div>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="label-job">Remark</label>
+                            </div>
+                            <div class="form-job">
+                                <input class="input-job" type="text" placeholder=" ">
+                            </div>
+                            <div class="form-job" style="width: 10%">
+                                <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade in" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: black">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Update User</h4>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="pageCustomScript">
+    <script th:src="@{/js/app/triggerDetail.js}"></script>
+</th:block>
+</body>
+
