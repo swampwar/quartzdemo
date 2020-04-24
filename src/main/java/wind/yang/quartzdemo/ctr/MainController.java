@@ -19,13 +19,13 @@ public class MainController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String main(Model model){
-        model.addAttribute("triggerGroup", triggerGroupService.findAllTriggerGroup());
+        model.addAttribute("triggerGroup", triggerGroupService.findByTriggerGroup("ALL"));
         return "index";
     }
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String index(Model model){
-        model.addAttribute("triggerGroup", triggerGroupService.findAllTriggerGroup());
+        model.addAttribute("triggerGroup", triggerGroupService.findByTriggerGroup("ALL"));
         return "index";
     }
 
@@ -36,7 +36,6 @@ public class MainController {
 
     @RequestMapping(path = "/triggerGroup", method = RequestMethod.GET)
     public String triggerGroup(Model model) {
-
         return "triggerGroup";
     }
 }
