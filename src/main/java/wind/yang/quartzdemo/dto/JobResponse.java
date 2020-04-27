@@ -26,6 +26,7 @@ public class JobResponse {
     private String nextFireTime;
     private String prevFireTime;
     private String triggerExecStaCd;
+    private String description;
 
     public static JobResponse of(Trigger trigger, String triggerStatus) {
         JobResponse jobResponse = JobResponse.builder()
@@ -37,6 +38,7 @@ public class JobResponse {
                                             .prevFireTime(dateToString(trigger.getPreviousFireTime()))
                                             .startTime(dateToString(trigger.getStartTime()))
                                             .triggerStatus(triggerStatus)
+                                            .description(trigger.getDescription())
                                             .build();
         if(trigger instanceof CronTrigger){
             jobResponse.setCronExpression(((CronTrigger)trigger).getCronExpression());

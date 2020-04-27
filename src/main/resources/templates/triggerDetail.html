@@ -13,46 +13,108 @@
     <div id='page-wrapper'>
         <div class="row">
             <div class="col-lg-12">
-                <h3 class="page-header">Trigger Detail</h3>
+                <div class="page-title page-header">Trigger Group
+                    <div th:if="${#strings.equals(type, 'select')}" class="group-button-container">
+                        <div class="group-button Add-button" th:attr="onclick=|updateTrigger('${detail.triggerGroup}', '${detail.triggerName}');|" style="cursor: pointer;" >
+                            <span>Update</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="panel panel-default">
-                <div class="panel-body">
+
+                <div class="panel-body" >
                     <form class='form-horizontal' role='form'>
                         <div class='form-group'>
                             <label class='control-label col-md-2' for='trigger_group'>Trigger Group</label>
-                            <div class="selectbox">
+                            <!-- 분기 (등록 화면)-->
+                            <div class="selectbox triggerGroup" th:if="${#strings.equals(type, 'insert')}">
                                 <div class="select">
                                     <span>Select Group</span>
                                     <i class="fa fa-chevron-left"></i>
+                                    <input type="hidden" name="trigger_group" id="trigger_group">
                                 </div>
-                                <input type="hidden" name="trigger_group" id="trigger_group">
                                 <ul class="selectbox-menu">
-                                    <li id="group1">group1</li>
-                                    <li id="group2">group2</li>
+                                    <th:block th:each="triggerGroup : ${triggerGroup}">
+                                        <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">group</div></li>
+                                    </th:block>
+                                </ul>
+                            </div>
+                            <!-- 분기 (조회 화면)-->
+                            <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'select')}">
+                                <div class="form-group internal">
+<!--                                    <span th:text="${detail.triggerGroup}">Select Group</span>-->
+                                    <input class="form-control" type="text" th:value="${detail.triggerGroup}" readonly="readonly">
+                                </div>
+                            </div>
+                            <!-- 분기 (수정 화면)-->
+                            <div class="selectbox triggerGroup" th:if="${#strings.equals(type, 'update')}">
+                                <div class="select">
+                                    <span th:text="${detail.triggerGroup}">Select Group</span>
+                                    <i class="fa fa-chevron-left"></i>
+                                    <input type="hidden" name="trigger_group" id="trigger_group" th:value="${detail.triggerGroup}">
+                                </div>
+                                <ul class="selectbox-menu">
+                                    <th:block th:each="triggerGroup : ${triggerGroup}">
+                                        <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">group</div></li>
+                                    </th:block>
                                 </ul>
                             </div>
                         </div>
-                        <div class='form-group'>
+                        <div class='form-group tn-group'>
                             <label class='control-label col-md-2' for='trigger_name'>Trigger Name</label>
-                             <div class="selectbox">
-                                 <div class="select">
-                                     <span>Select Trigger</span>
-                                     <i class="fa fa-chevron-left"></i>
+                            <!-- 분기 (등록 화면)-->
+                            <div class="selectbox triggerName" th:if="${#strings.equals(type, 'insert')}">
+                                <div class="select">
+                                    <span>Select Trigger</span>
+                                    <i class="fa fa-chevron-left"></i>
+                                    <input type="hidden" name="trigger_name" id="trigger_name">
+                                </div>
+                                <th:block th:each="triggerGroup : ${triggerGroup}">
+                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
+                                        <th:block th:each="trigger : ${triggers}">
+                                            <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                                        </th:block>
+                                    </ul>
+                                </th:block>
+                            </div>
+                            <!-- 분기 (조회 화면)-->
+                            <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'select')}">
+                                 <div class="form-group internal">
+<!--                                     <span th:text="${detail.triggerName}">Select Trigger</span>-->
+                                     <input class="form-control" type="text" th:value="${detail.triggerName}" readonly="readonly">
                                  </div>
-                                 <input type="hidden" name="trigger_group" id="trigger_name">
-                                 <ul class="selectbox-menu">
-                                     <li id="name1">group1</li>
-                                     <li id="name2">group2</li>
-                                 </ul>
-                             </div>
+                            </div>
+                            <!-- 분기 (수정 화면)-->
+                            <div class="selectbox triggerName" th:if="${#strings.equals(type, 'update')}">
+                                <div class="select">
+                                    <span th:text="${detail.triggerName}">Select Trigger</span>
+                                    <i class="fa fa-chevron-left"></i>
+                                    <input type="hidden" name="trigger_name" id="trigger_name" th:value="${detail.triggerName}">
+                                    <input type="hidden" name="flag" id="select_or_update" class="select_or_update">
+                                </div>
+                                <th:block th:each="triggerGroup : ${triggerGroup}">
+                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
+                                        <th:block th:each="trigger : ${triggers}">
+                                            <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                                        </th:block>
+                                    </ul>
+                                </th:block>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class='control-label col-md-2' for='cron_expr'>Cron Expr</label>
                             <div class='col-md-3 indent-small'>
-                                <div class='form-group internal'>
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'insert')}">
                                     <input class='form-control' id='cron_expr' placeholder='0 0/10 * * * ?' type='text'>
+                                </div>
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'select')}">
+                                    <input class='form-control' id='cron_expr' placeholder='0 0/10 * * * ?' type='text' th:value="${detail.getCronExpression()}" readonly="readonly">
+                                </div>
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'update')}">
+                                    <input class='form-control' id='cron_expr' placeholder='0 0/10 * * * ?' type='text' th:value="${detail.getCronExpression()}">
                                 </div>
                             </div>
                         </div>
@@ -61,28 +123,66 @@
                         </div>
                         <div class="form-group">
                             <table id="job_list" class="table table-bordered table-hover">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Param1</th>
-                                    <th>Param2</th>
-                                    <th>Param3</th>
-                                    <th>Remark</th>
-                                    <th>File</th>
-                                    <th>Action</th>
-                                </tr>
-                                <tbody>
+                                <thead>
+                                    <tr>
+                                        <th>Seq</th>
+                                        <th>Summary</th>
+                                        <th>Description</th>
+                                        <th>Param1</th>
+                                        <th>Param2</th>
+                                        <th>Param3</th>
+                                        <th>File</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody th:if="${#strings.equals(type, 'insert')}">
                                     <tr>
                                         <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
                                         <td>
                                             <button class="btn btn-success form-control" onClick="editJob()" data-toggle="modal" data-target="#myModal")>EDIT</button>
                                             <button class="btn btn-danger form-control" onClick="">DELETE</button>
                                         </td>
                                     </tr>
+                                </tbody>
+                                <tbody th:if="${#strings.equals(type, 'select')}">
+                                <th:block th:each="execProg : ${detail.getExecProgInfoList()}">
+                                <tr>
+                                    <td th:text="${execProg.getSeq()}">1</td>
+                                    <td th:text="${execProg.getSummary()}">-</td>
+                                    <td th:text="${execProg.getDescription()}">-</td>
+                                    <td th:text="${execProg.getExecParam1()}">-</td>
+                                    <td th:text="${execProg.getExecParam2()}">-</td>
+                                    <td th:text="${execProg.getExecParam3()}">-</td>
+                                    <td th:text="${execProg.getProgramName()}" th:attr="onclick=|popupProgram('execProg', '${execProg.programName}');|" style="cursor: pointer;">-</td>
+                                    <td>
+                                        <button class="btn btn-success form-control" onClick="editJob()" data-toggle="modal" data-target="#myModal")>EDIT</button>
+                                        <button class="btn btn-danger form-control" onClick="">DELETE</button>
+                                    </td>
+                                </tr>
+                                </th:block>
+                                </tbody>
+                                <tbody th:if="${#strings.equals(type, 'update')}">
+                                <th:block th:each="execProg : ${detail.getExecProgInfoList()}">
+                                    <tr>
+                                        <td th:text="${execProg.getSeq()}">1</td>
+                                        <td th:text="${execProg.getSummary()}">-</td>
+                                        <td th:text="${execProg.getDescription()}">-</td>
+                                        <td th:text="${execProg.getExecParam1()}">-</td>
+                                        <td th:text="${execProg.getExecParam2()}">-</td>
+                                        <td th:text="${execProg.getExecParam3()}">-</td>
+                                        <td th:text="${execProg.getProgramName()}" th:attr="onclick=|popupProgram('execProg', '${execProg.programName}');|" style="cursor: pointer;">-</td>
+                                        <td>
+                                            <button class="btn btn-success form-control" onClick="editJob()" data-toggle="modal" data-target="#myModal")>EDIT</button>
+                                            <button class="btn btn-danger form-control" onClick="">DELETE</button>
+                                        </td>
+                                    </tr>
+                                </th:block>
                                 </tbody>
                             </table>
                         </div>
@@ -126,6 +226,118 @@
                         </div>
                     </form>
                 </div>
+
+<!--                &lt;!&ndash; 기존 트리거 조회인 경우 &ndash;&gt;-->
+<!--                <div class="panel-body" th:if="${#strings.equals(type, 'select')}">-->
+<!--                    <form class='form-horizontal' role='form'>-->
+<!--                        <div class='form-group'>-->
+<!--                            <label class='control-label col-md-2' for='trigger_group'>Trigger Group</label>-->
+<!--                            <div class="selectbox">-->
+<!--                                <div class="select">-->
+<!--                                    <span th:text="${detail.triggerGroup}">Select Group</span>-->
+<!--&lt;!&ndash;                                    <i class="fa fa-chevron-left"></i>&ndash;&gt;-->
+<!--                                </div>-->
+<!--                                <input type="hidden" name="trigger_group" id="trigger_group">-->
+<!--                                <ul class="selectbox-menu">-->
+<!--                                    <li id="group1">group1</li>-->
+<!--                                    <li id="group2">group2</li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class='form-group'>-->
+<!--                            <label class='control-label col-md-2' for='trigger_name'>Trigger Name</label>-->
+<!--                            <div class="selectbox">-->
+<!--                                <div class="select">-->
+<!--                                    <span>Select Trigger</span>-->
+<!--                                    <i class="fa fa-chevron-left"></i>-->
+<!--                                </div>-->
+<!--                                <input type="hidden" name="trigger_group" id="trigger_name">-->
+<!--                                <ul class="selectbox-menu">-->
+<!--                                    <li id="name1">group1</li>-->
+<!--                                    <li id="name2">group2</li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <label class='control-label col-md-2' for='cron_expr'>Cron Expr</label>-->
+<!--                            <div class='col-md-3 indent-small'>-->
+<!--                                <div class='form-group internal'>-->
+<!--                                    <input class='form-control' id='cron_expr' placeholder='0 0/10 * * * ?' type='text'>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class='form-group'>-->
+<!--                            <label class='control-label col-md-2' for='job_list'>Job List</label>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <table id="job_list" class="table table-bordered table-hover">-->
+<!--                                <tr>-->
+<!--                                    <th>Name</th>-->
+<!--                                    <th>Param1</th>-->
+<!--                                    <th>Param2</th>-->
+<!--                                    <th>Param3</th>-->
+<!--                                    <th>Remark</th>-->
+<!--                                    <th>File</th>-->
+<!--                                    <th>Action</th>-->
+<!--                                </tr>-->
+<!--                                <tbody>-->
+<!--                                <tr>-->
+<!--                                    <td>1</td>-->
+<!--                                    <td>-</td>-->
+<!--                                    <td>-</td>-->
+<!--                                    <td>-</td>-->
+<!--                                    <td>-</td>-->
+<!--                                    <td>-</td>-->
+<!--                                    <td>-->
+<!--                                        <button class="btn btn-success form-control" onClick="editJob()" data-toggle="modal" data-target="#myModal")>EDIT</button>-->
+<!--                                        <button class="btn btn-danger form-control" onClick="">DELETE</button>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                        <div class='form-group'>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                                <span class="highlight"></span>-->
+<!--                                <span class="bar"></span>-->
+<!--                                <label class="label-job">Job Name</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                                <span class="highlight"></span>-->
+<!--                                <span class="bar"></span>-->
+<!--                                <label class="label-job">Param1</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                                <span class="highlight"></span>-->
+<!--                                <span class="bar"></span>-->
+<!--                                <label class="label-job">Param2</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                                <span class="highlight"></span>-->
+<!--                                <span class="bar"></span>-->
+<!--                                <label class="label-job">Param3</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                                <span class="highlight"></span>-->
+<!--                                <span class="bar"></span>-->
+<!--                                <label class="label-job">Remark</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-job">-->
+<!--                                <input class="input-job" type="text" placeholder=" ">-->
+<!--                            </div>-->
+<!--                            <div class="form-job" style="width: 10%">-->
+<!--                                <button class="btn btn-primary form-control" type="submit">SUBMIT</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; 기존 트리거 수정인 경우 &ndash;&gt;-->
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import wind.yang.quartzdemo.service.DashboardService;
 import wind.yang.quartzdemo.service.TriggerGroupService;
 
 
@@ -16,6 +17,8 @@ import wind.yang.quartzdemo.service.TriggerGroupService;
 public class MainController {
     @Autowired
     private TriggerGroupService triggerGroupService;
+    @Autowired
+    private DashboardService dashboardService;
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String main(Model model){
@@ -41,7 +44,9 @@ public class MainController {
 
     @RequestMapping(path = "/triggerDetail", method = RequestMethod.GET)
     public String triggerDetail(Model model) {
-
+        model.addAttribute("triggerGroup", triggerGroupService.findByTriggerGroup("ALL"));
+        model.addAttribute("triggers", dashboardService.readTriggers("ALL"));
+        model.addAttribute("type", "insert");
         return "triggerDetail";
     }
 }

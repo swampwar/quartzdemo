@@ -90,7 +90,7 @@ const popupProgram = (target, progName) => {
         shellScriptNm : progName
     });
 
-    let popUrl = 'dashboard/popup/' + target +'/' +progName;
+    let popUrl = '/dashboard/popup/' + target +'/' +progName;
     let popupWidth = 650; let popupHeight = 800;
     let popupX = (window.screen.width/2) - (popupWidth/2) ;
     let popupY = (window.screen.height/2) - (popupHeight/2) ;
@@ -216,5 +216,9 @@ const rerunTrigger = (triggerGroup, triggerName) => {
 const modifyTrigger = (triggerGroup, triggerName) => {
     const target = $('.'+triggerGroup+'-'+triggerName);
     // console.log(target.parent('div'));
+};
+
+const goToDetail = (triggerGroup, triggerName) => {
+    location.href = 'triggerDetail/' + triggerGroup + '/' + triggerName;
 };
 

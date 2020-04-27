@@ -122,7 +122,7 @@ public class QuartzService {
     }
 
     /**
-     * Trigger 조회
+     * Trigger 리스트 조회
      */
     private List<JobResponse> readTriggers(String triggerGroup){
         List<JobResponse> jobResponseList = new ArrayList<>();
@@ -141,6 +141,32 @@ public class QuartzService {
         }
 
         return jobResponseList;
+    }
+
+    /**
+     * Trigger 단건 조회
+     */
+
+    public JobResponse readTrigger(String triggerGroup, String triggerName) {
+        JobResponse jobResponse;
+        try {
+            List<String> triggerGroupNames = readTriggerGroupNames(triggerGroup);
+            for (String group : triggerGroupNames) {
+                Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.groupEquals(group));
+                for(TriggerKey triggerKey : triggerKeys) {
+                    if (triggerKey.getName().equals(triggerName)) {
+                        jobResponse = JobResponse.of(scheduler.getTrigger(triggerKey),
+                                                     scheduler.getTriggerState(triggerKey).name().toUpperCase());
+
+                        return jobResponse;
+                    }
+                }
+            }
+        }catch (SchedulerException e) {
+            log.error("Job 전체조회 중 에러[{}]가 발생했습니다.", e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

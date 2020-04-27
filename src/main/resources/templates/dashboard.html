@@ -12,13 +12,13 @@
         <th:block th:each="trigger : ${triggers}">
         <div class="col-md-6" > <!--th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}"> -->
             <div class="panel" th:attrappend="class=${' panel-' +trigger.triggerExecStaCd}">
-                <div class="panel-heading" th:attrappend="class=${' '+trigger.triggerGroup+'-'+trigger.triggerName}, triggerGroup=${trigger.triggerGroup}, triggerName=${trigger.triggerName}">
+                <div class="panel-heading" th:attrappend="class=${' '+trigger.triggerGroup+'-'+trigger.triggerName}, triggerGroup=${trigger.triggerGroup}, triggerName=${trigger.triggerName}" th:attr="onclick=|goToDetail('${trigger.triggerGroup}', '${trigger.triggerName}');|">
                     <div class="row">
                         <div class="col-xs-3">
                             <i class="fa fa-comments fa-4x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge"><span th:text="${trigger.triggerName}"> triggerStatus </span></div>
+                            <div class="huge"><span th:text="${trigger.triggerName}"> triggerName </span></div>
                             <div><span th:text="${trigger.triggerGroup}"> triggerGroup </span></div>
                         </div>
                     </div>

@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TriggerJobInfo {
     private String triggerGroup;
     private String triggerName;
