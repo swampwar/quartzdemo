@@ -63,4 +63,22 @@ public class TriggerDetailController {
     public List<ExecProg> getExecProgList(@RequestBody JobRequest jobRequest) {
         return execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
     }
+
+    @PostMapping("/insert")
+    public String insertTriggerDetail(@ModelAttribute TriggerJobInfo triggerJobInfo) {
+        log.debug(triggerJobInfo.toString());
+        log.debug(triggerJobInfo.getExecProgFileList().toString());
+        log.debug(triggerJobInfo.getExecProgInfoList().toString());
+
+        triggerDetailService.insertTriggerDetail(triggerJobInfo);
+
+        String triggerName = "";
+        if("".equals(triggerJobInfo.getTriggerName1())) {
+            triggerName = triggerJobInfo.getTriggerName2();
+        }else {
+            triggerName = triggerJobInfo.getTriggerName1();
+        }
+
+        return "redirect:/triggerDetail/" + triggerJobInfo.getTriggerGroup() + "/" + triggerName;
+    }
 }

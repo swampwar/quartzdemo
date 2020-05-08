@@ -28,4 +28,7 @@ public class ExecProgService {
     }
 
     public List<ExecProg> findByTriggerGroup(String triggerGroup) { return epMapper.findByTriggerGroup(triggerGroup);}
+
+    public void insertExecProg(ExecProg execProg) {epMapper.insertExecProg(execProg);}
+    public void deleteExecProg(TriggerKey key) {epMapper.deleteExecProg(key);}
 }

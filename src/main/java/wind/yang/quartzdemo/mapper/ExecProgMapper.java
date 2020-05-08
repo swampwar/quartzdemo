@@ -16,4 +16,5 @@ public interface ExecProgMapper {
     List<ExecProg> findByTriggerGroup(String triggerGroup);
 
     // TODO update, delete 추가
+    void deleteExecProg(@Param("key") TriggerKey key);
 }

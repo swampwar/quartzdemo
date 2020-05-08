@@ -25,21 +25,7 @@ $('.selectbox .selectbox-menu li').click(function () {
         $('.tn-group').find('span').text('Select Trigger');
         $('#trigger_name').val('');
         $('.table tbody').empty();
-        $('.table tbody').append("" +
-            "<tr>\n" +
-            "<td>1</td>\n" +
-            "<td>-</td>\n" +
-            "<td>-</td>\n" +
-            "<td>-</td>\n" +
-            "<td>-</td>\n" +
-            "<td>-</td>\n" +
-            "<td>-</td>\n" +
-            "<td>\n" +
-            "<button class=\"btn btn-success form-control\" onClick=\"editJob()\" data-toggle=\"modal\" data-target=\"#myModal\")>EDIT</button>\n" +
-            "<button class=\"btn btn-danger form-control\" onClick=\"\">DELETE</button>\n" +
-            "</td>\n" +
-            "</tr>");
-
+        getEmptyJobList();
     }
 });
 /*End selectbox Menu*/
@@ -64,19 +50,25 @@ $('.selectbox-menu li').click(function () {
         msg = '<span class="msg">Hidden input value: ';
 });
 
-/************************ insert or update trigger END *************************/
+const getEmptyJobList = () => {
+    const i = $('.table tbody').children('tr').length;
+    // console.log($('.table tbody').children('tr').length);
 
-
-/************************ search trigger deatil START *************************/
-
-const updateTrigger = (triggerGroup, triggerName) => {
-    location.href = '/triggerDetail/update/' + triggerGroup + "/" + triggerName;
+    $('.table tbody').append("" +
+        "<tr>\n" +
+        "<td width='6%'><input class='input-job job-seq' type='text' name='execProgInfoList["+i+"].seq' placeholder=' ' value='"+(i+1)+"' onchange='changeSeq(this);'></td>" +
+        "<td width='15%'><input class='input-job job-sum' type='text' name='execProgInfoList["+i+"].summary' placeholder=' ' ></td>" +
+        "<td width='15%'><input class='input-job job-des' type='text' name='execProgInfoList["+i+"].description' placeholder=' ' ></td>" +
+        "<td width='18%'><input class='input-job job-file' type='file' name='execProgFileList["+i+"]' placeholder=' ' onchange=\"getFileName(this);\">" +
+        "                <input type=\"text\" class=\"input-job job-progNm\" name=\"execProgInfoList["+i+"].programName\" placeholder=\"선택된 파일이 없습니다.\" readonly=\"readonly\"></td>" +
+        "<td width='13%'><input class='input-job job-par1' type='text' name='execProgInfoList["+i+"].execParam1' placeholder=' ' ></td>" +
+        "<td width='13%'><input class='input-job job-par2' type='text' name='execProgInfoList["+i+"].execParam2' placeholder=' ' ></td>" +
+        "<td width='13%'><input class='input-job job-par3' type='text' name='execProgInfoList["+i+"].execParam3' placeholder=' ' ></td>" +
+        "<td>\n" +
+        "    <button class=\"btn btn-danger form-control\" onclick=\"deleteJob(this);\">DELETE</button>\n" +
+        "</td>" +
+        "</tr>");
 };
-
-/************************ search trigger deatil END *************************/
-
-
-
 
 const getJobList = (triggerGroup, triggerName) => {
     const jsonData = JSON.stringify(
@@ -95,20 +87,111 @@ const getJobList = (triggerGroup, triggerName) => {
         $.each(datas, function (i, execProg) {
             $('.table tbody').append("" +
                 "<tr>\n" +
-                "<td>" + execProg.seq + "</td>\n" +
-                "<td>" + execProg.summary + "</td>\n" +
-                "<td>" + execProg.description + "</td>\n" +
-                "<td>" + execProg.execParam1 +  "</td>\n" +
-                "<td>" + execProg.execParam2 +  "</td>\n" +
-                "<td>" + execProg.execParam3 +  "</td>\n" +
-                "<td onclick='popupProgram(\"execProg\",\""+ execProg.programName +"\");' style=\"cursor:pointer;\" data-tooltip-text=\"소스 보기\">" + execProg.programName + "</td>\n" +
+                "<td width='6%'><input class='input-job job-seq' type='text' name='execProgInfoList["+i+"].seq' placeholder=' ' value='" + execProg.seq + "' onchange='changeSeq(this);'></td>" +
+                "<td width='15%'><input class='input-job job-sum' type='text' name='execProgInfoList["+i+"].summary' placeholder=' ' value='" + execProg.summary + "'></td>" +
+                "<td width='15%'><input class='input-job job-des' type='text' name='execProgInfoList["+i+"].description' placeholder=' ' value='" + execProg.description + "'></td>" +
+                "<td width='18%'><input class='input-job job-file' type='file' name='execProgFileList["+i+"]' placeholder='" + execProg.description + "' onchange='getFileName(this);'>" +
+                "                <input type='text' class='input-job job-progNm' name='execProgInfoList["+i+"].programName' placeholder='선택된 파일이 없습니다.' readonly='readonly' value='" + execProg.programName + "'></td>" +
+                "<td width='13%'><input class='input-job job-par1' type='text' name='execProgInfoList["+i+"].execParam1' placeholder=' ' value='" + execProg.execParam1 + "'></td>" +
+                "<td width='13%'><input class='input-job job-par2' type='text' name='execProgInfoList["+i+"].execParam2' placeholder=' ' value='" + execProg.execParam2 + "'></td>" +
+                "<td width='13%'><input class='input-job job-par3' type='text' name='execProgInfoList["+i+"].execParam3' placeholder=' ' value='" + execProg.execParam3 + "'></td>" +
                 "<td>\n" +
-                "<button class=\"btn btn-success form-control\" onClick=\"editJob()\" data-toggle=\"modal\" data-target=\"#myModal\")>EDIT</button>\n" +
-                "<button class=\"btn btn-danger form-control\" onClick=\"\">DELETE</button>\n" +
+                "<button class=\"btn btn-danger form-control\" onclick=\"deleteJob(this);\">DELETE</button>\n" +
                 "</td>\n" +
                 "</tr>");
         });
     });
+};
+
+const newTrigger = (obj) => {
+    if($(obj).is(":checked") === true) {
+        $('.indent-small.triggerName.display-none').removeClass('display-none');
+        $('.selectbox.triggerName').addClass('display-none');
+        // console.log($('.selectbox.triggerName').children('div').children('input'));
+        $('.selectbox.triggerName').children('div').children('input').val("");
+        $('.table tbody').empty();
+        getEmptyJobList();
+    }else {
+        $('.indent-small.triggerName').addClass('display-none');
+        // console.log($('.indent-small.triggerName').children('input').children('input'));
+        $('.indent-small.triggerName').children('div').children('input').val("");
+        $('.selectbox.triggerName.display-none').removeClass('display-none');
+
+        const triggerGroup = $('#trigger_group').val();
+        const triggerName = $('#trigger_name').val();
+        getJobList(triggerGroup, triggerName);
+    }
+};
+
+const newJob = () => {
+    getEmptyJobList();
+};
+
+const deleteJob = (obj) => {
+    // console.log(obj);
+    const row = $(obj).parents('tr');
+    const tbody = $(row).parent('tbody');
+    // console.log(row);
+    $(row).remove();
+
+    // 아직 tbody의 row가 남아있으면 seq 순서 변경
+    if ($(tbody).children('tr').length !== 0) {
+        $.each((tbody).children('tr'), function (i, tr) {
+            // console.log(tr);
+            $.each($(tr).children('td'), function (j, td) {
+                // console.log(td);
+                if(j === 0 ) {
+                    $(td).children('input').val(i+1);
+                }
+                if(j !== 7) {
+                    let name = $(td).children('input').attr('name');
+                    name = name.substr(0, name.indexOf('[') + 1) + i + name.substr(name.indexOf(']'));
+                    // console.log(name);
+                    $(td).children('input').attr('name', name);
+                }
+            })
+        });
+    }
+};
+
+const changeSeq = (obj) => {
+
+    const changedSeq = $(obj).val();
+    $.each($(obj).parents('tr').children('td'), function (i, td) {
+        // console.log(td);
+        if(i !== 7) {
+            let name = $(td).children('input').attr('name');
+            name = name.substr(0, name.indexOf('[') + 1) + (changedSeq - 1) + name.substr(name.indexOf(']'));
+            // console.log(name);
+            $(td).children('input').attr('name', name);
+        }
+    });
+
+};
+
+/************************ insert or update trigger END *************************/
+
+
+/************************ search trigger detail START *************************/
+
+const updateTrigger = (triggerGroup, triggerName) => {
+    location.href = '/triggerDetail/update/' + triggerGroup + "/" + triggerName;
+};
+
+const canselUpdate = (triggerGroup, triggerName) => {
+    location.href = '/triggerDetail/' + triggerGroup + "/" + triggerName;
+};
+
+/************************ search trigger detail END *************************/
+
+const getFileName = (obj) => {
+    // console.log(obj);
+    const fileValue = $(obj).val().split("\\");
+    const fileName = fileValue[fileValue.length-1];
+    // console.log(fileName);
+
+    $(obj).parent('td').children('input:last').val(fileName);
+    // $('#file_nm').val(fileName);
 };
 
 /* POPUP*/
@@ -170,6 +253,6 @@ function editJob() {
      */
 }
 
-$("form").submit(function(e) {
-    e.preventDefault();
-});
+// $("form").submit(function(e) {
+//     e.preventDefault();
+// });

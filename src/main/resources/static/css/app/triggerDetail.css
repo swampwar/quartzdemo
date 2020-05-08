@@ -79,32 +79,29 @@ span.choose {
     background-color: #e2e2e2
 }
 
+.isNew-box{
+    margin-left: 40px;
+}
+
+.display-none {
+    display: none;
+}
+
 /* Start Job List Table Form */
+.table {
+    width: 100%;
+}
+
 th{
     text-align: center;
     padding: 4px !important;
-    width: 14%
 }
 
 td {
     padding: 4px !important;
     font-size: 14px;
     vertical-align: middle !important;
-    width: 14%;
-}
-
-.btn {
-    font-weight: bolder;
-    letter-spacing: .1em;
-    width: 48%;
-    padding: 2.4%;
-    font-size: 12px;
-}
-
-.btn-primary {
-    width: 80%;
-    vertical-align: middle;
-    horiz-align: center;
+    height: 44px;
 }
 
 /* Start Modal */
@@ -235,6 +232,19 @@ td {
     line-height: 1.1;
 }
 
+.btn {
+    font-weight: bolder;
+    letter-spacing: .1em;
+    font-size: 12px;
+    /*width: 96%;*/
+}
+
+.btn-primary {
+    /*width: 80%;*/
+    vertical-align: middle;
+    horiz-align: center;
+}
+
 .group-button-container {
     display: inline-block;
 }
@@ -251,3 +261,15 @@ td {
 }
 /************* update button End ******************/
 
+.job-file {
+    width: 62px;
+    float: left;
+    display: inline-block;
+    padding: 7px 7px 7px 1px;
+}
+
+.job-progNm {
+    float: left;
+    margin-left: 0px;
+    width: 160px;
+}

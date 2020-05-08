@@ -4,7 +4,7 @@
 <!-- namespace : Mapper I/F와 동일하도록 설정 -->
 <mapper namespace="wind.yang.quartzdemo.mapper.ExecProgMapper">
     <select id="findByTrigger" resultType="wind.yang.quartzdemo.dto.ExecProg">
-        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY
+        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY, description
         from TB_EXEC_PROG
         where TRIGGER_GROUP = #{group}
         and TRIGGER_NAME = #{name}
@@ -12,7 +12,7 @@
     </select>
 
     <select id="findOneByTrigger" resultType="wind.yang.quartzdemo.dto.ExecProg">
-        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY
+        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY, description
         from TB_EXEC_PROG
         where TRIGGER_GROUP = #{key.group}
           and TRIGGER_NAME = #{key.name}
@@ -20,7 +20,7 @@
     </select>
 
     <select id="findByTriggerGroup" resultType="wind.yang.quartzdemo.dto.ExecProg">
-        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY
+        select TRIGGER_GROUP, TRIGGER_NAME, SEQ, PROGRAM_NAME, EXEC_PARAM1, EXEC_PARAM2, EXEC_PARAM3, SUMMARY, description
         from TB_EXEC_PROG
         where TRIGGER_GROUP = #{triggerGroup}
           and SEQ = 1
@@ -29,7 +29,13 @@
 
     <insert id="insertExecProg">
         insert into TB_EXEC_PROG
-            (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)
-        values (#{triggerGroup}, #{triggerName}, #{seq}, #{programName}, #{execParam1}, #{execParam2}, #{execParam3})
+            (trigger_group, trigger_name, seq, program_name, summary, description, exec_param1, exec_param2, exec_param3)
+        values (#{triggerGroup}, #{triggerName}, #{seq}, #{programName}, #{summary}, #{description}, #{execParam1}, #{execParam2}, #{execParam3})
     </insert>
+
+    <delete id="deleteExecProg">
+        delete from TB_EXEC_PROG
+        where TRIGGER_GROUP = #{key.group}
+          and TRIGGER_NAME = #{key.name}
+    </delete>
 </mapper>

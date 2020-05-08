@@ -12,7 +12,8 @@ import java.util.List;
 @Builder
 public class TriggerJobInfo {
     private String triggerGroup;
-    private String triggerName;
+    private String triggerName1;
+    private String triggerName2;
     private String triggerDescription;
     private String cronExpression;
     private List<ExecProg> execProgInfoList;
@@ -22,7 +23,8 @@ public class TriggerJobInfo {
     public String toString() {
         return "TriggerJobInfo{" +
                 "triggerGroup='" + triggerGroup + '\'' +
-                ", triggerName='" + triggerName + '\'' +
+                ", triggerName1='" + triggerName1 + '\'' +
+                ", triggerName2='" + triggerName2 + '\'' +
                 ", triggerDescription='" + triggerDescription + '\'' +
                 ", cronExpression='" + cronExpression + '\'' +
                 '}';
