@@ -73,6 +73,9 @@ Content-Type: application/json
 
 {
   "triggerName" : "MGT_TRIGGER1",
-  "triggerGroup" : "MGT"
+  "triggerGroup" : "MGT",
+  "execSeq" : "1,3"
 }
+
+###
 

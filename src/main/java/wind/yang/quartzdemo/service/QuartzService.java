@@ -16,10 +16,7 @@ import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static wind.yang.quartzdemo.util.QuartzStringUtils.dateToString;
@@ -93,11 +90,15 @@ public class QuartzService {
      * @param origTriggerKey : 강제실행 대상이 되는 트리거의 키
      * @return
      */
-    public String createForceJob(TriggerKey origTriggerKey){
+    public String createForceJob(TriggerKey origTriggerKey, String execSeq){
         if(!"START".equals(getTriggerExecutionStatusCd(origTriggerKey))) {
             TriggerKey fTriggerKey = new TriggerKey(origTriggerKey.getName() + ".F."
                     + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
                     , origTriggerKey.getGroup());
+
+            // 강제실행시 실행할 Job의 시퀀스를 지정한다.
+            HashMap<String, String> jobData = new HashMap<>();
+            jobData.put("execSeq", execSeq);
 
             SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
             factoryBean.setName(fTriggerKey.getName());
@@ -106,6 +107,7 @@ public class QuartzService {
             factoryBean.setRepeatCount(0);
             factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT);
             factoryBean.setJobDetail(defaultJob);
+            factoryBean.setJobDataAsMap(jobData);
             factoryBean.afterPropertiesSet();
             try {
                 scheduler.scheduleJob(factoryBean.getObject());

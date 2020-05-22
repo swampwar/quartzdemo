@@ -5,6 +5,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
@@ -13,6 +14,7 @@ import wind.yang.quartzdemo.service.QuartzService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -45,12 +47,19 @@ public abstract class BaseJob implements Job, InterruptableJob {
         this.triggerKey = context.getTrigger().getKey();
         this.execProgList = (List<ExecProg>) context.getJobDetail().getJobDataMap().get("execProg");
         this.masterExecHistory = (ExecHistory) context.getJobDetail().getJobDataMap().get("execHistory");
+        String execSeqStr = (String) context.getTrigger().getJobDataMap().get("execSeq");
 
         for(ExecProg execProg : execProgList) {
             // 상세이력 '시작' 업데이트
             ExecHistory detail = beforeExecuteJob(execProg);
-
             log.info("Trigger[{}]에 의해 Job(seq={})을 실행시작", triggerKey, execProg.getSeq());
+
+            // 실행시퀀스(execSeq)가 세팅되어 있으면 해당 시퀀스만 실행한다.
+            if(!validExecSeq(execProg.getSeq(), execSeqStr)){
+                // 실행시퀀스가 세팅되었으나 해당되는 시퀀스가 아닌경우 '생략' 업데이트
+                afterExecuteJob(detail, JobExecutionStatusCode.SKIP, JobExecutionStatusCode.SKIP.getMsg());
+                continue;
+            }
 
             try {
                 executeInternal(execProg);
@@ -64,6 +73,17 @@ public abstract class BaseJob implements Job, InterruptableJob {
 
             // 상세이력 '성공' 업데이트
             afterExecuteJob(detail, JobExecutionStatusCode.SUCCESS, JobExecutionStatusCode.SUCCESS.getMsg());
+        }
+    }
+
+    private boolean validExecSeq(int seq, String execSeqStr){
+        log.debug("시퀀스를 검사합니다. execSeqStr = [{}], seq = {}", execSeqStr, seq);
+        if(StringUtils.isEmpty(execSeqStr)){
+            return true;
+        }else{
+            String[] execSeqArr = execSeqStr.split(",");
+            return Arrays.stream(execSeqArr)
+                         .anyMatch(seqStr -> Integer.parseInt(seqStr) == seq);
         }
     }
 
