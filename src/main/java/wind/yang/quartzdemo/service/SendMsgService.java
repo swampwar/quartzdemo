@@ -60,8 +60,10 @@ public class SendMsgService {
         try {
             if(message.getTriggerGroup().equals("MGT"))
                 sendUrl = sendUrlMgt;
-            else if(message.getTriggerGroup().equals("SETTM"))
+            else if(message.getTriggerGroup().equals("STL"))
                 sendUrl = sendUrlSettm;
+            else if(message.getTriggerGroup().equals("BUS"))
+                sendUrl = sendUrlMgt;
 
             System.out.println("sendUrl : " + sendUrl);
             restTemplate.postForEntity(sendUrl, message.getMessageEntity(), String.class);
