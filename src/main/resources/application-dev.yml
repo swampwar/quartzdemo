@@ -20,3 +20,7 @@ quartzdemo:
     cmd: sh
     timeout: 600000 # 600초
 
+slack:
+  url:
+    mgt: https://hooks.slack.com/services/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
+    settm : https://hooks.slack.com/services/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
