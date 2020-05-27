@@ -5,7 +5,9 @@
 <head>
     <th:block layout:fragment="pageCustomCss">
         <link rel="stylesheet" href="/css/dataTables/dataTables.bootstrap-1.10.20.css">
+        <link rel="stylesheet" href="/css/bootstrap-datepicker/bootstrap-datepicker.css">
         <link rel="stylesheet" href="/css/dataTables/rowGroup.dataTables.min-1.1.1.css">
+        <link rel="stylesheet" href="/css/app/history.css">
     </th:block>
 </head>
 <body>
@@ -14,6 +16,61 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
+                <div class="page-title page-header">Execution History</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- select boxes -->
+                <div class="select-boxes-con">
+                    <div class="col-md-2">
+                        <label class='control-label' for='startDate'>시작 날짜</label>
+                        <input type="text" id="startDate" class="form-control" value="">
+                    </div>
+                    <div class="col-md-2">
+                        <label class='control-label' for='endDate'>종료 날짜</label>
+                        <input type="text" id="endDate" class="form-control" value="">
+                    </div>
+                    <div class="col-md-2">
+                        <label class='control-label' for='trigger_group'>트리거 그룹</label>
+                        <div class="selectbox triggerGroup">
+                            <div class="select">
+                                <span>ALL</span>
+                                <i class="fa fa-chevron-left"></i>
+                                <input type="hidden" name="triggerGroup" id="trigger_group">
+                            </div>
+                            <ul class="selectbox-menu">
+                                <th:block th:each="triggerGroup : ${triggerGroup}">
+                                    <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">group</div></li>
+                                </th:block>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class='control-label' for='trigger_name'>트리거</label>
+                        <!-- 분기 (등록 화면)-->
+                        <div class="selectbox triggerName">
+                            <div class="select">
+                                <span>ALL</span>
+                                <i class="fa fa-chevron-left"></i>
+                                <input type="hidden" name="triggerName1" id="trigger_name">
+                            </div>
+                            <th:block th:each="triggerGroup : ${triggerGroup}">
+                                <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
+                                    <th:block th:each="trigger : ${triggers}">
+                                        <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                                    </th:block>
+                                </ul>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" type="button" onclick="searchHistory();">SEARCH</button>
+                    </div>
+                </div>
+
+
                 <!-- DataTales -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -28,7 +85,7 @@
                                     <th>프로그램설명</th>
                                     <th>시작시간</th>
                                     <th>종료시간</th>
-                                    <th>잡실행상태코드</th>
+                                    <th>잡실행상태</th>
                                     <th>잡실행결과</th>
 <!--                                    <th>파라미터1</th>-->
 <!--                                    <th>파라미터2</th>-->
@@ -45,7 +102,7 @@
                                     <th>프로그램설명</th>
                                     <th>시작시간</th>
                                     <th>종료시간</th>
-                                    <th>잡실행상태코드</th>
+                                    <th>잡실행상태</th>
                                     <th>잡실행결과</th>
 <!--                                    <th>파라미터1</th>-->
 <!--                                    <th>파라미터2</th>-->
@@ -68,60 +125,64 @@
     <script src="/js/dataTables/jquery.dataTables.min-1.10.20.js"></script>
     <script src="/js/dataTables/dataTables.bootstrap.min-1.10.20.js"></script>
     <script src="/js/dataTables/dataTables.rowGroup.min-1.1.1.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            let time;
-            $('#dataTable').DataTable({
-                "ajax": '/history/all',
-                "columns": [
-                    { "data": "triggerName" },
-                    // { "data": "triggerSttDtm" },
-                    { "data": "execProgSeq" },
-                    { "data": "execProgName" },
-                    { "data": "summary" },
-                    { "data": "jobSttDtm" },
-                    { "data": "jobEndDtm" },
-                    { "data": "jobExecStaCd" },
-                    { "data": "jobExecRslt" }
-                    // { "data": "execParam1" },
-                    // { "data": "execParam2" },
-                    // { "data": "execParam3" },
-                    // { "data": "execCmd" },
-                ],
-                rowGroup: {
-                    startRender: null,
-                    endRender: function ( rows, group ) {
-                        let triggerName = rows.data()[0].triggerName;
-                        // let jobSttDtm = convertStrToDate(rows.data()[rows.length-1].jobSttDtm);
-                        // let jobEndDtm = convertStrToDate(rows.data()[rows.length-1].jobEndDtm);
+    <script src="/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="/js/bootstrap-datepicker/locale/bootstrap-datepicker.ko.js"></script>
+    <script src="/js/app/execHistory.js"></script>
+<!--    <script type="text/javascript">-->
+<!--        $(document).ready(function () {-->
+<!--            let time;-->
+<!--            $('#dataTable').DataTable({-->
+<!--                "order": [],-->
+<!--                "ajax": '/history/all',-->
+<!--                "columns": [-->
+<!--                    { "data": "triggerName" },-->
+<!--                    // { "data": "triggerSttDtm" },-->
+<!--                    { "data": "execProgSeq" },-->
+<!--                    { "data": "execProgName" },-->
+<!--                    { "data": "summary" },-->
+<!--                    { "data": "jobSttDtm" },-->
+<!--                    { "data": "jobEndDtm" },-->
+<!--                    { "data": "jobExecStaCd" },-->
+<!--                    { "data": "jobExecRslt" }-->
+<!--                    // { "data": "execParam1" },-->
+<!--                    // { "data": "execParam2" },-->
+<!--                    // { "data": "execParam3" },-->
+<!--                    // { "data": "execCmd" },-->
+<!--                ],-->
+<!--                rowGroup: {-->
+<!--                    startRender: null,-->
+<!--                    endRender: function ( rows, group ) {-->
+<!--                        let triggerName = rows.data()[0].triggerName;-->
+<!--                        // let jobSttDtm = convertStrToDate(rows.data()[rows.length-1].jobSttDtm);-->
+<!--                        // let jobEndDtm = convertStrToDate(rows.data()[rows.length-1].jobEndDtm);-->
 
-                        let execTime = 0;
-                        rows.data().each(function(data){
-                            if(data.jobSttDtm == null || data.jobEndDtm == null){
-                                console.log('시작시간 또는 종료시간이 null');
-                                return true;
-                            }
+<!--                        let execTime = 0;-->
+<!--                        rows.data().each(function(data){-->
+<!--                            if(data.jobSttDtm == null || data.jobEndDtm == null){-->
+<!--                                console.log('시작시간 또는 종료시간이 null');-->
+<!--                                return true;-->
+<!--                            }-->
 
-                            execTime += (convertStrToDate(data.jobEndDtm) - convertStrToDate(data.jobSttDtm))/1000;
-                        });
+<!--                            execTime += (convertStrToDate(data.jobEndDtm) - convertStrToDate(data.jobSttDtm))/1000;-->
+<!--                        });-->
 
-                        return triggerName + ' 실행이력 : 트리거 시작(' + formatTime(group) + '), 프로그램('+rows.count()+' 건), 실행시간(' + execTime + ' 초)';
-                    },
-                    dataSrc: 'triggerSttDtm'
-                }
-            });
-        });
+<!--                        return '  '+triggerName + ' 실행이력 : 트리거 시작 (' + formatTime(group) + '), 프로그램 ('+rows.count()+' 건), 실행시간 (' + execTime + ' 초)';-->
+<!--                    },-->
+<!--                    dataSrc: 'triggerSttDtm'-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
 
-        function convertStrToDate(str){
-            return new Date(str.slice(0, 4), str.slice(4, 6) - 1, str.slice(6, 8),
-                str.slice(8, 10), str.slice(10, 12), str.slice(12, 14));
-        }
+<!--        function convertStrToDate(str){-->
+<!--            return new Date(str.slice(0, 4), str.slice(4, 6) - 1, str.slice(6, 8),-->
+<!--                str.slice(8, 10), str.slice(10, 12), str.slice(12, 14));-->
+<!--        }-->
 
-        function formatTime(str){
-            return str.slice(0, 4) + '/' + str.slice(4, 6) + '/' + str.slice(6, 8) + ' '
-                    + str.slice(8, 10) + ':' + str.slice(10, 12) + ':' + str.slice(12, 14);
-        }
-    </script>
+<!--        function formatTime(str){-->
+<!--            return str.slice(0, 4) + '/' + str.slice(4, 6) + '/' + str.slice(6, 8) + ' '-->
+<!--                    + str.slice(8, 10) + ':' + str.slice(10, 12) + ':' + str.slice(12, 14);-->
+<!--        }-->
+<!--    </script>-->
 
 </th:block>
 </body>

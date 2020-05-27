@@ -88,7 +88,14 @@
         FROM tb_exec_history
         WHERE 1=1
         AND exec_prog_seq != 0
-        ORDER BY trigger_group ASC, trigger_name ASC, job_stt_dtm ASC
+        and trigger_stt_dtm between #{startDate} and #{endDate}
+        <if test="triggerGroup != 'ALL'">
+            AND TRIGGER_GROUP = #{triggerGroup}
+        </if>
+        <if test="triggerName != 'ALL'">
+            AND trigger_name = #{triggerName}
+        </if>
+        ORDER BY trigger_stt_dtm desc, trigger_group asc, trigger_name asc, exec_prog_seq asc
     </select>
 
     <select id="findLastExecHistory" resultType="wind.yang.quartzdemo.dto.ExecHistory">

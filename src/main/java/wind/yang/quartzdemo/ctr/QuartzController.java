@@ -134,7 +134,7 @@ public class QuartzController {
         log.info("runNowJob 파라미터 : {}", jobRequest);
         String msg = "";
         // Job(Trigger) 생성
-        msg = quartzService.createForceJob(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+        msg = quartzService.createForceJob(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), jobRequest.getExecSeq());
         return new ApiResponse(true, msg);
     }
 }

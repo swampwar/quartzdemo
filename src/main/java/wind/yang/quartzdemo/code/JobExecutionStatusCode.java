@@ -5,7 +5,8 @@ public enum JobExecutionStatusCode {
     DUPLICATE("중복실행", "트리거 중복실행으로 실행되지 않음"),
     START("시작", "실행 시작"),
     SUCCESS("완료", "실행 완료 :)"),
-    ERROR("에러", "실행중 에러발생");
+    ERROR("에러", "실행중 에러발생"),
+    SKIP("생략", "실행 생략");
 
     private final String name;
     private final String msg;

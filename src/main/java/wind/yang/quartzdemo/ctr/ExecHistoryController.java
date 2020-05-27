@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.service.ExecHistoryService;
@@ -27,11 +28,14 @@ public class ExecHistoryController {
         return rslt;
     }
 
-    @RequestMapping("/all")
+    @RequestMapping("/search")
     @ResponseBody
-    public Map<String,List<ExecHistory>> historyAll(){
+    public Map<String,List<ExecHistory>> getHistory(@RequestParam("startDate") String startDate,
+                                                    @RequestParam("endDate") String endDate,
+                                                    @RequestParam("triggerGroup") String triggerGroup,
+                                                    @RequestParam("triggerName") String triggerName){
         HashMap<String, List<ExecHistory>> rslt = new HashMap<>();
-        rslt.put("data", ehService.readDetailAllExecHistory());
+        rslt.put("data", ehService.readDetailAllExecHistory(startDate, endDate, triggerGroup, triggerName));
         return rslt;
     }
 }

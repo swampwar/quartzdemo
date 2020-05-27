@@ -16,4 +16,5 @@ public class JobRequest {
     private String jobName;
     private String jobGroup;
     private String shellScriptNm;
+    private String execSeq; // 실행순서
 }
