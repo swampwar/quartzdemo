@@ -105,6 +105,8 @@
                     $(a).attr('onclick', "killTrigger('"+ triggerGroup +"', '" + triggerName + "');");
                 }else if($(a).hasClass('rerun-a')) {
                     $(a).attr('onclick', "rerunTrigger('"+ triggerGroup +"', '" + triggerName + "');");
+                }else if($(a).hasClass('rerunall-a')) {
+                    $(a).attr('onclick', "rerunAllTrigger('"+ triggerGroup +"', '" + triggerName + "');");
                 }
             });
 

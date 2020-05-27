@@ -34,6 +34,8 @@ public class MainController {
 
     @RequestMapping(path = "/history", method = RequestMethod.GET)
     public String history(Model model){
+        model.addAttribute("triggerGroup", triggerGroupService.findByTriggerGroup("ALL"));
+        model.addAttribute("triggers", dashboardService.readTriggers("ALL"));
         return "history";
     }
 

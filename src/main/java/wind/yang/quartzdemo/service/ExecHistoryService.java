@@ -8,8 +8,12 @@ import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
 import wind.yang.quartzdemo.mapper.ExecHistoryMapper;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
@@ -23,8 +27,8 @@ public class ExecHistoryService {
         return historyList;
     }
 
-    public List<ExecHistory> readDetailAllExecHistory() {
-        return ehMapper.findDetailAll();
+    public List<ExecHistory> readDetailAllExecHistory(String startDate, String endDate, String triggerGroup, String triggerName) {
+        return ehMapper.findDetailAll(startDate, endDate, triggerGroup, triggerName);
     }
 
     public List<ExecHistory> readLastAllExecHistory(String group, String name) {

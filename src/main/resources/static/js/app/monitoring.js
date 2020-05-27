@@ -188,29 +188,64 @@ const killTrigger = (triggerGroup, triggerName) => {
 };
 
 const rerunTrigger = (triggerGroup, triggerName) => {
-    const target = $('.'+triggerGroup+'-'+triggerName);
-    // console.log(target.parent('div'));
-    const panel = target.parent('div');
+    let execSeq = prompt("재실행할 시퀀스를 입력하세요. (미입력시 전체 재실행)", 'ex) 1,3');
+    if (execSeq != null) {
+        if (execSeq == "") { execSeq = null; }
+        console.log(execSeq);
 
-    const jsonData = JSON.stringify(
-        {triggerGroup : triggerGroup, triggerName : triggerName}
-    );
+        const target = $('.' + triggerGroup + '-' + triggerName);
+        // console.log(target.parent('div'));
+        const panel = target.parent('div');
 
-    $.ajax({
-        url: '/scheduler/job/runNow',
-        type: 'post',
-        dataType: 'json',
-        data: jsonData,
-        contentType: 'application/json',
-        async: false,
-        success : function(rslt){
-            alert(rslt.msg);
-            getDashboardSection($('.active-button').val());
-        },
-        error : function(rslt){
-            alert(rslt.msg);
-        }
-    });
+        const jsonData = JSON.stringify(
+            {triggerGroup: triggerGroup, triggerName: triggerName, execSeq: execSeq}
+        );
+
+        $.ajax({
+            url: '/scheduler/job/runNow',
+            type: 'post',
+            dataType: 'json',
+            data: jsonData,
+            contentType: 'application/json',
+            async: false,
+            success: function (rslt) {
+                alert(rslt.msg);
+                getDashboardSection($('.active-button').val());
+            },
+            error: function (rslt) {
+                alert(rslt.msg);
+            }
+        });
+    }
+};
+
+const rerunAllTrigger = (triggerGroup, triggerName) => {
+    if (confirm("재기동하시겠습니까?")) {
+
+        const target = $('.' + triggerGroup + '-' + triggerName);
+        // console.log(target.parent('div'));
+        const panel = target.parent('div');
+
+        const jsonData = JSON.stringify(
+            {triggerGroup: triggerGroup, triggerName: triggerName}
+        );
+
+        $.ajax({
+            url: '/scheduler/job/runNow',
+            type: 'post',
+            dataType: 'json',
+            data: jsonData,
+            contentType: 'application/json',
+            async: false,
+            success: function (rslt) {
+                alert(rslt.msg);
+                getDashboardSection($('.active-button').val());
+            },
+            error: function (rslt) {
+                alert(rslt.msg);
+            }
+        });
+    }
 };
 
 const modifyTrigger = (triggerGroup, triggerName) => {
