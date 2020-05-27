@@ -63,6 +63,7 @@ public class SendMsgService {
             else if(message.getTriggerGroup().equals("SETTM"))
                 sendUrl = sendUrlSettm;
 
+            System.out.println("sendUrl : " + sendUrl);
             restTemplate.postForEntity(sendUrl, message.getMessageEntity(), String.class);
             return true;
         } catch (Exception e) {

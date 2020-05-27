@@ -40,7 +40,16 @@ public class ExecHistory {
      */
     public static ExecHistory newMaster(TriggerKey triggerKey, JobKey jobKey){
         String sttDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        ExecHistory master = newExecHistory(new ExecProg(triggerKey.getGroup(), triggerKey.getName(), 0), jobKey, sttDtm, sttDtm);
+
+        String triggerName = triggerKey.getName();
+        // FORCE인 경우 이력 등록시 원래 트리거 이름으로 마스터 저장
+        if(triggerName.indexOf(".") != -1) {
+            System.out.println(triggerName);
+            triggerName = triggerName.substring(0, triggerName.indexOf("."));
+            System.out.println(triggerName);
+        }
+
+        ExecHistory master = newExecHistory(new ExecProg(triggerKey.getGroup(), triggerName, 0), jobKey, sttDtm, sttDtm);
         master.setJobExecStaCd(JobExecutionStatusCode.START);
         return master;
     }

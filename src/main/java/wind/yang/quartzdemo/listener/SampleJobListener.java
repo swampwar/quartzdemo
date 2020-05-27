@@ -74,10 +74,13 @@ public class SampleJobListener implements JobListener {
         String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
         execHistory.setJobEndDtm(jobEndDtm);
+        System.out.println("완료후 이력 업데이트 : " + execHistory.getTriggerName() + " / 시퀀스 : " + execHistory.getExecProgSeq());
 
         if(jobException == null){ // 정상실행이면
             execHistory.setJobExecStaCd(JobExecutionStatusCode.SUCCESS);
             execHistory.setJobExecRslt(JobExecutionStatusCode.SUCCESS.getMsg());
+            ehSvc.updateExecHistory(execHistory);
+
         }else{ // 에러발생이면
             execHistory.setJobExecStaCd(JobExecutionStatusCode.ERROR);
             execHistory.setJobExecRslt(jobException.getMessage());
@@ -86,7 +89,6 @@ public class SampleJobListener implements JobListener {
             ehSvc.updateExecHistory(execHistory);
             smSvc.notifySlack(new PushMessage(execHistory));
         }
-
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobWasExecuted : jobKey : {}", jobKey);
