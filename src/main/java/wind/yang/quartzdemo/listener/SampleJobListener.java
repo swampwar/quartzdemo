@@ -81,11 +81,12 @@ public class SampleJobListener implements JobListener {
         }else{ // 에러발생이면
             execHistory.setJobExecStaCd(JobExecutionStatusCode.ERROR);
             execHistory.setJobExecRslt(jobException.getMessage());
-
-            // 에러 발생시 Push 전송
-            ehSvc.updateExecHistory(execHistory);
-            smSvc.notifySlack(new PushMessage(execHistory));
         }
+
+        ehSvc.updateExecHistory(execHistory);
+
+        // 에러 발생시 Push 전송
+        if (jobException != null ) smSvc.notifySlack(new PushMessage(execHistory));
 
 
         JobKey jobKey = context.getJobDetail().getKey();

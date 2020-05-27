@@ -42,7 +42,7 @@ public class PushMessage {
 
     public String toSimpleSlackTitle(){
         StringBuilder builder = new StringBuilder();
-        builder.append("*[SLACK]").append(" 모니터링 결과*").append("\n").append("\n");
+        builder.append("[SLACK]").append(" 모니터링 결과*").append("\n").append("\n");
         return builder.toString();
     }
 
