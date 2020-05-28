@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/kyun
+    url: jdbc:postgresql://localhost:5432/QSchedulerDB
     # url: jdbc:h2:/Users/jaeseok/Documents/Yang/Dev/02.CNS/DB/test_db   # jdbc:h2:mem:testDB
-    username: kyun
+    username: cns
     password: 1234
 
 logging:
@@ -15,8 +15,8 @@ logging:
 
 quartzdemo:
   shell:
-    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
-    log-path: /Users/kyun/workspace/2020-중점추진과제/log/
+    script-path: /Users/jongwonsong/Study/Company/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
+    log-path: /Users/jongwonsong/Study/Company/log/
     cmd: sh
     timeout: 600000 # 600초
 

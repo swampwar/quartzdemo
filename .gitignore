@@ -33,3 +33,5 @@ build/
 # project
 /src/main/resources/text.md
 /src/main/resources/application-dev.yml
+
+.DS_Store
