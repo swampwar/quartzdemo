@@ -6,6 +6,10 @@ PARAM1=$1
 PARAM2=$2
 MY_VAR_ADDED="${MY_VAR} PARAM1:${PARAM1} PARAM2:${PARAM2}"
 
+echo "sleep start"
+sleep 10s # Waits xx seconds.
+echo "sleep end"
+
 echo ${MY_VAR_ADDED}
 echo "모든 파라미터 : [" "$*" "]" # shell script의 인자 [ 1 2 ]
 echo "모든 파라미터 갯수 : " $#

@@ -132,6 +132,28 @@
     color: #3d8b3d;
 }
 
+.panel-SKIP {
+    border-color: #8f8f8f;
+}
+
+.panel-SKIP > .panel-heading {
+    border-color: #8f8f8f;
+    color: #fff;
+    background-color: #8f8f8f;
+}
+
+.panel-SKIP .panel-footer {
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.panel-SKIP a {
+    color: #8f8f8f;
+}
+
+.panel-SKIP a:hover {
+    color: #6f6f6f;
+}
+
 .panel-READY {
     border-color: #8f8f8f;
 }
