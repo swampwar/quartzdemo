@@ -2,11 +2,13 @@
 spring:
   thymeleaf:
     cache: false
+  profiles:
+    active: dev
 
   quartz:
     job-store-type: jdbc
     jdbc:
-      initialize-schema: never
+      initialize-schema: always
     properties:
       org.quartz.threadPool.threadCount: 5
       org.quartz.jobStore.misfireThreshold: 3000 # misfire라고 판단하는 기준시간
