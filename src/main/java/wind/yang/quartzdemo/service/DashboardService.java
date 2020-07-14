@@ -88,6 +88,7 @@ public class DashboardService {
     public List<JobResponse> readTriggers(String triggerGroup) {
         // 스케쥴러의 트리거 정보를 조회
         List<JobResponse> jobResponseList = quartzService.readTriggersByTriggerGroup(triggerGroup);
+        List<JobResponse> removeForceJob = new ArrayList<>();
 
         // 트리거의 최종 실행이력을 조회
         for(JobResponse job : jobResponseList){
@@ -96,10 +97,20 @@ public class DashboardService {
                 if (lastMaster != null) {
                     job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
                 } else {
+                    // FORCE인 경우 제외
+                    if (job.getTriggerName().indexOf(".") != -1) {
+                        removeForceJob.add(job);
+                    }
                     job.setTriggerExecStaCd(JobExecutionStatusCode.READY.toString());
                 }
             }else {
                 job.setTriggerExecStaCd(job.getTriggerStatus());
+            }
+        }
+        // FORCE인 경우 제외
+        if (removeForceJob.size() != 0) {
+            for (JobResponse forceJob : removeForceJob) {
+                jobResponseList.remove(forceJob);
             }
         }
 

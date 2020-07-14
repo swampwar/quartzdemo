@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.code.JobExecutionStatusCode;
 import wind.yang.quartzdemo.dto.ExecHistory;
 import wind.yang.quartzdemo.dto.ExecProg;
+import wind.yang.quartzdemo.dto.PushMessage;
 import wind.yang.quartzdemo.service.ExecHistoryService;
+import wind.yang.quartzdemo.service.SendMsgService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +20,9 @@ import java.util.List;
 public class SampleJobListener implements JobListener {
     @Autowired
     ExecHistoryService ehSvc;
+
+    @Autowired
+    SendMsgService smSvc;
 
     @Override
     public String getName() {
@@ -67,15 +72,23 @@ public class SampleJobListener implements JobListener {
         // 실행결과 DB Update
         ExecHistory execHistory = (ExecHistory)context.getJobDetail().getJobDataMap().get("execHistory");
         String jobEndDtm = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+        execHistory.setJobEndDtm(jobEndDtm);
+        System.out.println("완료후 이력 업데이트 : " + execHistory.getTriggerName() + " / 시퀀스 : " + execHistory.getExecProgSeq());
+
         if(jobException == null){ // 정상실행이면
             execHistory.setJobExecStaCd(JobExecutionStatusCode.SUCCESS);
             execHistory.setJobExecRslt(JobExecutionStatusCode.SUCCESS.getMsg());
+
         }else{ // 에러발생이면
             execHistory.setJobExecStaCd(JobExecutionStatusCode.ERROR);
             execHistory.setJobExecRslt(jobException.getMessage());
         }
-        execHistory.setJobEndDtm(jobEndDtm);
+
         ehSvc.updateExecHistory(execHistory);
+
+        // 에러 발생시 Push 전송
+        if (jobException != null ) smSvc.notifySlack(new PushMessage(execHistory));
 
         JobKey jobKey = context.getJobDetail().getKey();
         log.info("jobWasExecuted : jobKey : {}", jobKey);

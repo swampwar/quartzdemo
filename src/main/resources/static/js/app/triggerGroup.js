@@ -23,8 +23,8 @@ $(document).ready(function () {
             data : null,
             render : function(data, type, row) {
                 return '<div class="tg-button-container">' +
-                    '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + row.triggerGroup + '\', this)">Update</div>' +
-                    '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + row.triggerGroup + '\')">Delete</div>' +
+                    '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + row.triggerGroup + '\', this)">UPDATE</div>' +
+                    '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + row.triggerGroup + '\')">DELETE</div>' +
                     '</div>'
             }
         }]
@@ -82,8 +82,8 @@ const updateTriggerGroup = (triggerGroup, obj) => {
             // data.push(val);
         }else if(i === 5) {
             td.html('<div class="tg-button-container">' +
-                '<div class="tg-button tg-update" onclick="saveTriggerGroup(this)">Save</div>' +
-                '<div class="tg-button tg-delete" onclick="cancelTriggerGroup(\'' + triggerGroup + '\', this)">Cancel</div>' +
+                '<div class="tg-button tg-update" onclick="saveTriggerGroup(this)">SAVE</div>' +
+                '<div class="tg-button tg-delete" onclick="cancelTriggerGroup(\'' + triggerGroup + '\', this)">CANCEL</div>' +
                 '</div>');
         }
     });
@@ -152,8 +152,8 @@ const saveTriggerGroup = (obj) => {
                         }
                     }else {
                         td.html('<div class="tg-button-container">' +
-                            '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + triggerGroup + '\', this)">Update</div>' +
-                            '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + triggerGroup + '\', this)">Delete</div>' +
+                            '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + triggerGroup + '\', this)">UPDATE</div>' +
+                            '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + triggerGroup + '\', this)">DELETE</div>' +
                             '</div>');
                     }
                 });
@@ -225,8 +225,8 @@ const cancelTriggerGroup = (triggerGroup, obj) => {
             // data.push(val);
         }else if(i === 5) {
             td.html('<div class="tg-button-container">' +
-                '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + triggerGroup + '\', this)">Update</div>' +
-                '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + triggerGroup + '\', this)">Delete</div>' +
+                '<div class="tg-button tg-update" onclick="updateTriggerGroup(\'' + triggerGroup + '\', this)">UPDATE</div>' +
+                '<div class="tg-button tg-delete" onclick="deleteTriggerGroup(\'' + triggerGroup + '\', this)">DELETE</div>' +
                 '</div>');
         }
     });
