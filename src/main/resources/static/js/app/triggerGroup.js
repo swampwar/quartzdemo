@@ -59,8 +59,8 @@ const addTriggerGroup = () => {
         "<td></td>" +
         "<td></td>" +
         "<td><div class='tg-button-container'>" +
-        "<div class='tg-button tg-update' onclick='saveTriggerGroup(this);'>Save</div>" +
-        "<div class='tg-button tg-delete' onclick='cancelTriggerGroup(\"thisisinsert\", this);'>Cancel</div>" +
+        "<div class='tg-button tg-update' onclick='saveTriggerGroup(this);'>SAVE</div>" +
+        "<div class='tg-button tg-delete' onclick='cancelTriggerGroup(\"thisisinsert\", this);'>CANCEL</div>" +
         "</div></td>" +
         "</tr>"
     )
