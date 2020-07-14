@@ -12,7 +12,7 @@ spring:
     properties:
       org.quartz.threadPool.threadCount: 5
       org.quartz.jobStore.misfireThreshold: 3000 # misfire라고 판단하는 기준시간
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.driverDelegateClass: wind.yang.quartzdemo.quartz.CustomDelegate
     scheduler-name: 지역스케줄러
 
   servlet:
