@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="~{layout/baseLayout}" lang="">
+<head>
+    <th:block layout:fragment="pageCustomCss">
+        <link rel="stylesheet" href="/css/dataTables/dataTables.bootstrap-1.10.20.css">
+        <link rel="stylesheet" href="/css/dataTables/rowGroup.dataTables.min-1.1.1.css">
+        <link rel="stylesheet" href="/css/app/programDetail.css">
+    </th:block>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <div id='page-wrapper'>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title page-header">프로그램 등록
+                    <div th:if="${#strings.equals(type, 'select')}" class="group-button-container">
+                        <div class="group-button Add-button" th:attr="onclick=|updateTrigger('${detail.triggerGroup}', '${detail.triggerName1}');|" style="cursor: pointer;" >
+                            <span> 수 정 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="panel panel-default">
+
+                <div class="panel-body" >
+                    <form class='form-horizontal' method="post" enctype="multipart/form-data" action="/program/insert">
+                        <div class='form-group'>
+                            <label class='control-label' for='job_list' style="padding: 0 15px;">프로그램 등록</label>
+                            <button class="btn btn-success " type="button" onclick="newJob();" th:if="${#strings.equals(type, 'insert')}">MORE</button>
+                            <button class="btn btn-success " type="button" onclick="newJob();" th:if="${#strings.equals(type, 'update')}">MORE</button>
+                        </div>
+                        <div class="form-group" style="display: contents; text-align: center;">
+                            <table id="job_list" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>순서</th>
+                                    <th>업무 구분</th>
+                                    <th>프로그램명</th>
+                                    <th>프로그램구분</th>
+                                    <th>프로그램경로</th>
+                                    <th>프로그램설명</th>
+<!--                                    <th>파일</th>-->
+<!--                                    <th>적용일시</th>-->
+<!--                                    <th>종료일시</th>-->
+<!--                                    <th>사용여부</th>-->
+                                    <th th:if="${#strings.equals(type, 'insert')}">Action</th>
+                                    <th th:if="${#strings.equals(type, 'update')}">Action</th>
+                                </tr>
+                                </thead>
+                                <!-- 분기 (등록 화면)-->
+                                <tbody th:if="${#strings.equals(type, 'insert')}">
+                                <tr>
+                                    <td width="6%"><input class="input-job job-seq" type="text" name="execProgInfoList[0].jobSeq" placeholder=" " value="1" onchange="changeSeq(this);"></td>
+                                    <td width="10%"><!--input class="input-job job-name" type="text" name="execProgInfoList[0].jobName" placeholder=" "-->
+                                        <div class="selectbox-inTable workDvsCd">
+                                            <div class="select">
+                                                <span>선 택</span>
+                                                <i class="fa fa-chevron-left"></i>
+                                                <input class="input-job job-workDvsCd" type="hidden" name="execProgInfoList[0].workDvsCd">
+                                            </div>
+                                            <ul class="selectbox-menu">
+                                                <th:block th:each="triggerGroup : ${triggerGroup}">
+                                                    <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">업무 구분</div></li>
+                                                </th:block>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td width="18%"><input class="input-job job-progName" type="text" name="execProgInfoList[0].progNm" placeholder=" "></td>
+                                    <td width="10%"><!--input class="input-job job-pgType" type="text"  placeholder=" "-->
+                                        <div class="selectbox-inTable progType">
+                                            <div class="select">
+                                                <span>선 택</span>
+                                                <i class="fa fa-chevron-left"></i>
+                                                <input class="input-job job-progDvsCd" type="hidden" name="execProgInfoList[0].progDvsCd">
+                                            </div>
+                                            <ul class="selectbox-menu">
+                                                <li class="tg-selectbox" id="00"><div>SHELL (00)</div></li>
+                                                <li class="tg-selectbox" id="01"><div>PROC (01)</div></li>
+                                                <li class="tg-selectbox" id="02"><div>ETC (02)</div></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td width="25%"><input class="input-job job-progPath" type="text" name="execProgInfoList[0].progPath" placeholder=" "></td>
+                                    <td width="25%"><input class="input-job job-progDesc" type="text" name="execProgInfoList[0].progDesc" placeholder=" "></td>
+                                    <td>
+                                        <button class="btn btn-danger form-control" onclick="deleteJob(this);">DELETE</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <!-- 분기 (조회 화면)-->
+                                <tbody th:if="${#strings.equals(type, 'select')}">
+                                <th:block th:each="execProg : ${detail.getExecProgInfoList()}">
+                                    <tr>
+                                        <td width="3%" th:text="${execProg.getSeq()}">1</td>
+                                        <td width="10%"th:text="${execProg.getJobName()}">-</td>
+                                        <td width="15%"th:text="${execProg.getProgramName()}">-</td>
+                                        <td width="9%"th:text="${execProg.getProgramType()}">-</td>
+                                        <td width="23%"th:text="${execProg.getProgramDirectory()}">-</td>
+                                        <td width="15%"th:text="${execProg.getProgramDescription()}">-</td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                                <!-- 분기 (수정 화면)-->
+                                <tbody th:if="${#strings.equals(type, 'update')}">
+                                <th:block th:each="execProg : ${detail.getExecProgInfoList()}">
+                                    <tr>
+                                        <td width="3%"><input class="input-job job-seq" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].jobSeq'}" th:value="${execProg.getSeq()}" placeholder=" " onchange="changeSeq(this);"></td>
+                                        <td width="10%"><input class="input-job job-name" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].jobName'}" th:value="${execProg.getJobName()}" placeholder=" "></td>
+                                        <td width="15%"><input class="input-job job-pgNm" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].programName'}" th:value="${execProg.getProgramName()}" placeholder=" "></td>
+                                        <td width="9%"><input class="input-job job-pgType" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].programType'}" th:value="${execProg.getProgramType()}" placeholder=" "></td>
+                                        <td width="23%"><input class="input-job job-pgDir" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].programDir'}" th:value="${execProg.getProgramDirectory()}" placeholder=" "></td>
+                                        <td width="15%"><input class="input-job job-pgDes" type="text" th:name="${'execProgInfoList['+ (execProg.getSeq()-1) +'].programDes'}" th:value="${execProg.getProgramDescription()}" placeholder=" "></td>
+                                        <td>
+                                            <button class="btn btn-danger form-control" onclick="deleteJob(this);">DELETE</button>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="group-button-container" th:if="${#strings.equals(type, 'insert')}">
+                            <button class="btn btn-primary " type="submit">SUBMIT</button>
+                        </div>
+                        <div class="group-button-container" th:if="${#strings.equals(type, 'update')}">
+                            <button class="btn btn-primary " type="submit">SUBMIT</button>
+                            <button class="btn btn-danger " th:attr="onclick=|canselUpdate('${detail.triggerGroup}', '${detail.triggerName1}');|">CANSEL</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade in" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: black">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Update User</h4>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="pageCustomScript">
+    <script src="/js/dataTables/jquery.dataTables.min-1.10.20.js"></script>
+    <script src="/js/dataTables/dataTables.bootstrap.min-1.10.20.js"></script>
+    <script src="/js/dataTables/dataTables.rowGroup.min-1.1.1.js"></script>
+    <script th:src="@{/js/app/programDetail.js}"></script>
+</th:block>
+</body>
+

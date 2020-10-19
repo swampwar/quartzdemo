@@ -1,11 +1,14 @@
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/QSchedulerDB
-    # url: jdbc:h2:/Users/jaeseok/Documents/Yang/Dev/02.CNS/DB/test_db   # jdbc:h2:mem:testDB
-    username: cns
-    password: 1234
+#    driver-class-name: org.postgresql.Driver
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+#    url: jdbc:postgresql://localhost:5432/kyun
+    url: jdbc:oracle:thin:@172.16.22.23:3521/DEV_HHZDBP
+    username: sscpbz
+#    username: kyun
+    password: roqkf01
+#    password: 1234
 
 logging:
   level:
@@ -15,8 +18,8 @@ logging:
 
 quartzdemo:
   shell:
-    script-path: /Users/jongwonsong/Study/Company/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
-    log-path: /Users/jongwonsong/Study/Company/log/
+    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
+    log-path: /Users/kyun/workspace/2020-중점추진과제/log/
     cmd: sh
     timeout: 600000 # 600초
 

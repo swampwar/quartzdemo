@@ -3,8 +3,11 @@ package wind.yang.quartzdemo.job;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import wind.yang.quartzdemo.dto.ExecProg;
+import wind.yang.quartzdemo.dto.JobSchedule;
+import wind.yang.quartzdemo.service.JobScheduleService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +19,8 @@ public class ShellExecJob extends BaseJob {
     private String fileName;
     private int exitCode = -1;
     private static final int SUCCESS = 0;
+    @Autowired
+    JobScheduleService jobScheduleService;
 
     @Override
     protected void executeInternal(ExecProg execProg) throws JobExecutionException {
@@ -28,10 +33,16 @@ public class ShellExecJob extends BaseJob {
             String command = CMD + " " + scriptFileFullPath; // 실행할 Command
             command = addParameters(command, execProg);
 
-            try(FileOutputStream os = new FileOutputStream(new File(LOG_PATH + fileName + ".log"), true)) {
-                exitCode = executeShell(command, os, os); // 쉘스크립트 실행
-            }
-        } catch (IOException e) {
+            /** 2020.09.14 - 쉘 스크립트 실행하는 소스 대신 DB에 저장하는 소스로 변경*/
+//            try(FileOutputStream os = new FileOutputStream(new File(LOG_PATH + fileName + ".log"), true)) {
+//                exitCode = executeShell(command, os, os); // 쉘스크립트 실행
+//            }
+            JobSchedule jobSchedule = new JobSchedule(null, execProg.getTriggerGroup(), scriptFileFullPath, "1"
+                    , execProg.getExecParam1(), execProg.getExecParam2(), execProg.getExecParam3(), null, null, null, null);
+
+            exitCode = jobScheduleService.saveJobSchedule(jobSchedule);
+
+        } catch (Exception e) {
             log.error("Trigger[{}] 쉘스크립트에 대한 Path를 찾을 수 없습니다. : [{}]", triggerKey, e.getMessage());
             throw new JobExecutionException(e);
         }

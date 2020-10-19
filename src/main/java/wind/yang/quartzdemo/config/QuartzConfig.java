@@ -68,7 +68,7 @@ public class QuartzConfig {
         factoryBean.setName("MGT_TRIGGER2");
         factoryBean.setGroup("MGT");
         factoryBean.setDescription("관리 크론트리거2");
-        factoryBean.setCronExpression("0 10 * * * ?"); // 매분 n초마다 실행
+        factoryBean.setCronExpression("0 15 * * * ?"); // 매분 n초마다 실행
         factoryBean.setJobDetail(cronJobDetail);
         factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
         return factoryBean;
@@ -88,7 +88,7 @@ public class QuartzConfig {
         schedulerFactory.setApplicationContext(applicationContext);
         schedulerFactory.setOverwriteExistingJobs(true);
         schedulerFactory.setQuartzProperties(getQuartzProperties());
-        schedulerFactory.setDataSource(dataSource);
+//        schedulerFactory.setDataSource(dataSource);
         schedulerFactory.setWaitForJobsToCompleteOnShutdown(true);
         schedulerFactory.setGlobalTriggerListeners(triggerListener);
         schedulerFactory.setGlobalJobListeners(jobListener);

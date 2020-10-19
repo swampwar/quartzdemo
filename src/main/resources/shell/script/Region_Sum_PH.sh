@@ -31,7 +31,7 @@ echo"---------- 버스 사업자별 집계 작업 종료 ----------"
 echo"---------- 사업자별 수입금 확정 작업 시작 ----------"
 echo "JAB_CreatePmtAmt $BEFORE_PRDAY $SYSTEM_CODE"
 #JAB_CreatePmtAmt $BEFORE_PRDAY $SYSTEM_CODE
-sleep 1s # Business Logic
+sleep 590s # Business Logicss
 
 echo"---------- 사업자별 수입금 확정 작업 종료 ----------"
 

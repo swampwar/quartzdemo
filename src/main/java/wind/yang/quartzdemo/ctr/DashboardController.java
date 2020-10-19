@@ -57,4 +57,5 @@ public class DashboardController {
         model.addAttribute("progName", target.equals("execLog") ? progName + ".log" : progName);
         return "popup";
     }
+
 }

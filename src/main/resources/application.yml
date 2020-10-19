@@ -6,13 +6,14 @@ spring:
     active: dev
 
   quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
+    job-store-type: memory #jdbc
+#    jdbc:
+#      initialize-schema: never
     properties:
       org.quartz.threadPool.threadCount: 5
-      org.quartz.jobStore.misfireThreshold: 3000 # misfire라고 판단하는 기준시간
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+#      org.quartz.jobStore.misfireThreshold: 3000 # misfire라고 판단하는 기준시간
+      org.quartz.jobStore.class: org.quartz.simpl.RAMJobStore
+#      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
     scheduler-name: 지역스케줄러
 
   servlet:

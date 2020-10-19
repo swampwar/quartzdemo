@@ -60,6 +60,125 @@ alter table tb_trigger_group owner to cns;
 
 comment on table tb_trigger_group is '트리거그룹';
 
+create table TBFZD999
+(
+    JOB_VER_ID varchar(14)
+        constraint TBFZD999_pk
+        primary key,
+    JOB_GROUP varchar(19),
+    FULL_PATH varchar(200),
+    STATUS_CD varchar(1),
+    EXEC_PARAM1 varchar(100),
+    EXEC_PARAM2 varchar(100),
+    EXEC_PARAM3 varchar(100),
+    RGT_DTM varchar(14),
+    RGT_ID varchar(50),
+    UDT_DTM varchar(14),
+    UDT_ID varchar(50)
+)
+
+create table TBFZM990
+(
+    WORK_DVS_CD varchar(5) not null,
+    JOB_GROUP_ID varchar(20) not null,
+    PROG_ID varchar(20) not null,
+    WORK_TIME varchar(100),
+    WORK_SEQ varchar(3),
+    STT_DT varchar(14),
+    END_DT varchar(14),
+    USE_YN varchar(1),
+    REGIST_ID varchar(50),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(50),
+    UPDATE_DTIME varchar(14),
+    constraint TBFZM990_pk
+    primary key (WORK_DVS_CD, JOB_GROUP_ID, PROG_ID)
+)
+
+create table TBFZD991
+(
+    WORK_DVS_CD varchar(5) not null,
+    JOB_GROUP_ID varchar(20) not null,
+    JOB_ID varchar(20) not null,
+    PROG_ID varchar(20) not null,
+    JOB_NAME varchar(50),
+    JOB_SEQ varchar(3),
+    STT_DT varchar(14),
+    END_DT varchar(14),
+    USE_YN varchar(1),
+    REGIST_ID varchar(50),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(50),
+    UPDATE_DTIME varchar(14),
+    constraint TBFZD991_pk
+    primary key (WORK_DVS_CD, JOB_GROUP_ID, JOB_ID, PROG_ID)
+)
+
+create table TBFZD992
+(
+    WORK_DVS_CD varchar(5) not null,
+    JOB_ID varchar(20) not null,
+    PROG_ID varchar(20) not null,
+    JOB_SEQ varchar(3),
+    HGRN_JOB_ID varchar(20),
+    WORK_PROC_DT varchar(14),
+    STT_DT varchar(14),
+    END_DT varchar(14),
+    USE_YN varchar(1),
+    REGIST_ID varchar(50),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(50),
+    UPDATE_DTIME varchar(14),
+    constraint TBFZD992_pk
+    primary key (WORK_DVS_CD, JOB_ID, PROG_ID)
+)
+
+create table TBFZD993
+(
+    WORK_DVS_CD varchar(5) not null,
+    PROG_ID varchar(20) not null,
+    PROG_DVS_CD varchar(3),
+    PROG_NM varchar(20),
+    PROG_DESC varchar(14),
+    PROG_PATH varchar(14),
+    END_DT varchar(14),
+    USE_YN varchar(1),
+    REGIST_ID varchar(50),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(50),
+    UPDATE_DTIME varchar(14),
+    constraint TBFZD993_pk
+    primary key (WORK_DVS_CD, PROG_ID)
+)
+
+create table TBFZH995
+(
+    WORK_DVS_CD varchar(5) not null,
+    WORK_DT varchar(14),
+    JOB_GROUP_ID varchar(20) not null,
+    JOB_ID varchar(20) not null,
+    PROG_ID varchar(20) not null,
+    SYST_AREA_CLASS_CD varchar(5) not null,
+    WORK_SEQ varchar(3),
+    WORK_STT_DT varchar(14),
+    WORK_END_DT varchar(14),
+    WORK_RESULT_CD varchar(1),
+    WORK_DESC varchar(200),
+    REGIST_ID varchar(50),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(50),
+    UPDATE_DTIME varchar(14),
+    constraint TBFZH995_pk
+    primary key (WORK_DVS_CD, JOB_GROUP_ID, JOB_ID, PROG_ID, SYST_AREA_CLASS_CD)
+)
+
+create table TBIBM715
+(
+    WORK_DVS_CD varchar(5) not null,
+
+)
+
+
 
 INSERT INTO tb_exec_prog
     (trigger_group, trigger_name, seq, program_name, exec_param1, exec_param2, exec_param3)

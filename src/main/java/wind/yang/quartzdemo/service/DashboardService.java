@@ -22,6 +22,7 @@ public class DashboardService {
     @Autowired private ExecProgService execProgService;
     @Autowired private ExecHistoryService execHistoryService;
     @Autowired private QuartzService quartzService;
+    @Autowired private JobScheduleService jobScheduleService;
 
     @Value("${quartzdemo.shell.script-path}")
     protected String SH_PATH;
@@ -115,5 +116,9 @@ public class DashboardService {
         }
 
         return jobResponseList;
+    }
+
+    public String dbtest() {
+        return jobScheduleService.dbtest();
     }
 }

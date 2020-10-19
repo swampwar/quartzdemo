@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace : Mapper I/F와 동일하도록 설정 -->
+<mapper namespace="wind.yang.quartzdemo.mapper.TBIBM710Mapper">
+    <select id="findJobGroupList" resultType="wind.yang.quartzdemo.dto.TBIBM710">
+        select *
+        from TBIBM710
+        where use_yn = 'Y'
+        <if test="workDvsCd != 'ALL'">
+            and work_dvs_cd = #{workDvsCd}
+        </if>
+        order by work_dvs_cd asc, job_group_id asc
+    </select>
+
+    <insert id="insertJobGroup">
+        insert into TBIBM710
+           (work_dvs_cd, job_group_id, prog_id, work_time, work_seq, stt_dt, end_dt, use_yn, regist_id, regist_dtime, update_id, update_dtime)
+        values (#{workDvsCd}, #{job_group_id}, #{prog_id}, #{work_time}, #{work_seq}, #{stt_dt}, #{end_dt}, #{use_yn}, #{regist_id}, #{registDtime}, #{updateId}, #{updateDtime})
+    </insert>
+
+</mapper>

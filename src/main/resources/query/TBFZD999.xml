@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace : Mapper I/F와 동일하도록 설정 -->
+<mapper namespace="wind.yang.quartzdemo.mapper.TBFZD999Mapper">
+    <select id="insertJobSchedule">
+        insert into tbfzd999
+            (job_ver_id, job_group, full_path, status_cd, exec_param1, exec_param2, exec_param3, rgt_dtm, rgt_id, udt_dtm, udt_id)
+        VALUES (#{jobVerId}, #{jobGroup}, #{fullPath}, #{statusCd}, #{execParam1}, #{execParam2}, #{execParam3}, #{rgtDtm}, #{rgtId}, #{udtDtm}, #{udtId})
+    </select>
+
+    <select id="countJobSchedule" resultType="int">
+        select count(*)
+          from tbfzd999
+         where job_ver_id like #{date} || '%'
+    </select>
+
+    <select id="testDb" resultType="int">
+        select count(*)
+          from TBIEM210
+         where SYST_AREA_CLASS_CD = 'popup'
+    </select>
+</mapper>
