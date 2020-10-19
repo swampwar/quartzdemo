@@ -16,6 +16,9 @@ classes/
 
 ### IntelliJ IDEA ###
 .idea
+.mvn
+mvnw
+mvnw.cmd
 *.iws
 *.iml
 *.ipr
