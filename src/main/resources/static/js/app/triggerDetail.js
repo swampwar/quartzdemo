@@ -85,7 +85,7 @@ $('.selectbox .selectbox-menu li').click(function () {
         const triggerGroup = $('#trigger_group').val();
         const triggerName = $('#trigger_name').val();
 
-        getJobList(triggerGroup, triggerName);
+        // getJobList(triggerGroup, triggerName);
 
     }else if($(this).hasClass('tg-selectbox')) {
         $('.tn-group').find('span').text('선 택');
@@ -114,7 +114,7 @@ $('.selectbox.jobId').click(function () {
     const selected_group = $('#trigger_group').val();
     console.log("selected jog group : " + selected_group);
 
-    const selected_job = $('#trigger_name').val();
+    const selected_job = $('#job_group_id').val();
     console.log("selected jog  : " + selected_job);
 
     if(selected_group === null || selected_group === "") {
@@ -152,63 +152,36 @@ $('.selectbox.useYn').click(function () {
 });
 /*End selectbox-useYn Menu*/
 
-/*selectbox-progType Menu*/
-$('.selectbox.progType').click(function () {
-    $(this).attr('tabindex', 1).focus();
-    $(this).toggleClass('active');
-    $(this).find('.selectbox-menu').slideToggle(300);
-});
-/*End selectbox-progType Menu*/
-
 $('.selectbox .selectbox-menu li').click(function () {
     var input = '<strong>' + $(this).parents('.selectbox').find('input').val() + '</strong>',
         msg = '<span class="msg">Hidden input value: ';
 });
 
-/*selectbox-intable-progTypeT Menu*/
-$('.selectbox-inTable.progTypeT').click(function () {
-    $(this).attr('tabindex', 1).focus();
-    $(this).toggleClass('active');
-    $(this).find('.selectbox-menu').slideToggle(300);
-});
-/*End selectbox-useYn Menu*/
-$('.selectbox-inTable').focusout(function () {
-    $(this).removeClass('active');
-    $(this).find('.selectbox-menu').slideUp(300);
-});
-
-$('.selectbox-inTable .selectbox-menu li').click(function () {
-    $(this).parents('.selectbox-inTable').find('span').text($(this).text());
-    $(this).parents('.selectbox-inTable').find('input').attr('value', $(this).attr('id'));
-});
-
-$('.selectbox-inTable .selectbox-menu li').click(function () {
-    var input = '<strong>' + $(this).parents('.selectbox-inTable').find('input').val() + '</strong>',
-        msg = '<span class="msg">Hidden input value: ';
-});
 
 const selectRadio = () => {
-    let checkedValue = $('input:radio[name=insert_type]:checked').val();
-    console.log("i")
-    if (checkedValue === 'job_group') {
+    let checkedValue = $('input:radio[name=insertType]:checked').val();
+    console.log("insert type : " + checkedValue);
+    if (checkedValue === 'jobGroup') {
         $('.selectbox.triggerName').parent('div').hide();
         $('.selectbox.jobId').parent('div').hide();
         $('.selectbox.hgrnJobDetail').parent('div').hide();
         $('.work-time').parent('div').show();
         $('.job-seq').parent('div').hide();
-
+        $('.job-name').parent('div').hide();
     } else if(checkedValue === 'job') {
         $('.selectbox.triggerName').parent('div').show();
         $('.selectbox.jobId').parent('div').hide();
         $('.selectbox.hgrnJobDetail').parent('div').hide();
         $('.work-time').parent('div').hide();
         $('.job-seq').parent('div').show();
-    } else if(checkedValue === 'job_detail') {
+        $('.job-name').parent('div').show();
+    } else if(checkedValue === 'jobDetail') {
         $('.selectbox.triggerName').parent('div').show();
         $('.selectbox.jobId').parent('div').show();
         $('.selectbox.hgrnJobDetail').parent('div').show();
         $('.work-time').parent('div').hide();
         $('.job-seq').parent('div').show();
+        $('.job-name').parent('div').hide();
     }
 };
 

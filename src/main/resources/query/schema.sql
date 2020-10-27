@@ -151,32 +151,63 @@ create table TBFZD993
     primary key (WORK_DVS_CD, PROG_ID)
 )
 
-create table TBFZH995
+create table TBIBM714
 (
-    WORK_DVS_CD varchar(5) not null,
-    WORK_DT varchar(14),
-    JOB_GROUP_ID varchar(20) not null,
-    JOB_ID varchar(20) not null,
-    PROG_ID varchar(20) not null,
-    SYST_AREA_CLASS_CD varchar(5) not null,
-    WORK_SEQ varchar(3),
-    WORK_STT_DT varchar(14),
-    WORK_END_DT varchar(14),
-    WORK_RESULT_CD varchar(1),
-    WORK_DESC varchar(200),
-    REGIST_ID varchar(50),
+    SETTM_WORK_DVS_CD varchar(5) not null,
+    PRST_ID varchar(14) not null,
+    PRST_DESC varchar(4000),
+    USE_YN varchar(1),
+    REGIST_ID varchar(20),
     REGIST_DTIME varchar(14),
-    UPDATE_ID varchar(50),
+    UPDATE_ID varchar(20),
     UPDATE_DTIME varchar(14),
-    constraint TBFZH995_pk
-    primary key (WORK_DVS_CD, JOB_GROUP_ID, JOB_ID, PROG_ID, SYST_AREA_CLASS_CD)
+    constraint TBIBM714_pk
+    primary key (SETTM_WORK_DVS_CD, PRST_ID)
 )
 
 create table TBIBM715
 (
-    WORK_DVS_CD varchar(5) not null,
-
+    SETTM_WORK_DVS_CD varchar(5) not null,
+    PRST_ID varchar(14) not null,
+    PRMT_ID varchar(14) not null,
+    SETTM_JOB_ID varchar(14),
+    PROG_ID varchar(14),
+    PRMT_VAL varchar(50),
+    PRMT_DESC varchar(4000),
+    PRMT_SEQ int default 0,
+    USE_YN varchar(1),
+    REGIST_ID varchar (20),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(20),
+    UPDATE_DTIME varchar(14),
+    constraint TBIBM715_pk
+    primary key (SETTM_WORK_DVS_CD, PRST_ID, PRMT_ID)
 )
+
+create table TBIBD760
+(
+    SETTM_WORK_DVS_CD varchar(5) not null,
+    SETTM_JOB_GROUP_ID varchar(14) not null,
+    SETTM_JOB_ID varchar(14) not null,
+    PROG_ID varchar(14) not null,
+    SYST_AREA_CLASS_CD varchar(5) not null,
+    WORK_DT varchar(8) not null,
+    WORK_SEQ int default 0,
+    WORK_STT_DTIME varchar(14),
+    WORK_END_DTIME varchar(14),
+    WORK_RESULT_CD varchar(2),
+    WORK_DESC varchar(4000),
+    REGIST_ID varchar (20),
+    REGIST_DTIME varchar(14),
+    UPDATE_ID varchar(20),
+    UPDATE_DTIME varchar(14),
+    constraint TBIBD760_pk
+    primary key (SETTM_WORK_DVS_CD, SETTM_JOB_GROUP_ID, SETTM_JOB_ID,
+    PROG_ID, SYST_AREA_CLASS_CD, WORK_DT)
+)
+
+
+
 
 
 

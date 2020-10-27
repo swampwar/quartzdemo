@@ -47,8 +47,8 @@ public class DashboardController {
 
     @PostMapping("/getJob")
     @ResponseBody
-    public List<ExecHistory> getJobDatas(@RequestBody JobRequest jobRequest) {
-        return dashboardService.getExecHistoryList(jobRequest);
+    public List<TBIBD760> getJobDatas(@RequestBody JobRequest jobRequest) {
+        return dashboardService.getJobDashboardData(jobRequest);
     }
 
     @RequestMapping(path = "/popup/{target}/{progName}", method = RequestMethod.GET)

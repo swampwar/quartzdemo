@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TBIBM713 {
-    String workDvsCd;
+    String settmWorkDvsCd;
     String progId;
     String progDvsCd;
     String progNm;
@@ -19,9 +19,9 @@ public class TBIBM713 {
     String updateId;
     String updateDtime;
 
-    public TBIBM713(String workDvsCd, String progId, String progDvsCd, String progNm,
+    public TBIBM713(String settmWorkDvsCd, String progId, String progDvsCd, String progNm,
                     String progDesc, String progPath) {
-        this.workDvsCd = workDvsCd;
+        this.settmWorkDvsCd = settmWorkDvsCd;
         this.progId = progId;
         this.progDvsCd = progDvsCd;
         this.progNm = progNm;

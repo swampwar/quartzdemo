@@ -4,7 +4,7 @@ spring:
 #    driver-class-name: org.postgresql.Driver
     driver-class-name: oracle.jdbc.driver.OracleDriver
 #    url: jdbc:postgresql://localhost:5432/kyun
-    url: jdbc:oracle:thin:@172.16.22.23:3521/DEV_HHZDBP
+    url: jdbc:oracle:thin:@172.16.22.23:3521/KSCLC1KD
     username: sscpbz
 #    username: kyun
     password: roqkf01
@@ -18,12 +18,12 @@ logging:
 
 quartzdemo:
   shell:
-    script-path: /Users/kyun/workspace/2020-중점추진과제/quartzdemo/src/main/resources/shell/script/ # classpath 이하에서 경로를 작성
-    log-path: /Users/kyun/workspace/2020-중점추진과제/log/
+    script-path: /home/apvtzman/yang/log/ # classpath 이하에서 경로를 작성
+    log-path: /home/apvtzman/yang/log/
     cmd: sh
     timeout: 600000 # 600초
 
-slack:
-  url:
-    mgt: https://hooks.slack.com/services/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
-    settm : https://hooks.slack.com/services/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
+#slack:
+#  url:
+#    mgt: https://hooks.slack.com/services/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
+#    settm : https://hooks.slack.com/services/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

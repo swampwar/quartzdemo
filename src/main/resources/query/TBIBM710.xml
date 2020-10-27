@@ -8,15 +8,31 @@
         from TBIBM710
         where use_yn = 'Y'
         <if test="workDvsCd != 'ALL'">
-            and work_dvs_cd = #{workDvsCd}
+            and settm_work_dvs_cd = #{workDvsCd}
         </if>
-        order by work_dvs_cd asc, job_group_id asc
+        order by settm_work_dvs_cd asc, settm_job_group_id asc
     </select>
 
     <insert id="insertJobGroup">
+        <![CDATA[
         insert into TBIBM710
-           (work_dvs_cd, job_group_id, prog_id, work_time, work_seq, stt_dt, end_dt, use_yn, regist_id, regist_dtime, update_id, update_dtime)
-        values (#{workDvsCd}, #{job_group_id}, #{prog_id}, #{work_time}, #{work_seq}, #{stt_dt}, #{end_dt}, #{use_yn}, #{regist_id}, #{registDtime}, #{updateId}, #{updateDtime})
+           (settm_work_dvs_cd, settm_job_group_id, prog_id, work_time, work_seq, stt_dt, end_dt, use_yn, regist_id, regist_dtime, update_id, update_dtime)
+        values (#{settmWorkDvsCd}, #{settmJobGroupId}, #{progId}, #{workTime}, #{workSeq}, #{sttDt}, #{endDt}, #{useYn}, #{registId}, #{registDtime}, #{updateId}, #{updateDtime})
+        ]]>
     </insert>
+
+    <select id="countJobGroupByWorkDvsCd" resultType="int">
+        select count(*)
+          from TBIBM710
+         where settm_work_dvs_cd = #{workDvsCd}
+    </select>
+
+    <select id="findByTrigger" resultType="wind.yang.quartzdemo.dto.TBIBM710">
+        select settm_work_dvs_cd, settm_job_group_id, prog_id, work_time, work_seq, stt_dt, end_dt, use_yn, regist_id, regist_dtime, update_id, update_dtime
+        from tbibm710
+        where settm_work_dvs_cd = #{group}
+        and settm_job_group_id = #{name}
+        order by work_seq ASC
+    </select>
 
 </mapper>

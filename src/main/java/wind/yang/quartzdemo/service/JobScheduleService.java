@@ -3,8 +3,9 @@ package wind.yang.quartzdemo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wind.yang.quartzdemo.dto.JobSchedule;
+import wind.yang.quartzdemo.dto.TBIBD760;
 import wind.yang.quartzdemo.mapper.TBFZD999Mapper;
+import wind.yang.quartzdemo.mapper.TBIBD760Mapper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,24 +16,24 @@ public class JobScheduleService {
     @Autowired
     TBFZD999Mapper tbfzd999Mapper;
 
-    public int saveJobSchedule(JobSchedule jobSchedule) {
+    @Autowired
+    TBIBD760Mapper tbibd760Mapper;
+
+    public int saveJobSchedule(TBIBD760 tbibd760) {
         // jobVerId, rgtDtm, udtDtm 등을 얻기 위함.
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         String rgtDtm = format.format(new Date());
-        String jobVerId = rgtDtm.substring(0, 10);
-        jobVerId += countTodayJobSchedule(rgtDtm.substring(0,8));
 
-        jobSchedule.setJobVerId(jobVerId);
-        jobSchedule.setRgtDtm(rgtDtm);
-        jobSchedule.setUdtDtm(rgtDtm);
-        jobSchedule.setRgtId("qurtzScheduler");
-        jobSchedule.setUdtId("qurtzScheduler");
+        tbibd760.setUpdateDtime(rgtDtm);
+        tbibd760.setRegistDtime(rgtDtm);
+        tbibd760.setUpdateId("qurtzScheduler");
+        tbibd760.setRegistId("qurtzScheduler");
 
-        log.info("jobSchedule : {}", jobSchedule.toString());
+        log.info("jobSchedule : {}", tbibd760.toString());
 
         int result = 0;
         try {
-            tbfzd999Mapper.insertJobSchedule(jobSchedule);
+            tbfzd999Mapper.insertJobSchedule(tbibd760);
         }catch (Exception e){
             result = 1;
         }
@@ -52,6 +53,15 @@ public class JobScheduleService {
         }
 
         return result;
+    }
+
+    public int checkJobHistroy(TBIBD760 tbibd760) {
+        int rslt = tbibd760Mapper.checkJobHistory(tbibd760);
+        if (rslt == 1) {
+            return 0;
+        }else {
+            return -1;
+        }
     }
 
     public String dbtest() {

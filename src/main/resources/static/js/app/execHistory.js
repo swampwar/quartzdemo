@@ -69,8 +69,8 @@ $(document).ready(function () {
 const searchHistory = () => {
     let startDate = $('#startDate').val();
     let endDate = $('#endDate').val();
-    const triggerGroup = $('#trigger_group').val();
-    const triggerName = $('#trigger_name').val();
+    const settmWorkDvsCd = $('#trigger_group').val();
+    const settmJobGroupId = $('#job_group_id').val();
 
     startDate = startDate.substr(0,4) + startDate.substr(5,2) + startDate.substr(8,2) + "000000";
     endDate = endDate.substr(0,4) + endDate.substr(5,2) + endDate.substr(8,2) + "235959";
@@ -81,38 +81,39 @@ const searchHistory = () => {
 
     table.destroy();
 
-    callDataTable(startDate, endDate, triggerGroup, triggerName);
+    callDataTable(startDate, endDate, settmWorkDvsCd, settmJobGroupId);
 };
 
-const callDataTable = (startDate, endDate, triggerGroup, triggerName) => {
-    if (triggerGroup == "" || triggerGroup == null) {
-        triggerGroup = "ALL";
+const callDataTable = (startDate, endDate, settmWorkDvsCd, settmJobGroupId) => {
+    if (settmWorkDvsCd == "" || settmWorkDvsCd == null) {
+        settmWorkDvsCd = "ALL";
     }
 
-    if (triggerName == "" || triggerName == null) {
-        triggerName = "ALL";
+    if (settmJobGroupId == "" || settmJobGroupId == null) {
+        settmJobGroupId = "ALL";
     }
 
-    console.log(triggerGroup, triggerName);
+    console.log(settmWorkDvsCd, settmJobGroupId);
 
     table = $('#dataTable').DataTable({
         "order": [],
         "ajax": {
             type: 'POST',
             url: '/history/search',
-            data: {startDate: startDate, endDate: endDate, triggerGroup: triggerGroup, triggerName: triggerName},
+            data: {startDate: startDate, endDate: endDate, settmWorkDvsCd: settmWorkDvsCd, settmJobGroupId: settmJobGroupId},
             dateType: "JSON"
         },
         "columns": [
-            { "data": "triggerName" },
-            // { "data": "triggerSttDtm" },
-            { "data": "execProgSeq" },
-            { "data": "execProgName" },
-            { "data": "summary" },
-            { "data": "jobSttDtm" },
-            { "data": "jobEndDtm" },
-            { "data": "jobExecStaCd" },
-            { "data": "jobExecRslt" }
+            { "data": "settmWorkDvsCd" },
+            { "data": "settmJobGroupId" },
+            { "data": "settmJobId" },
+            { "data": "progId" },
+            { "data": "systAreaClassCd" },
+            { "data": "workSeq" },
+            { "data": "workSttDtime" },
+            { "data": "workEndDtime" },
+            { "data": "workResultCd" },
+            { "data": "workDesc" }
             // { "data": "execParam1" },
             // { "data": "execParam2" },
             // { "data": "execParam3" },
@@ -121,23 +122,30 @@ const callDataTable = (startDate, endDate, triggerGroup, triggerName) => {
         rowGroup: {
             startRender: null,
             endRender: function ( rows, group ) {
-                let triggerName = rows.data()[0].triggerName;
+                let settmJobGroupId = rows.data()[0].settmJobGroupId;
+                let settmWorkDvsCd = rows.data()[0].settmWorkDvsCd;
                 // let jobSttDtm = convertStrToDate(rows.data()[rows.length-1].jobSttDtm);
                 // let jobEndDtm = convertStrToDate(rows.data()[rows.length-1].jobEndDtm);
+                let jobSttDtm = 0;
 
                 let execTime = 0;
                 rows.data().each(function(data){
-                    if(data.jobSttDtm == null || data.jobEndDtm == null){
-                        console.log('시작시간 또는 종료시간이 null');
+                    if(data.workSttDtime == null || data.workEndDtime == null){
+                        console.log(group +' 시작시간 또는 종료시간이 null');
                         return true;
                     }
 
-                    execTime += (convertStrToDate(data.jobEndDtm) - convertStrToDate(data.jobSttDtm))/1000;
+                    if (data.settmJobGroupId === data.settmJobId && data.workSeq === 1) {
+                        jobSttDtm = data.workSttDtime;
+                        console.log("jobSttDtm : " + jobSttDtm);
+                    }
+
+                    execTime += (convertStrToDate(data.workEndDtime) - convertStrToDate(data.workSttDtime))/1000;
                 });
 
-                return '  '+triggerName + ' 실행이력 : 트리거 시작 (' + formatTime(group) + '), 프로그램 ('+rows.count()+' 건), 실행시간 (' + execTime + ' 초)';
+                return '  '+settmJobGroupId + '(' +settmWorkDvsCd +') 실행이력 : 작업 시작 (' + formatTime(jobSttDtm) + '), 프로그램 ('+rows.count()+' 건), 실행시간 (' + execTime + ' 초)';
             },
-            dataSrc: 'triggerSttDtm'
+            dataSrc: 'settmJobGroupId'
         }
     });
 };

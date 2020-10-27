@@ -8,7 +8,7 @@
         from TB_EXEC_PROG
         where TRIGGER_GROUP = #{group}
         and TRIGGER_NAME = #{name}
-        order by SEQ ASC;
+        order by SEQ ASC
     </select>
 
     <select id="findOneByTrigger" resultType="wind.yang.quartzdemo.dto.ExecProg">
@@ -24,7 +24,7 @@
         from TB_EXEC_PROG
         where TRIGGER_GROUP = #{triggerGroup}
           and SEQ = 1
-        order by TRIGGER_GROUP ASC;
+        order by TRIGGER_GROUP ASC
     </select>
 
     <insert id="insertExecProg">

@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import wind.yang.quartzdemo.dto.PushMessage;
 
 @Slf4j
-@Service
+//@Service
 public class SendMsgService {
 
     @Value("${slack.url.mgt}")

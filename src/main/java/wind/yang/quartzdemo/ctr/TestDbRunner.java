@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.mapper.TBFZD999Mapper;
 
 @Slf4j
-@Component
+//@Component
 public class TestDbRunner implements ApplicationRunner {
     @Autowired
     TBFZD999Mapper tbfzd999Mapper;

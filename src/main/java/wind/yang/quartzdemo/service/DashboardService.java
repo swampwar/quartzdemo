@@ -23,6 +23,7 @@ public class DashboardService {
     @Autowired private ExecHistoryService execHistoryService;
     @Autowired private QuartzService quartzService;
     @Autowired private JobScheduleService jobScheduleService;
+    @Autowired private JobService jobService;
 
     @Value("${quartzdemo.shell.script-path}")
     protected String SH_PATH;
@@ -66,17 +67,19 @@ public class DashboardService {
     }
 
 
-    public List<ExecHistory> getExecHistoryList(JobRequest jobRequest) {
-        List<ExecHistory> historyList;
+    public List<TBIBD760> getJobDashboardData(JobRequest jobRequest) {
+        List<TBIBD760> historyList;
         boolean isFiredToday = execHistoryService.isFiredToday(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
 
         if(isFiredToday){ // 마지막 실행이력(TB_EXEC_HISTORY)을 보여준다.
-            historyList = execHistoryService.readLastDetailExecHistory(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
+            log.debug("마지막 실행이력(TB_EXEC_HISTORY)을 보여준다.");
+            historyList = execHistoryService.readLastDetailExecHistory(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), "job");
         }else{ // 실행프로그램(TB_EXEC_PROG)기준 실행될 계획을 보여준다.
-            List<ExecProg> execProgs = execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+            log.debug("실행프로그램(TB_EXEC_PROG)기준 실행될 계획을 보여준다.");
+            List<TBIBM711> tbibm711List = jobService.getJobList(jobRequest.getTriggerGroup(), jobRequest.getTriggerName());
             historyList = new ArrayList<>();
-            for(ExecProg execProg : execProgs){
-                historyList.add(ExecHistory.of(execProg));
+            for(TBIBM711 tbibm711 : tbibm711List){
+                historyList.add(TBIBD760.of(tbibm711));
             }
         }
 
@@ -94,9 +97,21 @@ public class DashboardService {
         // 트리거의 최종 실행이력을 조회
         for(JobResponse job : jobResponseList){
             if (!"PAUSED".equals(job.getTriggerStatus())) {
-                ExecHistory lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
+                TBIBD760 lastMaster = execHistoryService.readLastMasterExecHistory(job.getTriggerGroup(), job.getTriggerName());
                 if (lastMaster != null) {
-                    job.setTriggerExecStaCd(lastMaster.getJobExecStaCd().toString());
+                    String status = lastMaster.getWorkResultCd();
+                    if ("00".equals(status) || "01".equals(status)) {
+                        status = "READY";
+                    }else if("1".equals(status) || "4".equals(status)) {
+                        status = "START";
+                    }else if("2".equals(status) || "5".equals(status)) {
+                        status = "SUCCESS";
+                    }else if("7".equals(status)) {
+                        status = "DUPLICATE";
+                    }else if("6".equals(status) || "3".equals(status)) {
+                        status = "ERROR";
+                    }
+                    job.setTriggerExecStaCd(status);
                 } else {
                     // FORCE인 경우 제외
                     if (job.getTriggerName().indexOf(".") != -1) {

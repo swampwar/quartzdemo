@@ -112,20 +112,20 @@ public class QuartzController {
         return new ApiResponse(true, "Trigger 수정이 완료되었습니다.");
     }
 
-    @PostMapping("/job/kill")
-    @ResponseBody
-    public ApiResponse killJob(@RequestBody JobRequest jobRequest) {
-        // TODO 파라미터 필수검사
-        log.info("killJob 파라미터 : {}", jobRequest);
-        String msg = "서버오류로 Trigger 강제종료에 실패했습니다.";
-        try{
-            msg = quartzService.kill(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
-        }catch(SchedulerException e){
-            return new ApiResponse(false, msg);
-        }
-
-        return new ApiResponse(true, msg);
-    }
+//    @PostMapping("/job/kill")
+//    @ResponseBody
+//    public ApiResponse killJob(@RequestBody JobRequest jobRequest) {
+//        // TODO 파라미터 필수검사
+//        log.info("killJob 파라미터 : {}", jobRequest);
+//        String msg = "서버오류로 Trigger 강제종료에 실패했습니다.";
+//        try{
+//            msg = quartzService.kill(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+//        }catch(SchedulerException e){
+//            return new ApiResponse(false, msg);
+//        }
+//
+//        return new ApiResponse(true, msg);
+//    }
 
     @PostMapping("/job/runNow")
     @ResponseBody

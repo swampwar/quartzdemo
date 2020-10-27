@@ -14,4 +14,5 @@ public interface TriggerGroupMapper {
     void insertTriggerGroup(TriggerGroup triggerGroup);
     void updateTriggerGroup(TriggerGroup triggerGroup);
     void deleteTriggerGroup(String triggerGroup);
+    int getLastSeq();
 }

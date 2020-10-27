@@ -16,7 +16,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <div class="page-title page-header">Execution History</div>
+                <div class="page-title page-header">배치 실행 이력</div>
             </div>
         </div>
         <div class="row">
@@ -32,33 +32,34 @@
                         <input type="text" id="endDate" class="form-control" value="">
                     </div>
                     <div class="col-md-2">
-                        <label class='control-label' for='trigger_group'>트리거 그룹</label>
+                        <label class='control-label' for='trigger_group'>업무 그룹</label>
                         <div class="selectbox triggerGroup">
                             <div class="select">
                                 <span>ALL</span>
                                 <i class="fa fa-chevron-left"></i>
-                                <input type="hidden" name="triggerGroup" id="trigger_group">
+                                <input type="hidden" name="workDvsCd" id="trigger_group">
                             </div>
                             <ul class="selectbox-menu">
-                                <th:block th:each="triggerGroup : ${triggerGroup}">
-                                    <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">group</div></li>
+<!--                                <li class="tg-selectbox" th:id="${triggerGroup.triggerGroup}"><div th:text="${triggerGroup.triggerGroup}">선택</div></li>-->
+                                <th:block th:each="workDvsCd : ${workDvsCd}">
+                                    <li class="tg-selectbox" th:id="${workDvsCd.triggerGroup}"><div th:text="${workDvsCd.triggerGroup}">group</div></li>
                                 </th:block>
                             </ul>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <label class='control-label' for='trigger_name'>트리거</label>
+                        <label class='control-label' for='job_group_id'>작업그룹ID</label>
                         <!-- 분기 (등록 화면)-->
                         <div class="selectbox triggerName">
                             <div class="select">
                                 <span>ALL</span>
                                 <i class="fa fa-chevron-left"></i>
-                                <input type="hidden" name="triggerName1" id="trigger_name">
+                                <input type="hidden" name="jobGroupId" id="job_group_id">
                             </div>
-                            <th:block th:each="triggerGroup : ${triggerGroup}">
-                                <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
-                                    <th:block th:each="trigger : ${triggers}">
-                                        <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                            <th:block th:each="workDvsCd : ${workDvsCd}">
+                                <ul class="selectbox-menu" th:attrappend="class=${' '+ workDvsCd.triggerGroup + '-selected'}">
+                                    <th:block th:each="jobGroup : ${jobGroup}">
+                                        <li class="tn-selectbox" th:if="${#strings.equals(workDvsCd.triggerGroup, jobGroup.settmWorkDvsCd)}" th:id="${jobGroup.settmJobGroupId}" th:attrappend="triggerGroup=${jobGroup.settmWorkDvsCd}"><div th:text="${jobGroup.settmJobGroupId}">Job Group Id</div></li>
                                     </th:block>
                                 </ul>
                             </th:block>
@@ -78,13 +79,14 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>트리거명</th>
-<!--                                    <th>시작시간</th>-->
-                                    <th>시퀀스</th>
-                                    <th>프로그램명</th>
-                                    <th>프로그램설명</th>
-                                    <th>시작시간</th>
-                                    <th>종료시간</th>
+                                    <th>업무구분</th>
+                                    <th>작업그룹ID</th>
+                                    <th>작업ID</th>
+                                    <th>프로그램ID</th>
+                                    <th>지역구분코드</th>
+                                    <th>작업순서</th>
+                                    <th>작업시작시간</th>
+                                    <th>작업종료시간</th>
                                     <th>잡실행상태</th>
                                     <th>잡실행결과</th>
 <!--                                    <th>파라미터1</th>-->
@@ -95,13 +97,14 @@
                                 </thead>
                                 <tfoot>
                                 <tr>
-                                    <th>트리거명</th>
-<!--                                    <th>시작시간</th>-->
-                                    <th>시퀀스</th>
-                                    <th>프로그램명</th>
-                                    <th>프로그램설명</th>
-                                    <th>시작시간</th>
-                                    <th>종료시간</th>
+                                    <th>업무구분</th>
+                                    <th>작업그룹ID</th>
+                                    <th>작업ID</th>
+                                    <th>프로그램ID</th>
+                                    <th>지역구분코드</th>
+                                    <th>작업순서</th>
+                                    <th>작업시작시간</th>
+                                    <th>작업종료시간</th>
                                     <th>잡실행상태</th>
                                     <th>잡실행결과</th>
 <!--                                    <th>파라미터1</th>-->

@@ -43,7 +43,7 @@
         <if test="execProgSeq != null and execProgSeq >= 0">
             AND exec_prog_seq = #{execProgSeq}
         </if>
-        ORDER BY trigger_group ASC, trigger_name ASC, job_stt_dtm ASC, exec_prog_seq ASC;
+        ORDER BY trigger_group ASC, trigger_name ASC, job_stt_dtm ASC, exec_prog_seq ASC
     </select>
 
     <select id="findAll" resultType="wind.yang.quartzdemo.dto.ExecHistory">

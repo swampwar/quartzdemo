@@ -18,9 +18,9 @@
                     <div class="group-button ALL-button" onclick="getDashboardSection('ALL')" >
                         <span>ALL</span>
                     </div>
-                    <th:block th:each="triggerGroup : ${triggerGroup}">
-                        <div class="group-button not-all" th:attrappend="class=${' ' + triggerGroup.triggerGroup + '-button'}" th:attr="onclick=|getDashboardSection('${triggerGroup.triggerGroup}');|" th:name="${triggerGroup.triggerGroup}">
-                            <span th:text="${triggerGroup.triggerGroup}">triggerGroup</span>
+                    <th:block th:each="workDvsCd : ${workDvsCd}">
+                        <div class="group-button not-all" th:attrappend="class=${' ' + workDvsCd.triggerGroup + '-button'}" th:attr="onclick=|getDashboardSection('${workDvsCd.triggerGroup}');|" th:name="${workDvsCd.triggerGroup}">
+                            <span th:text="${workDvsCd.triggerGroup}">triggerGroup</span>
                         </div>
                     </th:block>
                 </div>
@@ -40,10 +40,10 @@
         <div id="page-wrapper-inside">
             <div id="scrollbar">
                 <div class="wrapper">
-                    <th:block th:each="triggerGroup : ${triggerGroup}">
-                        <div class="group-container item " th:attrappend="class=${' ' +triggerGroup.triggerGroup+ '-container'}" th:name="${triggerGroup.triggerGroup}">
-                            <h2><span th:text="${triggerGroup.triggerGroup}">triggerGroup</span></h2>
-                            <div class="group-trigger-container" th:attrappend="class=${' ' +triggerGroup.triggerGroup+ '-trigger-container'}"></div>
+                    <th:block th:each="workDvsCd : ${workDvsCd}">
+                        <div class="group-container item " th:attrappend="class=${' ' +workDvsCd.triggerGroup+ '-container'}" th:name="${workDvsCd.triggerGroup}">
+                            <h2><span th:text="${workDvsCd.triggerGroup}">triggerGroup</span></h2>
+                            <div class="group-trigger-container" th:attrappend="class=${' ' +workDvsCd.triggerGroup+ '-trigger-container'}"></div>
                         </div>
                     </th:block>
                 </div>

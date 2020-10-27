@@ -28,7 +28,7 @@ const callDataTable = (triggerGroup) => {
             dateType: "JSON"
         },
         "columns": [
-            { "data": "workDvsCd" },
+            { "data": "settmWorkDvsCd" },
             // { "data": "triggerSttDtm" },
             { "data": "progId" },
             { "data": "progNm" },

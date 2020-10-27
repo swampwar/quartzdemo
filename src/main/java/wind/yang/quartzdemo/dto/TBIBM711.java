@@ -7,12 +7,13 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class TBIBM710 {
+public class TBIBM711 {
     String settmWorkDvsCd;
     String settmJobGroupId;
+    String settmJobId;
     String progId;
-    String workTime;
-    int workSeq;
+    String settmJobName;
+    int jobSeq;
     String sttDt;
     String endDt;
     String useYn;
@@ -21,21 +22,16 @@ public class TBIBM710 {
     String updateId;
     String updateDtime;
 
-    public TBIBM710(String settmWorkDvsCd, String settmJobGroupId, String progId, String workTime,
-                    int workSeq, String sttDt, String endDt, String useYn) {
+    public TBIBM711(String settmWorkDvsCd, String settmJobGroupId, String progId, String settmJobId, String settmJobName,
+                    int jobSeq, String sttDt, String endDt, String useYn) {
         this.settmWorkDvsCd = settmWorkDvsCd;
         this.settmJobGroupId = settmJobGroupId;
         this.progId = progId;
-        this.workTime = workTime;
-        this.workSeq = workSeq;
+        this.settmJobId = settmJobId;
+        this.settmJobName = settmJobName;
+        this.jobSeq = jobSeq;
         this.sttDt = sttDt;
         this.endDt = endDt;
         this.useYn = useYn;
-    }
-
-    public TBIBM710(String settmWorkDvsCd, String settmJobGroupId, int workSeq) {
-        this.settmWorkDvsCd = settmWorkDvsCd;
-        this.settmJobGroupId = settmJobGroupId;
-        this.workSeq = workSeq;
     }
 }

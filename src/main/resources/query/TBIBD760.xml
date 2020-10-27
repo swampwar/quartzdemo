@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace : Mapper I/F와 동일하도록 설정 -->
+<mapper namespace="wind.yang.quartzdemo.mapper.TBIBD760Mapper">
+    <select id="checkJobHistory" resultType="int">
+        select count(*)
+          from tbibd760
+         where settm_work_dvs_cd = #{settmWorkDvsCd}
+           AND settm_job_group_id = #{settmJobGroupId}
+           AND settm_job_id = #{settmWorkDvsCd}
+           AND prog_id = #{progId}
+           AND syst_area_class_cd = #{systAreaClassCd}
+           AND work_dt = #{workDt}
+           AND work_result_cd = '00'
+    </select>
+
+    <select id="checkJobHistoryMaster" resultType="wind.yang.quartzdemo.dto.TBIBD760">
+        select temp.*
+          from (
+            select *
+              from tbibd760
+             where 1=1
+                <if test="settmWorkDvsCd != null">
+                AND settm_work_dvs_cd = #{settmWorkDvsCd}
+                </if>
+                <if test="settmJobGroupId != 'ALL'">
+                 AND settm_job_group_id = #{settmJobGroupId}
+                </if>
+               AND settm_job_id = #{settmWorkDvsCd}
+               AND prog_id = #{progId}
+               AND work_dt = #{workDt}
+               and work_result_cd in ('00', '01')
+             order by syst_area_class_cd desc
+         ) temp
+        where rownum = 1 --limit 1
+    </select>
+
+    <select id="findDetailAll" resultType="wind.yang.quartzdemo.dto.TBIBD760">
+        select a.settm_work_dvs_cd, a.settm_job_group_id,
+               case when (a.settm_job_id = a.settm_job_group_id) then a.settm_job_id
+                    else a.settm_job_id || '(' || (select c.settm_job_name from tbibm711 c where c.settm_job_id = a.settm_job_id
+                                                                                            and c.settm_job_group_id = a.settm_job_group_id
+                                                                                            and c.settm_work_dvs_cd = a.settm_work_dvs_cd) || ')'
+                    end settm_job_id ,
+               a.prog_id || '(' || (select b.prog_nm from tbibm713 b where a.settm_work_dvs_cd = b.settm_work_dvs_cd
+                                    and a.prog_id = b.prog_id)  || ')' prog_id,
+               case when (a.syst_area_class_cd = '3' or a.syst_area_class_cd = '3-1') then '-'
+                    else a.syst_area_class_cd
+                     end syst_area_class_cd ,
+               a.work_seq, a.work_stt_dtime, a.work_end_dtime,
+               case when (a.work_result_cd = '1' or a.work_result_cd = '4') then '시작'
+                    when (a.work_result_cd = '2' or a.work_result_cd = '5') then '완료'
+                    when (a.work_result_cd = '3' or a.work_result_cd = '6') then '실패(에러)'
+                    when (a.work_result_cd = '7') then '실패(중복실행)'
+                    else a.work_result_cd
+                    end work_result_cd ,
+               a.work_desc
+          from tbibd760 a
+         where 1=1
+           and a.work_stt_dtime between #{startDate} and #{endDate}
+           and a.work_result_cd not in ('00', '01')
+        <if test="settmWorkDvsCd != 'ALL'">
+            AND a.settm_work_dvs_cd = #{settmWorkDvsCd}
+        </if>
+        <if test="settmJobGroupId != 'ALL'">
+            AND a.settm_job_group_id = #{settmJobGroupId}
+        </if>
+        order by a.settm_job_group_id desc, a.work_seq asc
+
+    </select>
+
+    <select id="findLastExecHistory" resultType="wind.yang.quartzdemo.dto.TBIBD760">
+        select temp.*
+        from
+        (
+            SELECT *
+            FROM tbibd760
+            WHERE 1=1
+            <if test="settmWorkDvsCd != null">
+                AND settm_work_dvs_cd = #{settmWorkDvsCd}
+            </if>
+            <if test="settmJobGroupId != null">
+                AND settm_job_group_id = #{settmJobGroupId}
+            </if>
+--             and work_result_cd in ('00', '01')
+            and settm_job_group_id = settm_job_id
+            ORDER BY work_stt_dtime DESC
+        ) temp
+        where rownum = 1 --limit 1
+    </select>
+
+    <select id="findLastStartExecHistory" resultType="wind.yang.quartzdemo.dto.TBIBD760">
+        select temp.*
+        from
+        (
+            SELECT *
+            FROM tbibd760
+            WHERE 1=1
+            <if test="settmWorkDvsCd != null">
+                AND settm_work_dvs_cd = #{settmWorkDvsCd}
+            </if>
+            <if test="settmJobGroupId != null">
+                AND settm_job_group_id = #{settmJobGroupId}
+            </if>
+            --             and work_result_cd in ('00', '01')
+            and settm_job_group_id = settm_job_id
+            and work_seq = 1
+            ORDER BY work_stt_dtime DESC
+        ) temp
+        where rownum = 1 --limit 1
+    </select>
+
+    <select id="findByExecHistory" resultType="wind.yang.quartzdemo.dto.TBIBD760">
+
+--         select temp.*
+--         from
+--         (
+        SELECT *
+        FROM tbibd760
+        WHERE 1=1
+        <if test="settmWorkDvsCd != null">
+            AND settm_work_dvs_cd = #{settmWorkDvsCd}
+        </if>
+        <if test="settmJobGroupId != null">
+            AND settm_job_group_id = #{settmJobGroupId}
+        </if>
+        <if test="settmJobId != null">
+            AND settm_job_id = #{settmJobId}
+        </if>
+        <if test="progId != null">
+            AND prog_id = #{progId}
+        </if>
+        <if test="systAreaClassCd != null">
+            AND syst_area_class_cd = #{systAreaClassCd}
+        </if>
+        <![CDATA[
+        and work_stt_dtime > ]]> #{workSttDtime}
+        ORDER BY work_stt_dtime DESC
+--         ) temp
+--         limit 1--where rownum = 1
+    </select>
+
+    <insert id="insertExecHistory">
+        insert into TBIBD760
+            (settm_work_dvs_cd, settm_job_group_id, settm_job_id, prog_id, syst_area_class_cd, work_dt, work_seq,
+             work_stt_dtime, work_end_dtime, work_result_cd, work_desc, regist_id, regist_dtime, update_id, update_dtime)
+        values (#{settmWorkDvsCd}, #{settmJobGroupId}, #{settmWorkDvsCd}, #{progId}, #{systAreaClassCd}, #{workDt}, #{workSeq},
+         #{workSttDtime}, #{workEndDtime, jdbcType=VARCHAR}, #{workResultCd}, #{workDesc}, #{registId}, #{registDtime}, #{updateId, jdbcType=VARCHAR}, #{updateDtime, jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateExecHistory">
+        <![CDATA[
+        UPDATE TBIBD760
+        SET work_end_dtime = #{workEndDtime, jdbcType=VARCHAR
+        },
+            work_result_cd = #{workResultCd, jdbcType=VARCHAR},
+            work_desc = #{workDesc},
+            update_id = #{updateId, jdbcType=VARCHAR},
+            update_dtime = #{updateDtime, jdbcType=VARCHAR}
+        WHERE settm_work_dvs_cd = #{settmWorkDvsCd}
+        AND settm_job_group_id = #{settmJobGroupId}
+        AND settm_job_id = #{settmJobId}
+        AND prog_id = #{progId}
+        AND syst_area_class_cd = #{systAreaClassCd}
+        AND work_dt = #{workDt}
+        ]]>
+    </update>
+</mapper>

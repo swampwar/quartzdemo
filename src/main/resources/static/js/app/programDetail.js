@@ -33,7 +33,7 @@ const getEmptyJobList = () => {
             "<div class='select'>" +
                 "<span>선 택</span>" +
                 "<i class='fa fa-chevron-left'></i>" +
-                "<input class='input-job job-workDvsCd' type='hidden' name='execProgInfoList["+i+"].workDvsCd'>" +
+                "<input class='input-job job-workDvsCd' type='hidden' name='execProgInfoList["+i+"].settmWorkDvsCd'>" +
             "</div>" +
             "<ul class='selectbox-menu'>" +
                 "<li class='tg-selectbox' id='MGT'><div>MGT</div></li>" +

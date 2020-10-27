@@ -35,30 +35,30 @@ const closeJobDatas = (triggerName, triggerGroup) => {
 
 const addJobDetail= (target, rslt) => {
     let jobSttDtm = "실행전"; let jobEndDtm = "종료전";
-    if(rslt.jobSttDtm != null) {
-        jobSttDtm = rslt.jobSttDtm.substr(8,2) + ':' + rslt.jobSttDtm.substr(10,2) + ':' + rslt.jobSttDtm.substr(12,2);
+    if(rslt.workSttDtime != null) {
+        jobSttDtm = rslt.workSttDtime.substr(8,2) + ':' + rslt.workSttDtime.substr(10,2) + ':' + rslt.workSttDtime.substr(12,2);
     }
-    if(rslt.jobEndDtm != null) {
-        jobEndDtm = rslt.jobEndDtm.substr(8,2) + ':' + rslt.jobEndDtm.substr(10,2) + ':' + rslt.jobEndDtm.substr(12,2);
+    if(rslt.workEndDtime != null) {
+        jobEndDtm = rslt.workEndDtime.substr(8,2) + ':' + rslt.workEndDtime.substr(10,2) + ':' + rslt.workEndDtime.substr(12,2);
     }
 
     $('.' + target + '-box').append(''+
-        '<div class="job-'+rslt.seq+' job-container panel-'+ rslt.jobExecStaCd +'">' +
+        '<div class="job-'+rslt.workSeq+' job-container panel-'+ rslt.workResultCd +'">' +
             '<div class="panel-heading">' +
                 '<div class="row job-box">' +
                     '<div class="col-xs-2">' +
                         // '<i class="fa fa-comments fa-4x"></i>' +
-                        '<span class="pull-left job-seq">'+ rslt.execProgSeq +'</span>' +
+                        '<span class="pull-left job-seq">'+ rslt.workSeq +'</span>' +
                     '</div>' +
                     '<div class="col-xs-10 text-right" style="display: inline-grid">' +
-                        '<div class="huge"><span class="pull-right job-name">' + rslt.summary + '</span></div>' +
-                        '<div ><span class="pull-right" onclick="popupProgram(\'execProg\',\''+ rslt.execProgName +'\');" style="cursor:pointer;" data-tooltip-text="소스 보기">' + rslt.execProgName + '</span></div>' +
+                        '<div class="huge"><span class="pull-right job-name">' + rslt.settmJobId + '</span></div>' +
+                        '<div ><span class="pull-right" onclick="popupProgram(\'execProg\',\''+ rslt.progId +'\');" style="cursor:pointer;" data-tooltip-text="소스 보기">' + rslt.progId + '</span></div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
             '<a>' +
                 '<div class="panel-footer">' +
-                    '<span class="pull-right" onclick="popupProgram(\'execLog\',\''+ rslt.execProgName +'\');" style="cursor:pointer;" data-tooltip-text="로그 보기">' + rslt.jobExecStaCd +'</span>' +
+                    '<span class="pull-right" onclick="popupProgram(\'execLog\',\''+ rslt.settmJobId +'\');" style="cursor:pointer;" data-tooltip-text="로그 보기">' + rslt.workResultCd +'</span>' +
 
                     '<div class="clearfix"></div>' +
                 '</div>' +

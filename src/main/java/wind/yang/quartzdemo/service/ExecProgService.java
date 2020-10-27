@@ -50,6 +50,12 @@ public class ExecProgService {
         return TBIBM713Mapper.findProgList(workDcsCd);
     }
 
+    public TBIBM713 findProgByProgId(String workDvsCd, String progId) {
+        TBIBM713 tbibm713 = TBIBM713Mapper.findProgByProgId(workDvsCd, progId);
+
+        return tbibm713;
+    }
+
     public List<TBIBM713> insertProgDetail(ProgDetailInfo progDetailInfo) {
         List<TBIBM713> progList = progDetailInfo.getExecProgInfoList();
 
@@ -59,15 +65,7 @@ public class ExecProgService {
             TBIBM713 TBIBM713 = progList.get(i);
             try {
 
-                String progId = "P_" + TBIBM713.getWorkDvsCd() + "_";
-                int progCnt = TBIBM713Mapper.countProgByWorkDvsCd(TBIBM713.getWorkDvsCd());
-                if (progCnt < 9) {
-                    progId += "00" + (progCnt + 1);
-                } else if (progCnt < 99) {
-                    progId += "0" + (progCnt + 1);
-                } else {
-                    progId += (progCnt + 1);
-                }
+                String progId = makeProgId(TBIBM713.getSettmWorkDvsCd());
 
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 Date time = new Date();
@@ -86,5 +84,20 @@ public class ExecProgService {
             }
         }
         return insertFailList;
+    }
+
+    public String makeProgId(String workDvsCd) {
+        String progId = "P_" + workDvsCd + "_";
+        int progCnt = TBIBM713Mapper.countProgByWorkDvsCd(workDvsCd);
+        if (progCnt < 9) {
+            progId += "00" + (progCnt + 1);
+        } else if (progCnt < 99) {
+            progId += "0" + (progCnt + 1);
+        } else {
+            progId += (progCnt + 1);
+        }
+
+        log.debug("progId  : {}", progId);
+        return progId;
     }
 }

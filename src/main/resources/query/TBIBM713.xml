@@ -4,32 +4,38 @@
 <!-- namespace : Mapper I/F와 동일하도록 설정 -->
 <mapper namespace="wind.yang.quartzdemo.mapper.TBIBM713Mapper">
     <select id="findProgList" resultType="wind.yang.quartzdemo.dto.TBIBM713">
-        select work_dvs_cd, prog_id, case when prog_dvs_cd = '00'
-                                          then concat('SHELL(', prog_dvs_cd, ')')
-                                          when prog_dvs_cd = '01'
-                                          then concat('PC(', prog_dvs_cd, ')')
-                                          when prog_dvs_cd = '02'
-                                          then concat('ETC(', prog_dvs_cd, ')')
+        select settm_work_dvs_cd, prog_id, case when prog_dvs_cd = '1'
+                                          then 'SHELL(' || prog_dvs_cd || ')'--concat('SHELL(', prog_dvs_cd, ')')
+                                          when prog_dvs_cd = '2'
+                                          then 'PC(' || prog_dvs_cd || ')'--concat('PC(', prog_dvs_cd, ')')
+                                          when prog_dvs_cd = '3'
+                                          then 'ETC(' || prog_dvs_cd || ')'--concat('ETC(', prog_dvs_cd, ')')
                                       end as prog_dvs_cd
             , prog_nm, prog_desc, prog_path, regist_dtime, regist_id, update_dtime, update_id
           from TBIBM713
           where use_yn = 'Y'
         <if test="workDvsCd != 'ALL'">
-            and work_dvs_cd = #{workDvsCd}
+            and settm_work_dvs_cd = #{workDvsCd}
         </if>
-        order by work_dvs_cd asc, prog_id asc
+        order by settm_work_dvs_cd asc, prog_id asc
+    </select>
+
+    <select id="findProgByProgId" resultType="wind.yang.quartzdemo.dto.TBIBM713">
+        select * from tbibm713
+         where settm_work_dvs_cd = #{workDvsCd}
+           and prog_id = #{progId}
     </select>
 
     <select id="countProgByWorkDvsCd" resultType="int">
         select count(*)
           from TBIBM713
-         where work_dvs_cd = #{workDvsCd}
+         where settm_work_dvs_cd = #{workDvsCd}
     </select>
 
     <insert id="insertProgDetail">
         insert into TBIBM713
-            (work_dvs_cd, prog_id, prog_dvs_cd, prog_nm, prog_desc, prog_path, use_yn, regist_id, regist_dtime, update_id, update_dtime)
-        values (#{workDvsCd}, #{progId}, #{progDvsCd}, #{progNm}, #{progDesc}, #{progPath}, 'Y', #{registId}, #{registDtime}, #{updateId}, #{updateDtime})
+            (settm_work_dvs_cd, prog_id, prog_dvs_cd, prog_nm, prog_desc, prog_path, use_yn, regist_id, regist_dtime, update_id, update_dtime)
+        values (#{settmWorkDvsCd}, #{progId}, #{progDvsCd}, #{progNm}, #{progDesc}, #{progPath}, 'Y', #{registId}, #{registDtime}, #{updateId}, #{updateDtime})
     </insert>
 
     <select id="testDb" resultType="int">

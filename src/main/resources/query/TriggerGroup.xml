@@ -4,46 +4,63 @@
 <!-- namespace : Mapper I/F와 동일하도록 설정 -->
 <mapper namespace="wind.yang.quartzdemo.mapper.TriggerGroupMapper">
     <select id="findAll" resultType="wind.yang.quartzdemo.dto.TriggerGroup">
-        select TRIGGER_GROUP, DESCRIPTION, USE_YN, RGT_DTM, UDT_DTM
-        from TB_TRIGGER_GROUP
+        select prmt_val triggerGroup , prmt_desc description, use_yn useYn, regist_dtime rgtDtm, update_dtime udtDtm
+        from tbibm715
         where 1=1
+        and settm_work_dvs_cd = 'DVS'
         <if test="triggerGroup != null">
-            AND TRIGGER_GROUP = #{triggerGroup}
+            AND prmt_val = #{triggerGroup}
         </if>
         <if test="description != null">
-            AND DESCRIPTION = #{description}
+            AND prmt_desc = #{description}
         </if>
         <if test="useYn != null">
             AND USE_YN = #{useYn}
         </if>
-        order by USE_YN DESC, TRIGGER_GROUP ASC;
+        order by USE_YN DESC, prmt_val ASC
     </select>
 
     <select id="findByTriggerGroup" resultType="wind.yang.quartzdemo.dto.TriggerGroup">
-        select TRIGGER_GROUP, DESCRIPTION, USE_YN
-        from TB_TRIGGER_GROUP
+        select prmt_val triggerGroup , prmt_desc description, use_yn useYn, regist_dtime rgtDtm, update_dtime udtDtm
+        from TBIBM715
         where 1=1
+        and settm_work_dvs_cd = 'DVS'
         <if test="triggerGroup != ALL">
-            AND TRIGGER_GROUP = #{triggerGroup}
+            AND prmt_val = #{triggerGroup}
         </if>
-        and USE_YN = 'Y';
+        and USE_YN = 'Y'
     </select>
 
     <select id="insertTriggerGroup" resultType="wind.yang.quartzdemo.dto.TriggerGroup">
-        insert into tb_trigger_group
-        values (#{triggerGroup}, #{description}, #{useYn}, #{rgtDtm}, #{udtDtm});
+        insert into tbibm715
+        (settm_work_dvs_cd, prst_id, prmt_id, settm_job_id, prog_id, prmt_val, prmt_desc, prmt_seq, use_yn, regist_id, regist_dtime, update_id, update_dtime)
+        values ('DVS', #{prstId}, #{prmtId}, null, null, #{triggerGroup}, #{description}, #{prmtSeq}, #{useYn}, 'quartz scheduler', #{rgtDtm}, 'quartz scheduler', #{udtDtm});
     </select>
 
     <select id="updateTriggerGroup" resultType="wind.yang.quartzdemo.dto.TriggerGroup">
-        update tb_trigger_group
-        set description = #{description},
+        update tbibm715
+        set prmt_desc = #{description},
             use_yn = #{useYn},
-            udt_dtm = #{udtDtm}
-        where trigger_group = #{triggerGroup};
+            update_dtime = #{udtDtm}
+        where prmt_val = #{triggerGroup}
+        and settm_work_dvs_cd = 'DVS'
     </select>
 
     <select id="deleteTriggerGroup" resultType="wind.yang.quartzdemo.dto.TriggerGroup">
-        delete from tb_trigger_group
-        where trigger_group = #{triggerGroup};
+        delete from tbibm715
+        where prmt_val = #{triggerGroup}
+        and settm_work_dvs_cd = 'DVS'
+    </select>
+
+    <select id="getLastSeq" resultType="int">
+        select temp.prmt_seq
+        from
+        (
+            select *
+              from tbibm715
+             where settm_work_dvs_cd = 'DVS'
+             order by prmt_seq desc
+        ) temp
+        where rownum = 1 --limit 1
     </select>
 </mapper>

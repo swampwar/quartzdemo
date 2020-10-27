@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import wind.yang.quartzdemo.code.JobExecutionStatusCode;
+import wind.yang.quartzdemo.dto.TBIBM710;
 import wind.yang.quartzdemo.service.ExecProgService;
+import wind.yang.quartzdemo.service.JobGropService;
 import wind.yang.quartzdemo.service.QuartzService;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +18,9 @@ import javax.annotation.PostConstruct;
 public class SampleTriggerListener implements TriggerListener {
     @Autowired
     ExecProgService epSvc;
+
+    @Autowired
+    JobGropService jobGropService;
 
     @Lazy
     @Autowired
@@ -33,9 +38,14 @@ public class SampleTriggerListener implements TriggerListener {
 
         // 실행 프로그램 조회
         if(trigger.getKey().getName().contains(".F.")){ // 강제 실행이면
-            jobDataMap.put("execProg", epSvc.findOriginalByTrigger(trigger.getKey()));
+//            jobDataMap.put("execProg", epSvc.findOriginalByTrigger(trigger.getKey()));
+            log.debug("parsing trigger name : {}",trigger.getKey().getName().substring(0, trigger.getKey().getName().indexOf(".")));
+            String parseName = trigger.getKey().getName().substring(0, trigger.getKey().getName().indexOf("."));
+            TriggerKey triggerKey = new TriggerKey(parseName, trigger.getKey().getGroup());
+            jobDataMap.put("TBIBM710", jobGropService.findByTrigger(triggerKey));
         }else{ // 일반 실행이면
-            jobDataMap.put("execProg", epSvc.findByTrigger(trigger.getKey()));
+//            jobDataMap.put("execProg", epSvc.findByTrigger(trigger.getKey()));
+            jobDataMap.put("TBIBM710", jobGropService.findByTrigger(trigger.getKey()));
         }
     }
 
@@ -44,16 +54,17 @@ public class SampleTriggerListener implements TriggerListener {
         log.debug("vetoJobExecution 실행가능여부 검사");
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
 
+
         // 잡이 실행가능 상태인지 검증한다.
         try {
             if(isTriggerDuplicateRunning(trigger.getKey())){ // 중복실행이면 종료
-                jobDataMap.put("vetoJobRsltMsg", "Trigger가 중복실행 되어 종료합니다.");
-                jobDataMap.put("vetoJobRsltCode", JobExecutionStatusCode.DUPLICATE);
+                jobDataMap.put("vetoJobRsltMsg", "작업그룹이 중복실행 되어 종료합니다.");
+                jobDataMap.put("vetoJobRsltCode", "7"); //JobExecutionStatusCode.DUPLICATE
                 return true;
             }
-            if(context.getJobDetail().getJobDataMap().get("execProg") == null){ // 실행프로그램이 없으면 종료
-                jobDataMap.put("vetoJobRsltMsg", "Trigger에 실행가능한 프로그램이 없습니다.");
-                jobDataMap.put("vetoJobRsltCode", JobExecutionStatusCode.ERROR);
+            if(context.getJobDetail().getJobDataMap().get("TBIBM710") == null){ // 실행프로그램이 없으면 종료
+                jobDataMap.put("vetoJobRsltMsg", "정산작업결과 상세 테이블(TBIBD750)에 등록 실패");
+                jobDataMap.put("vetoJobRsltCode", "3"); //JobExecutionStatusCode.ERROR
                 return true;
             }
         } catch (SchedulerException e) {

@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import wind.yang.quartzdemo.dto.ExecProg;
-import wind.yang.quartzdemo.dto.JobRequest;
-import wind.yang.quartzdemo.dto.TriggerGroup;
-import wind.yang.quartzdemo.dto.TriggerJobInfo;
+import wind.yang.quartzdemo.dto.*;
 import wind.yang.quartzdemo.service.DashboardService;
 import wind.yang.quartzdemo.service.ExecProgService;
 import wind.yang.quartzdemo.service.TriggerDetailService;
@@ -52,33 +49,24 @@ public class TriggerDetailController {
         TriggerJobInfo triggerJobInfo = triggerDetailService.getTriggerJobInfo(triggerGroup, triggerName);
         log.debug(triggerJobInfo.toString());
         model.addAttribute("triggerGroup", triggerGroupService.findByTriggerGroup("ALL"));
-        model.addAttribute("triggers", dashboardService.readTriggers("ALL"));
+//        model.addAttribute("triggers", dashboardService.readTriggers("ALL"));
         model.addAttribute("detail", triggerJobInfo);
         model.addAttribute("type", "update");
         return "triggerDetail";
     }
 
-    @PostMapping("/getExecProgList")
-    @ResponseBody
-    public List<ExecProg> getExecProgList(@RequestBody JobRequest jobRequest) {
-        return execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
-    }
+//    @PostMapping("/getExecProgList")
+//    @ResponseBody
+//    public List<ExecProg> getExecProgList(@RequestBody JobRequest jobRequest) {
+//        return execProgService.findByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()));
+//    }
 
     @PostMapping("/insert")
-    public String insertTriggerDetail(@ModelAttribute TriggerJobInfo triggerJobInfo) {
-        log.debug(triggerJobInfo.toString());
-        log.debug(triggerJobInfo.getExecProgFileList().toString());
-        log.debug(triggerJobInfo.getExecProgInfoList().toString());
+    public String insertTriggerDetail(@ModelAttribute TotalJobInfo totalJobInfo) {
+        log.debug(totalJobInfo.toString());
 
-        triggerDetailService.insertTriggerDetail(triggerJobInfo);
+        triggerDetailService.insertTriggerDetail(totalJobInfo);
 
-        String triggerName = "";
-        if("".equals(triggerJobInfo.getTriggerName1())) {
-            triggerName = triggerJobInfo.getTriggerName2();
-        }else {
-            triggerName = triggerJobInfo.getTriggerName1();
-        }
-
-        return "redirect:/triggerDetail/" + triggerJobInfo.getTriggerGroup() + "/" + triggerName;
+        return "redirect:/triggerDetail/"; // + triggerJobInfo.getTriggerGroup() + "/" + triggerName;
     }
 }

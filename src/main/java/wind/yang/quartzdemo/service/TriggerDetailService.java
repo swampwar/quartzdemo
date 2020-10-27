@@ -5,12 +5,11 @@ import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wind.yang.quartzdemo.dto.ExecProg;
-import wind.yang.quartzdemo.dto.JobRequest;
-import wind.yang.quartzdemo.dto.JobResponse;
-import wind.yang.quartzdemo.dto.TriggerJobInfo;
+import wind.yang.quartzdemo.dto.*;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,6 +20,15 @@ public class TriggerDetailService {
 
     @Autowired
     QuartzService quartzService;
+
+    @Autowired
+    JobGropService jobGropService;
+
+    @Autowired
+    JobService jobService;
+
+    @Autowired
+    JobDetailService jobDetailService;
 
     public TriggerJobInfo getTriggerJobInfo(String triggerGroup, String triggerName) {
         TriggerJobInfo triggerJobInfo = new TriggerJobInfo();
@@ -38,55 +46,112 @@ public class TriggerDetailService {
         return triggerJobInfo;
     }
 
-    public boolean insertTriggerDetail(TriggerJobInfo triggerJobInfo) {
-        String triggerGroup = triggerJobInfo.getTriggerGroup();
-        String triggerName = "";
-        if("".equals(triggerJobInfo.getTriggerName1())) {
-            triggerName = triggerJobInfo.getTriggerName2();
-        }else {
-            triggerName = triggerJobInfo.getTriggerName1();
-        }
-        TriggerKey triggerKey = new TriggerKey(triggerName, triggerGroup);
-
+    public boolean insertTriggerDetail(TotalJobInfo totalJobInfo) {
+        String insertType = totalJobInfo.getInsertType();
         boolean flag = true;
 
-        try {
-            // 기존에 없는 trigger인 경우 추가해준다.
-            if (quartzService.readTrigger(triggerGroup, triggerName) == null) {
-                JobRequest jobRequest = new JobRequest();
-                jobRequest = jobRequest.builder()
-                    .triggerGroup(triggerGroup)
-                    .triggerName(triggerName)
-                    .cronExpression(triggerJobInfo.getCronExpression())
-                    .triggerDescription(triggerJobInfo.getTriggerDescription())
-                    .build();
-
-                log.debug("jobRequest : {}" , jobRequest.toString());
-
-                quartzService.createJob(jobRequest);
+        String workDvsCd = totalJobInfo.getWorkDvsCd();
+        if ("jobGroup".equals(insertType)) {
+            if (totalJobInfo.getJobGroupId() == null || "".equals(totalJobInfo.getJobGroupId())) {
+                totalJobInfo.setJobGroupId(jobGropService.makeJobGroupId(totalJobInfo.getWorkDvsCd()));
             }
-            // 기존에 있는 trigger인 경우 update해준다.
-            else {
-                quartzService.update(triggerKey, triggerJobInfo.getCronExpression());
+            String triggerGroup = workDvsCd;
+            String triggerName = totalJobInfo.getJobGroupId();
+            String jobTime = totalJobInfo.getJobTime();
+
+            TriggerKey triggerKey = new TriggerKey(triggerName, triggerGroup);
+
+            try {
+                TBIBM713 tbibm713 = execProgService.findProgByProgId(workDvsCd, totalJobInfo.getProgId());
+
+                // Quartz Scheduler에 추가해준다.
+                // 기존에 없는 trigger인 경우 추가해준다.
+                if (quartzService.readTrigger(triggerGroup, triggerName) == null) {
+                    JobRequest jobRequest = new JobRequest();
+                    jobRequest = jobRequest.builder()
+                            .triggerGroup(triggerGroup)
+                            .triggerName(triggerName)
+                            .cronExpression(jobTime)
+                            .triggerDescription(tbibm713.getProgDesc())
+                            .build();
+
+                    log.debug("jobRequest : {}", jobRequest.toString());
+
+                    quartzService.createJob(jobRequest);
+
+                    //DB에 저장해준다
+                    flag = insertJobGroup(totalJobInfo);
+                }
+                // 기존에 있는 trigger인 경우 update해준다.
+                else {
+                    quartzService.update(triggerKey, totalJobInfo.getJobTime());
+
+                    /**TODO DB에 update하는 내용 추가필요*/
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                flag = false;
+            }
+        }else if ("job".equals(totalJobInfo.getInsertType())) {
+            if (totalJobInfo.getJobId() == null || "".equals(totalJobInfo.getJobId())) {
+                // 신규 등록
+                totalJobInfo.setJobId(jobService.makeJobId(totalJobInfo.getWorkDvsCd()));
+                flag = insertJob(totalJobInfo);
+            }else {
+                /**TODO DB에 update하는 내용 추가필요*/
             }
 
-            // trigger에 등록된 기존 execProg를 전부 삭제한다.
-            execProgService.deleteExecProg(triggerKey);
-
-            // 이후 TriggerJobInfo의 execProgList의 내용들을 전부 insert한다.
-            List<ExecProg> execProgList = triggerJobInfo.getExecProgInfoList();
-            for (ExecProg execProg : execProgList) {
-             // execProgList의 triggerGroup, triggerName은 전부 null로 넘어오니 세팅해준다.
-                execProg.setTriggerGroup(triggerGroup);
-                execProg.setTriggerName(triggerName);
-
-                execProgService.insertExecProg(execProg);
+        }else if ("jobDetail".equals(totalJobInfo.getInsertType())) {
+            if (totalJobInfo.getHgrnJobId() != null && !"".equals(totalJobInfo.getHgrnJobId())) {
+                totalJobInfo.setJobId(jobService.makeJobId(workDvsCd));
+            }else {
+                totalJobInfo.setHgrnJobId(null);
             }
-
-        }catch (Exception e) {
-             e.printStackTrace();
-             flag = false;
+            flag = insertJobDetail(totalJobInfo);
         }
+        return flag;
+    }
+
+    public boolean insertJobGroup(TotalJobInfo totalJobInfo) throws Exception{
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+
+        TBIBM710 tbibm710 = new TBIBM710(totalJobInfo.getWorkDvsCd(), totalJobInfo.getJobGroupId(), totalJobInfo.getProgId(),
+                totalJobInfo.getJobTime(), (totalJobInfo.getJobSeq().equals("")) ? 0 : Integer.parseInt(totalJobInfo.getJobSeq()),
+                totalJobInfo.getSttDt().replaceAll("-", ""), totalJobInfo.getEndDt().replaceAll("-", ""),
+                totalJobInfo.getUseYn(), "quartz scheduler", format.format(date), "quartz scheduler", format.format(date));
+
+        boolean flag = jobGropService.insertJobGroup(tbibm710);
+
+        return flag;
+    }
+
+    public boolean insertJob(TotalJobInfo totalJobInfo) {
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+
+                TBIBM711 tbibm711 = new TBIBM711(totalJobInfo.getWorkDvsCd(), totalJobInfo.getJobGroupId(), totalJobInfo.getJobId(),
+                totalJobInfo.getProgId(), totalJobInfo.getJobName(), (totalJobInfo.getJobSeq().equals("")) ? 0 : Integer.parseInt(totalJobInfo.getJobSeq()),
+                totalJobInfo.getSttDt().replaceAll("-", ""), totalJobInfo.getEndDt().replaceAll("-", ""),
+                totalJobInfo.getUseYn(), "quartz scheduler", format.format(date), "quartz scheduler", format.format(date));
+
+        boolean flag = jobService.insertJob(tbibm711);
+
+        return flag;
+    }
+
+    public boolean insertJobDetail(TotalJobInfo totalJobInfo) {
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+
+        TBIBM712 tbibm712 = new TBIBM712(totalJobInfo.getWorkDvsCd(), totalJobInfo.getJobId(), totalJobInfo.getHgrnJobId(),
+                totalJobInfo.getProgId(), (totalJobInfo.getJobSeq().equals("")) ? 0 : Integer.parseInt(totalJobInfo.getJobSeq()), totalJobInfo.getJobProdDt(),
+                totalJobInfo.getSttDt().replaceAll("-", ""), totalJobInfo.getEndDt().replaceAll("-", ""),
+                totalJobInfo.getUseYn(), "quartz scheduler", format.format(date), "quartz scheduler", format.format(date));
+
+        boolean flag = jobDetailService.insertJob(tbibm712);
+
         return flag;
     }
 

@@ -30,9 +30,9 @@
                     <form class='form-horizontal' method="post" enctype="multipart/form-data" action="/triggerDetail/insert">
                         <div class='form-group'  style="height: 49px;">
                             <label class='control-label col-md-2' for='trigger_group'>등록 대상</label>
-                            <label class="radio-button job_group" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insert_type" value="job_group" onclick="selectRadio();" checked> 작업 그룹</label>
-                            <label class="radio-button left-padding-25 job" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insert_type" value="job" onclick="selectRadio();"> 작업</label>
-                            <label class="radio-button left-padding-25 job_detail" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insert_type" value="job_detail" onclick="selectRadio();"> 작업 상세</label>
+                            <label class="radio-button job_group" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insertType" value="jobGroup" onclick="selectRadio();" checked> 작업 그룹</label>
+                            <label class="radio-button left-padding-25 job" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insertType" value="job" onclick="selectRadio();"> 작업</label>
+                            <label class="radio-button left-padding-25 job_detail" th:if="${#strings.equals(type, 'insert')}"><input type="radio" name="insertType" value="jobDetail" onclick="selectRadio();"> 작업 상세</label>
                         </div>
                         <!-- 업무 구분 START ------------------------------------------------------------------------>
                         <div class='form-group'>
@@ -42,7 +42,7 @@
                                 <div class="select">
                                     <span>선 택</span>
                                     <i class="fa fa-chevron-left"></i>
-                                    <input type="hidden" name="triggerGroup" id="trigger_group">
+                                    <input type="hidden" name="workDvsCd" id="trigger_group">
                                 </div>
                                 <ul class="selectbox-menu">
                                     <th:block th:each="workDvsCd : ${workDvsCd}">
@@ -53,32 +53,32 @@
                             <!-- 분기 (조회 화면)-->
                             <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'select')}">
                                 <div class="form-group internal">
-                                    <input class="form-control" type="text" name="triggerGroup" th:value="${detail.triggerGroup}" readonly="readonly">
+                                    <input class="form-control" type="text" name="workDvsCd" th:value="${detail.triggerGroup}" readonly="readonly">
                                 </div>
                             </div>
                             <!-- 분기 (수정 화면)-->
                             <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'update')}">
                                 <div class="form-group internal">
-                                    <input class="form-control" type="text" name="triggerGroup" th:value="${detail.triggerGroup}" readonly="readonly">
+                                    <input class="form-control" type="text" name="workDvsCd" th:value="${detail.triggerGroup}" readonly="readonly">
                                 </div>
                             </div>
                         </div>
 
                         <!-- 작업그룹ID START ------------------------------------------------------------------------>
                         <div class='form-group' style="display: none;">
-                            <label class='control-label col-md-2' for='trigger_name'>작업그룹ID</label>
+                            <label class='control-label col-md-2' for='job_group_id'>작업그룹ID</label>
                             <!-- 분기 (등록 화면)-->
                             <div class="selectbox triggerName" th:if="${#strings.equals(type, 'insert')}">
                                 <div class="select">
                                     <span>선 택</span>
                                     <i class="fa fa-chevron-left"></i>
-                                    <input type="hidden" name="triggerName1" id="trigger_name">
+                                    <input type="hidden" name="jobGroupId" id="job_group_id">
                                 </div>
 
                                 <th:block th:each="workDvsCd : ${workDvsCd}">
                                     <ul class="selectbox-menu" th:attrappend="class=${' '+ workDvsCd.triggerGroup + '-selected'}">
                                         <th:block th:each="jobGroup : ${jobGroup}">
-                                            <li class="tn-selectbox" th:if="${#strings.equals(workDvsCd.triggerGroup, jobGroup.workDvsCd)}" th:id="${jobGroup.jobGroupId}" th:attrappend="triggerGroup=${jobGroup.workDvsCd}"><div th:text="${jobGroup.jobGroupId}">Job Group Id</div></li>
+                                            <li class="tn-selectbox" th:if="${#strings.equals(workDvsCd.triggerGroup, jobGroup.settmWorkDvsCd)}" th:id="${jobGroup.settmJobGroupId}" th:attrappend="triggerGroup=${jobGroup.settmWorkDvsCd}"><div th:text="${jobGroup.settmJobGroupId}">Job Group Id</div></li>
                                         </th:block>
                                     </ul>
                                 </th:block>
@@ -98,7 +98,7 @@
                             <!-- 분기 (수정 화면)-->
                             <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'update')}">
                                 <div class="form-group internal">
-                                    <input class="form-control" type="text" name="triggerName1" id="trigger_name_u" th:value="${detail.triggerName1}">
+                                    <input class="form-control" type="text" name="jobGroupId" id="job_group_id_u" th:value="${detail.triggerName1}">
                                 </div>
                             </div>
                             <button class="btn btn-danger form-control" onClick="" th:if="${#strings.equals(type, 'update')}" style="margin-right: 15px; float: right; width: 150px;">TRIGGER DELETE</button>
@@ -115,10 +115,10 @@
                                     <input type="hidden" name="jobId" id="job_id">
                                 </div>
 
-                                <th:block th:each="triggerGroup : ${triggerGroup}">
-                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
-                                        <th:block th:each="trigger : ${triggers}">
-                                            <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                                <th:block th:each="jobGroup : ${jobGroup}">
+                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ jobGroup.settmJobGroupId + '-selected'}">
+                                        <th:block th:each="job : ${job}">
+                                            <li class="tn-selectbox" th:if="${#strings.equals(jobGroup.settmJobGroupId, job.settmJobGroupId)}" th:id="${job.settmJobId}" th:attrappend="triggerGroup=${job.settmJobGroupId}"><div th:text="${job.settmJobName+' ('+job.settmJobId+')'}">Job Id</div></li>
                                         </th:block>
                                     </ul>
                                 </th:block>
@@ -142,17 +142,17 @@
                         <div class='form-group' style="display: none;">
                             <label class='control-label col-md-2' for='hgrn_job_detail'>상위 작업상세ID</label>
                             <!-- 분기 (등록 화면)-->
-                            <div class="selectbox hgrnJobDetail" th:if="${#strings.equals(type, 'insert')}">
+                            <div class="selectbox hgrnJobDetail jobId" th:if="${#strings.equals(type, 'insert')}">
                                 <div class="select">
                                     <span>선 택</span>
                                     <i class="fa fa-chevron-left"></i>
-                                    <input type="hidden" name="hgrnJobDetail" id="hgrn_job_detail">
+                                    <input type="hidden" name="hgrnJobId" id="hgrn_job_detail">
                                 </div>
 
-                                <th:block th:each="triggerGroup : ${triggerGroup}">
-                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ triggerGroup.triggerGroup + '-selected'}">
-                                        <th:block th:each="trigger : ${triggers}">
-                                            <li class="tn-selectbox" th:if="${#strings.equals(triggerGroup.triggerGroup, trigger.triggerGroup)}" th:id="${trigger.triggerName}" th:attrappend="triggerGroup=${trigger.triggerGroup}"><div th:text="${trigger.triggerName}">trigger Name</div></li>
+                                <th:block th:each="jobGroup : ${jobGroup}">
+                                    <ul class="selectbox-menu" th:attrappend="class=${' '+ jobGroup.settmJobGroupId + '-selected'}">
+                                        <th:block th:each="job : ${job}">
+                                            <li class="tn-selectbox" th:if="${#strings.equals(jobGroup.settmJobGroupId, job.settmJobGroupId)}" th:id="${job.settmJobId}" th:attrappend="triggerGroup=${job.settmJobGroupId}"><div th:text="${job.settmJobName+' ('+job.settmJobId+')'}">Job Id</div></li>
                                         </th:block>
                                     </ul>
                                 </th:block>
@@ -166,7 +166,7 @@
                             <!-- 분기 (수정 화면)-->
                             <div class="col-md-3 indent-small" th:if="${#strings.equals(type, 'update')}">
                                 <div class="form-group internal">
-                                    <input class="form-control" type="text" name="hgrnJobDetail" id="hgrn_job_detail_u" th:value="${detail.triggerName1}">
+                                    <input class="form-control" type="text" name="hgrnJobId" id="hgrn_job_detail_u" th:value="${detail.triggerName1}">
                                 </div>
                             </div>
                             <button class="btn btn-danger form-control" onClick="" th:if="${#strings.equals(type, 'update')}" style="margin-right: 15px; float: right; width: 150px;">TRIGGER DELETE</button>
@@ -186,7 +186,7 @@
                                 <th:block th:each="workDvsCd : ${workDvsCd}">
                                     <ul class="selectbox-menu" th:attrappend="class=${' '+ workDvsCd.triggerGroup + '2-selected'}">
                                         <th:block th:each="programList : ${programList}">
-                                            <li class="tn-selectbox" th:if="${#strings.equals(workDvsCd.triggerGroup, programList.workDvsCd)}" th:id="${programList.progId}" th:attrappend="triggerGroup=${programList.workDvsCd}"><div th:text="${programList.progNm+' ('+programList.progId+')'}">Job Group Id</div></li>
+                                            <li class="tn-selectbox" th:if="${#strings.equals(workDvsCd.triggerGroup, programList.settmWorkDvsCd)}" th:id="${programList.progId}" th:attrappend="triggerGroup=${programList.settmWorkDvsCd}"><div th:text="${programList.progNm+' ('+programList.progId+')'}">Job Group Id</div></li>
                                         </th:block>
                                     </ul>
                                 </th:block>
@@ -204,6 +204,25 @@
                                 </div>
                             </div>
                             <button class="btn btn-danger form-control" onClick="" th:if="${#strings.equals(type, 'update')}" style="margin-right: 15px; float: right; width: 150px;">TRIGGER DELETE</button>
+                        </div>
+
+                        <!-- 작업 이름 START ------------------------------------------------------------------------>
+                        <div class="form-group" style="display: none;">
+                            <label class='control-label col-md-2' for='job_name'>작업 이름</label>
+                            <div class='col-md-3 indent-small job-name'>
+                                <!-- 분기 (등록 화면)-->
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'insert')}">
+                                    <input class='form-control' name="jobName" id='job_name' placeholder='청구' type='text'>
+                                </div>
+                                <!-- 분기 (조회 화면)-->
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'select')}">
+                                    <input class='form-control' id='job_name' placeholder='청구' type='text' th:value="${detail.getTriggerDirectory()}" readonly="readonly">
+                                </div>
+                                <!-- 분기 (수정 화면)-->
+                                <div class='form-group internal' th:if="${#strings.equals(type, 'update')}">
+                                    <input class='form-control' name="jobName" id='job_name' placeholder='청구' type='text' th:value="${detail.getTriggerDirectory()}">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 작업 순서 START ------------------------------------------------------------------------>
@@ -231,7 +250,7 @@
                             <div class='col-md-3 indent-small work-time'>
                                 <!-- 분기 (등록 화면)-->
                                 <div class='form-group internal' th:if="${#strings.equals(type, 'insert')}">
-                                    <input class='form-control' name="cronExpression" id='cron_expr' placeholder='0 0/10 * * * ?' type='text'>
+                                    <input class='form-control' name="jobTime" id='cron_expr' placeholder='0 0/10 * * * ?' type='text'>
                                 </div>
                                 <!-- 분기 (조회 화면)-->
                                 <div class='form-group internal' th:if="${#strings.equals(type, 'select')}">
@@ -239,7 +258,7 @@
                                 </div>
                                 <!-- 분기 (수정 화면)-->
                                 <div class='form-group internal' th:if="${#strings.equals(type, 'update')}">
-                                    <input class='form-control' name="cronExpression" id='cron_expr' placeholder='0 0/10 * * * ?' type='text' th:value="${detail.getCronExpression()}">
+                                    <input class='form-control' name="jobTime" id='cron_expr' placeholder='0 0/10 * * * ?' type='text' th:value="${detail.getCronExpression()}">
                                 </div>
                             </div>
                         </div>
@@ -248,11 +267,11 @@
                         <div class="form-group">
                             <label class='control-label col-md-2' for='startDate'>적용일시</label>
                             <div class='col-md-3 indent-small form-group internal'>
-                                <input type="text" id="startDate" class="form-control" value="">
+                                <input type="text" id="startDate" name="sttDt" class="form-control" value="">
                             </div>
                             <label class='control-label col-md-2' for='endDate' style="margin-left: 55px">종료일시</label>
                             <div class='col-md-3 indent-small form-group internal'>
-                                <input type="text" id="endDate" class="form-control" value="">
+                                <input type="text" id="endDate" name="endDt" class="form-control" value="">
                             </div>
                         </div>
                         <div class='form-group'>

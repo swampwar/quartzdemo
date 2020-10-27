@@ -53,12 +53,12 @@ public class QuartzService {
     public boolean createJob(JobRequest jobRequest) {
         // 잡이 실행할 스크립트정보 저장
         // TODO max+1 seq생성 후 저장
-        if(execProgMapper.findOneByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), 1) == null){
-            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm(),"", "", "a", "b", "c"));
-        }else{
-            // TODO 중복 데이터는 업데이트
-            log.info("중복 데이터는 업데이트");
-        }
+//        if(execProgMapper.findOneByTrigger(new TriggerKey(jobRequest.getTriggerName(), jobRequest.getTriggerGroup()), 1) == null){
+//            execProgMapper.insertExecProg(new ExecProg(jobRequest.getTriggerGroup(), jobRequest.getTriggerName(), 1, jobRequest.getShellScriptNm(),"", "", "a", "b", "c"));
+//        }else{
+//            // TODO 중복 데이터는 업데이트
+//            log.info("중복 데이터는 업데이트");
+//        }
 
         // 리스케쥴이 될 트리거 생성
         CronTrigger trigger = null;
@@ -308,24 +308,36 @@ public class QuartzService {
         return currentlyExecutingJobs;
     }
 
-    public String kill(TriggerKey triggerKey) throws SchedulerException {
-        if("START".equals(getTriggerExecutionStatusCd(triggerKey))) {
-            List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
-            for (JobExecutionContext ctx : currentlyExecutingJobs) {
-                if (ctx.getTrigger().getKey().equals(triggerKey)) {
-                    String fireInstanceId = ctx.getFireInstanceId();
-                    log.info("Trigger[{}]에 대한 강제종료를 실행합니다. FireInstanceId[{}]", triggerKey, fireInstanceId);
-                    scheduler.interrupt(fireInstanceId);
-                }
-            }
-            return "Trigger 강제종료가 완료되었습니다.";
-        }else {
-            return "실행중인 Trigger만 강제종료를 할 수 있습니다.\n현재 선택된 Trigger는 실행중이지 않습니다.";
-        }
-    }
+//    public String kill(TriggerKey triggerKey) throws SchedulerException {
+//        if("START".equals(getTriggerExecutionStatusCd(triggerKey))) {
+//            List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
+//            for (JobExecutionContext ctx : currentlyExecutingJobs) {
+//                if (ctx.getTrigger().getKey().equals(triggerKey)) {
+//                    String fireInstanceId = ctx.getFireInstanceId();
+//                    log.info("Trigger[{}]에 대한 강제종료를 실행합니다. FireInstanceId[{}]", triggerKey, fireInstanceId);
+//                    scheduler.interrupt(fireInstanceId);
+//                }
+//            }
+//            return "Trigger 강제종료가 완료되었습니다.";
+//        }else {
+//            return "실행중인 Trigger만 강제종료를 할 수 있습니다.\n현재 선택된 Trigger는 실행중이지 않습니다.";
+//        }
+//    }
 
     // execution history에서 최근 트리거 실행 상태 코드를 가져와 Kill 또는 CreateForce(재실행) 하기위한 validation으로 사용
     public String getTriggerExecutionStatusCd(TriggerKey triggerKey) {
-        return ehService.readLastMasterExecHistory(triggerKey.getGroup(), triggerKey.getName()).getJobExecStaCd().toString();
+        String status = ehService.readLastMasterExecHistory(triggerKey.getGroup(), triggerKey.getName()).getWorkResultCd();
+        if ("00".equals(status) || "01".equals(status)) {
+            status = "READY";
+        }else if("1".equals(status) || "4".equals(status)) {
+            status = "START";
+        }else if("2".equals(status) || "5".equals(status)) {
+            status = "SUCCESS";
+        }else if("7".equals(status)) {
+            status = "DUPLICATE";
+        }else if("6".equals(status) || "3".equals(status)) {
+            status = "ERROR";
+        }
+        return status;
     }
 }

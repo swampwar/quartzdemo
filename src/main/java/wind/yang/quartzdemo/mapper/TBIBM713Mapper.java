@@ -12,4 +12,6 @@ public interface TBIBM713Mapper {
     int countProgByWorkDvsCd(@Param("workDvsCd") String workDvsCd);
 
     void insertProgDetail(TBIBM713 TBIBM713);
+
+    TBIBM713 findProgByProgId(String workDvsCd, String progId);
 }

@@ -13,4 +13,7 @@ public class TriggerGroup {
     String useYn;
     String rgtDtm;
     String udtDtm;
+    String prstId;
+    String prmtId;
+    int prmtSeq;
 }

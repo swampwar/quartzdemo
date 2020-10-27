@@ -50,25 +50,37 @@ public class QuartzConfig {
         return jobDetailFactory;
     }
 
-    @Bean
-    public CronTriggerFactoryBean cronTrigger1(@Qualifier("cronJobDetail") JobDetail cronJobDetail) {
-        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-        factoryBean.setName("MGT_TRIGGER1");
-        factoryBean.setGroup("MGT");
-        factoryBean.setDescription("관리 크론트리거1");
-        factoryBean.setCronExpression("40 30 * * * ?"); // 매분 n초마다 실행
-        factoryBean.setJobDetail(cronJobDetail);
-        factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
-        return factoryBean;
-    }
+//    @Bean
+//    public CronTriggerFactoryBean cronTrigger1(@Qualifier("cronJobDetail") JobDetail cronJobDetail) {
+//        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+//        factoryBean.setName("MGT_TRIGGER1");
+//        factoryBean.setGroup("MGT");
+//        factoryBean.setDescription("관리 크론트리거1");
+//        factoryBean.setCronExpression("40 30 * * * ?"); // 매분 n초마다 실행
+//        factoryBean.setJobDetail(cronJobDetail);
+//        factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+//        return factoryBean;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean cronTrigger2(@Qualifier("cronJobDetail") JobDetail cronJobDetail) {
+//        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+//        factoryBean.setName("MGT_TRIGGER2");
+//        factoryBean.setGroup("MGT");
+//        factoryBean.setDescription("관리 크론트리거2");
+//        factoryBean.setCronExpression("0 40 * * * ?"); // 매분 n초마다 실행
+//        factoryBean.setJobDetail(cronJobDetail);
+//        factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+//        return factoryBean;
+//    }
 
     @Bean
-    public CronTriggerFactoryBean cronTrigger2(@Qualifier("cronJobDetail") JobDetail cronJobDetail) {
+    public CronTriggerFactoryBean cronTrigger3(@Qualifier("cronJobDetail") JobDetail cronJobDetail) {
         CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-        factoryBean.setName("MGT_TRIGGER2");
-        factoryBean.setGroup("MGT");
-        factoryBean.setDescription("관리 크론트리거2");
-        factoryBean.setCronExpression("0 15 * * * ?"); // 매분 n초마다 실행
+        factoryBean.setName("S_OBZ_0001");
+        factoryBean.setGroup("OBZ");
+        factoryBean.setDescription("일정산 TEST");
+        factoryBean.setCronExpression("0 0 10 * * ?"); // 매분 n초마다 실행
         factoryBean.setJobDetail(cronJobDetail);
         factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
         return factoryBean;
